@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:grooks_dev/models/category.dart';
 import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_methods.dart';
 
@@ -9,6 +10,9 @@ class FirebaseRepository {
   Future<String> get getRequiredVersion => firebaseMethods.getRequiredVersion;
 
   Future<String> get getAppLink => firebaseMethods.getAppLink;
+
+  Future<List<Category>> get getAllCategories =>
+      firebaseMethods.getAllCategories;
 
   Future<bool> isNewUser({
     required String mobile,
@@ -75,4 +79,9 @@ class FirebaseRepository {
     String? userId,
   }) =>
       firebaseMethods.getUserActiveStatus(userId: userId);
+
+  Future<List<Category>> getSubcategoriesFromCategory({
+    required String categoryId,
+  }) =>
+      firebaseMethods.getSubcategoriesFromCategory(categoryId: categoryId);
 }
