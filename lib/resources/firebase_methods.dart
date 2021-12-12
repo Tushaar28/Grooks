@@ -68,7 +68,7 @@ class FirebaseMethods {
     }
     return categories;
   }
-
+  
   Future<bool> isNewUser({
     required String mobile,
   }) async {

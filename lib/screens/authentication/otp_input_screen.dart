@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:grooks_dev/models/question.dart';
+
 import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/user/navbar_screen.dart';
@@ -70,6 +71,7 @@ class _OTPInputScreenState extends State<OTPInputScreen> {
     _repository = FirebaseRepository();
     _isCodeSent = _isLoading = _wait = false;
     _start = 30;
+
     _otpResendCount = 0;
     _scaffoldKey = GlobalKey<ScaffoldState>();
     verifyPhone();
@@ -88,6 +90,7 @@ class _OTPInputScreenState extends State<OTPInputScreen> {
     String? token = await _messaging.getToken();
     _repository.saveDeviceToken(token);
   }
+
 
   void startTimer() {
     const onSec = Duration(seconds: 1);
@@ -201,10 +204,21 @@ class _OTPInputScreenState extends State<OTPInputScreen> {
     } catch (error) {
       throw error.toString();
     }
+=======
+  Future<String> generateReferralCode(
+      String userName, String userMobile) async {
+    var id = MyEncryptionDecryption.encryptAES(userMobile);
+    var randomCode = "${userName.substring(0, 3)}-${id.base64.substring(0, 8)}";
+    return randomCode;
+  }
+
+  Future<void> saveReferralLink(String link) async {
+    _repository.savePlayerReferalLink(link);
   }
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       key: _scaffoldKey,
       body: SafeArea(
