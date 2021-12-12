@@ -138,7 +138,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           } else {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) => OTPInputScreen(
+                               builder: (context) => OTPInputScreen(
                                   mobile: _mobileController.text.trim(),
                                   referralCode: '',
                                 ),
@@ -243,6 +243,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             //   ),
                             //   (Route<dynamic> route) => false,
                             // );
+
                           },
                         ),
                       ],
