@@ -10,6 +10,7 @@ import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/user/navbar_screen.dart';
 import 'package:grooks_dev/screens/user/user_detail_screen.dart';
+import 'package:grooks_dev/services/my_encryption.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/otp_field_style.dart';
 import 'package:otp_text_field/style.dart';
@@ -90,7 +91,6 @@ class _OTPInputScreenState extends State<OTPInputScreen> {
     String? token = await _messaging.getToken();
     _repository.saveDeviceToken(token);
   }
-
 
   void startTimer() {
     const onSec = Duration(seconds: 1);
@@ -204,7 +204,8 @@ class _OTPInputScreenState extends State<OTPInputScreen> {
     } catch (error) {
       throw error.toString();
     }
-=======
+  }
+
   Future<String> generateReferralCode(
       String userName, String userMobile) async {
     var id = MyEncryptionDecryption.encryptAES(userMobile);
@@ -213,12 +214,11 @@ class _OTPInputScreenState extends State<OTPInputScreen> {
   }
 
   Future<void> saveReferralLink(String link) async {
-    _repository.savePlayerReferalLink(link);
+    _repository.saveReferalLink(link);
   }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       key: _scaffoldKey,
       body: SafeArea(
