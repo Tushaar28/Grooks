@@ -75,4 +75,5 @@ class FirebaseRepository {
     String? userId,
   }) =>
       firebaseMethods.getUserActiveStatus(userId: userId);
+
 }

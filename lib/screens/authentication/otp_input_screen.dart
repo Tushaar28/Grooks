@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:grooks_dev/models/question.dart';
+
 import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/user/navbar_screen.dart';
@@ -74,6 +75,7 @@ class _OTPInputScreenState extends State<OTPInputScreen> {
     _scaffoldKey = GlobalKey<ScaffoldState>();
     verifyPhone();
     startTimer();
+
   }
 
   @override

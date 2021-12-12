@@ -27,6 +27,8 @@ class _LoginScreenState extends State<LoginScreen> {
   late TextEditingController _mobileController;
   late final GlobalKey<ScaffoldState> _scaffoldKey;
   late final FirebaseRepository _repository;
+  late bool _isLoading;
+
 
   @override
   void initState() {
