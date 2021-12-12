@@ -167,7 +167,7 @@ class FirebaseMethods {
   }) async {
     try {
       String? url = profileUrl;
-      late Users? referringUser;
+      Users? referringUser = null;
       DateTime currentDate = DateTime.now();
       if (url != null && url.isNotEmpty && profilePicture != null) {
         url = await uploadPhoto(
@@ -244,6 +244,95 @@ class FirebaseMethods {
       }
     } catch (error) {
       throw error.toString();
+    }
+  }
+
+  Future<void> saveDeviceToken(String? fcmToke) async {
+    User? currentUser = await getCurrentUser();
+
+    if (currentUser != null && fcmToke != null) {
+      var tokenRef = usersCollection
+          .doc(currentUser.uid)
+          .collection('tokens')
+          .doc(fcmToke);
+      await tokenRef.set({
+        'token': fcmToke,
+        'createdAt': FieldValue.serverTimestamp(),
+        'platform': Platform.operatingSystem
+      });
+    }
+  }
+
+  Future<void> saveReferalLink(String? link) async {
+    User? currentUser = await getCurrentUser();
+
+    if (currentUser != null && link != null && link.isNotEmpty) {
+      await usersCollection.doc(currentUser.uid).update({
+        'referralCode': link,
+      });
+    }
+  }
+
+  Future<void> updateUser({
+    required String userId,
+    required Map<String, dynamic> data,
+  }) async {
+    try {
+      String? profileUrl;
+      if (data.containsKey('profilePicture')) {
+        profileUrl = await uploadPhoto(
+            image: data['profilePicture'],
+            id: userId,
+            folderId: "profilePictures");
+      }
+      if (profileUrl != null) data['profilePicture'] = profileUrl;
+      await usersCollection.doc(userId).update(data);
+    } catch (error) {
+      throw error.toString();
+    }
+  }
+
+  Future<int> getUserBonusCoins({
+    required String userId,
+  }) async {
+    try {
+      int coins;
+      QuerySnapshot snapshot =
+          await walletsCollection.where('userId', isEqualTo: userId).get();
+      coins = snapshot.docs.first.get('bonusCoins');
+      return coins;
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<int> getUserRedeemableCoins({
+    required String userId,
+  }) async {
+    try {
+      int coins;
+      QuerySnapshot snapshot =
+          await walletsCollection.where('userId', isEqualTo: userId).get();
+      coins = snapshot.docs.first.get('redeemableCoins');
+      return coins;
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<bool> getUserActiveStatus({
+    String? userId,
+  }) async {
+    try {
+      Users user;
+      if (userId != null && userId.isNotEmpty) {
+        user = (await getUserDetails(userId: userId))!;
+      } else {
+        user = (await getUserDetails())!;
+      }
+      return user.isActive;
+    } catch (error) {
+      rethrow;
     }
   }
 }

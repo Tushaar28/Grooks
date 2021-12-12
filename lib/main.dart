@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:grooks_dev/screens/user/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,7 +37,7 @@ class _MyAppState extends State<MyApp> {
       title: 'Grooks',
       theme: ThemeData(primarySwatch: Colors.blue),
       home: const Center(
-        child: Text("Welcome"),
+        child: SplashScreen(),
       ),
     );
   }
