@@ -19,7 +19,7 @@ class SubcategoriesScreen extends StatefulWidget {
 }
 
 class _SubcategoriesScreenState extends State<SubcategoriesScreen> {
-  late final List<Category> _subcategories;
+  late List<Category> _subcategories;
   late final FirebaseRepository _repository;
   late bool _isDataLoaded;
 
@@ -44,6 +44,7 @@ class _SubcategoriesScreenState extends State<SubcategoriesScreen> {
   }
 
   Future<void> getSubcategoriesFromCategory() async {
+    setState(() => _isDataLoaded = false);
     _subcategories = await _repository.getSubcategoriesFromCategory(
         categoryId: widget.category.id);
     setState(() => _isDataLoaded = true);
@@ -69,14 +70,20 @@ class _SubcategoriesScreenState extends State<SubcategoriesScreen> {
         ),
       );
     }
+
     return RefreshIndicator(
       onRefresh: () => refresh(context: context),
-      child: Align(
-        alignment: Alignment.center,
-        child: ListView.builder(
-          itemCount: _subcategories.length,
-          itemBuilder: (context, index) => CustomSubcategoryCard(
-            subcategory: _subcategories[index],
+      child: FutureBuilder(
+        future: getSubcategoriesFromCategory(),
+        builder: (context, snapshot) => Align(
+          alignment: Alignment.center,
+          child: ListView.builder(
+            itemCount: _subcategories.length,
+            itemBuilder: (context, index) {
+              return CustomSubcategoryCard(
+                subcategory: _subcategories[index],
+              );
+            },
           ),
         ),
       ),

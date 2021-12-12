@@ -114,15 +114,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   : Column(
                       children: [
                         CustomTabView(
-                          initPosition: 0,
+                          initPosition: _index,
                           onPositionChange: (int? value) =>
                               setState(() => _index = value!),
                           itemCount: _categories.length,
                           tabBuilder: (context, index) {
-                            SchedulerBinding.instance!
-                                .addPostFrameCallback((timeStamp) {
-                              setState(() => _index = index);
-                            });
+                            _index = index;
                             return Tab(
                               text: _categories[_index].name,
                               icon: CircleAvatar(
