@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/authentication/login_screen.dart';
+import 'package:grooks_dev/screens/user/home_screen.dart';
 import 'package:grooks_dev/widgets/custom_appbar.dart';
 import 'package:grooks_dev/widgets/custom_drawer.dart';
 
@@ -26,33 +27,18 @@ class _NavbarScreenState extends State<NavbarScreen> {
   late final FirebaseRepository _repository;
   late bool? _isActive;
   late final GlobalKey<ScaffoldState> _scaffoldKey;
-  late final Map<String, Widget> _tabs;
+  late Map<String, Widget> _tabs;
 
   @override
   void initState() {
     super.initState();
     _isActive = true;
+    _tabs = {};
     _isDataLoaded = widget.user != null;
     _scaffoldKey = GlobalKey<ScaffoldState>();
     _currentPage = widget.initialPage ?? 'Home';
     _repository = FirebaseRepository();
     if (widget.user == null) {
-      getCurrentUser();
-    }
-    getUserActiveStatus();
-    _tabs = {
-      'Home': const Center(
-        child: Text("Home"),
-      ),
-      'My Trades': const Center(
-        child: Text("My trades"),
-      ),
-      'Profile': const Center(
-        child: Text("Profile"),
-      ),
-    };
-    if (widget.user == null) {
-      _isDataLoaded = false;
       getCurrentUser();
     }
   }
@@ -62,8 +48,10 @@ class _NavbarScreenState extends State<NavbarScreen> {
       Users? user = await _repository.getUserDetails();
       if (user != null) {
         widget.user = user;
+
         setState(() => _isDataLoaded = true);
       }
+      getUserActiveStatus();
     } catch (error) {
       throw error.toString();
     }
@@ -100,6 +88,16 @@ class _NavbarScreenState extends State<NavbarScreen> {
             (route) => false);
       });
     }
+    _tabs = {
+      'Home': HomeScreen(user: widget.user!),
+      'My Trades': const Center(
+        child: Text("My trades"),
+      ),
+      'Profile': const Center(
+        child: Text("Profile"),
+      ),
+    };
+
     return Scaffold(
       key: _scaffoldKey,
       drawer: CustomDrawer(context: context, user: widget.user!),

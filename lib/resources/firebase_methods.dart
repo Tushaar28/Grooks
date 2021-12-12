@@ -6,6 +6,7 @@ import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:grooks_dev/constants/constants.dart';
+import 'package:grooks_dev/models/category.dart';
 import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/models/wallet.dart';
 
@@ -53,6 +54,19 @@ class FirebaseMethods {
     } catch (error) {
       rethrow;
     }
+  }
+
+  Future<List<Category>> get getAllCategories async {
+    List<Category> categories = [];
+    QuerySnapshot snapshot = await categoriesCollection
+        .where('parent', isNull: true)
+        .where("isActive", isEqualTo: true)
+        .where("isDeleted", isEqualTo: false)
+        .get();
+    for (var element in snapshot.docs) {
+      categories.add(Category.fromMap(element.data() as Map<String, dynamic>));
+    }
+    return categories;
   }
 
   Future<bool> isNewUser({
@@ -333,6 +347,26 @@ class FirebaseMethods {
       return user.isActive;
     } catch (error) {
       rethrow;
+    }
+  }
+
+  Future<List<Category>> getSubcategoriesFromCategory({
+    required String categoryId,
+  }) async {
+    try {
+      List<Category> subcategories = [];
+      QuerySnapshot subcategoriesSnapshot = await categoriesCollection
+          .where('parent', isEqualTo: categoryId)
+          .where('isActive', isEqualTo: true)
+          .where('isDeleted', isEqualTo: false)
+          .get();
+      for (var element in subcategoriesSnapshot.docs) {
+        subcategories
+            .add(Category.fromMap(element.data() as Map<String, dynamic>));
+      }
+      return subcategories;
+    } catch (error) {
+      throw error.toString();
     }
   }
 }
