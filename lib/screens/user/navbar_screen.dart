@@ -31,6 +31,7 @@ class _NavbarScreenState extends State<NavbarScreen> {
   @override
   void initState() {
     super.initState();
+    _isActive = true;
     _isDataLoaded = widget.user != null;
     _scaffoldKey = GlobalKey<ScaffoldState>();
     _currentPage = widget.initialPage ?? 'Home';
