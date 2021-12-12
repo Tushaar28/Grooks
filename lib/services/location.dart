@@ -3,8 +3,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:grooks_dev/screens/authentication/login_screen.dart';
 import 'package:grooks_dev/screens/user/location_denied_screen.dart';
 
-import 'auth.dart';
-
 class Location extends StatefulWidget {
   const Location({Key? key}) : super(key: key);
 

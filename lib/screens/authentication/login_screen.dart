@@ -6,6 +6,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:grooks_dev/models/question.dart';
 import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
+import 'package:grooks_dev/screens/authentication/otp_input_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   final String? referralCode;
@@ -25,9 +26,7 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   late TextEditingController _mobileController;
   late final GlobalKey<ScaffoldState> _scaffoldKey;
-  late final GlobalKey<FormState> _formState;
   late final FirebaseRepository _repository;
-  late bool _isLoading;
 
   @override
   void initState() {
@@ -35,8 +34,6 @@ class _LoginScreenState extends State<LoginScreen> {
     _mobileController = TextEditingController();
     _repository = FirebaseRepository();
     _scaffoldKey = GlobalKey<ScaffoldState>();
-    _formState = GlobalKey<FormState>();
-    _isLoading = false;
   }
 
   Future<bool> isNewUser() async {
@@ -141,7 +138,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           } else {
                             Navigator.of(context).push(
                               MaterialPageRoute(
-                                builder: (context) => OTPInputWidget(
+                                builder: (context) => OTPInputScreen(
                                   mobile: _mobileController.text.trim(),
                                   referralCode: '',
                                 ),
@@ -236,16 +233,16 @@ class _LoginScreenState extends State<LoginScreen> {
                             if (userDetails != null) {
                               userDetails = await _repository.getUserDetails();
                             }
-                            Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => NavBarWidget(
-                                  user: userDetails,
-                                  initialPage: 'Home',
-                                ),
-                              ),
-                              (Route<dynamic> route) => false,
-                            );
+                            // Navigator.pushAndRemoveUntil(
+                            //   context,
+                            //   MaterialPageRoute(
+                            //     builder: (context) => NavBarWidget(
+                            //       user: userDetails,
+                            //       initialPage: 'Home',
+                            //     ),
+                            //   ),
+                            //   (Route<dynamic> route) => false,
+                            // );
                           },
                         ),
                       ],
