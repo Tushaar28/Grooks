@@ -1,6 +1,9 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:grooks_dev/models/category.dart';
+import 'package:grooks_dev/models/question.dart';
+import 'package:grooks_dev/models/trade.dart';
 import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_methods.dart';
 
@@ -84,4 +87,79 @@ class FirebaseRepository {
     required String categoryId,
   }) =>
       firebaseMethods.getSubcategoriesFromCategory(categoryId: categoryId);
+
+  Future<List<Question>> getOpenQuestions({
+    required String subcategoryId,
+  }) =>
+      firebaseMethods.getOpenQuestions(subcategoryId: subcategoryId);
+
+  Future<List<Question>> getClosedQuestions({
+    required String subcategoryId,
+  }) =>
+      firebaseMethods.getClosedQuestions(subcategoryId: subcategoryId);
+
+  Future<Question> getQuestionDetails({
+    required String questionId,
+  }) =>
+      firebaseMethods.getQuestionDetails(questionId: questionId);
+
+  Future<void> placeTrade({
+    required int bet,
+    required int bonusCoins,
+    required int redeemableCoins,
+    required int count,
+    required String questionId,
+    required bool response,
+    required String userId,
+  }) =>
+      firebaseMethods.placeTrade(
+        bet: bet,
+        bonusCoins: bonusCoins,
+        count: count,
+        questionId: questionId,
+        redeemableCoins: redeemableCoins,
+        response: response,
+        userId: userId,
+      );
+
+  Future<QuerySnapshot> getTopTrades({
+    required String userId,
+    required String questionId,
+  }) =>
+      firebaseMethods.getTopTrades(
+        userId: userId,
+        questionId: questionId,
+      );
+
+  Future<List<Trade>> getTradesForQuestionForUser({
+    required String userId,
+    required String questionId,
+  }) =>
+      firebaseMethods.getTradesForQuestionForUser(
+        questionId: questionId,
+        userId: userId,
+      );
+
+  Future<void> cancelTrade({
+    required Trade trade,
+    required String userId,
+  }) =>
+      firebaseMethods.cancelTrade(
+        trade: trade,
+        userId: userId,
+      );
+
+  Future<void> pairTrade({
+    required Trade firstTrade,
+    required String userId,
+  }) =>
+      firebaseMethods.pairTrade(
+        firstTrade: firstTrade,
+        userId: userId,
+      );
+
+  Future<String> getUserNameFromUserId({
+    required String userId,
+  }) =>
+      firebaseMethods.getUserNameFromUserId(userId: userId);
 }

@@ -2,14 +2,17 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:grooks_dev/models/category.dart';
-import 'package:grooks_dev/screens/user/navbar_screen.dart';
+import 'package:grooks_dev/models/user.dart';
+import 'package:grooks_dev/screens/user/questions_screen.dart';
 import 'package:page_transition/page_transition.dart';
 
 class CustomSubcategoryCard extends StatefulWidget {
   final Category subcategory;
+  final Users user;
   const CustomSubcategoryCard({
     Key? key,
     required this.subcategory,
+    required this.user,
   }) : super(key: key);
 
   @override
@@ -24,7 +27,11 @@ class _CustomSubcategoryCardState extends State<CustomSubcategoryCard> {
       child: InkWell(
         onTap: () => Navigator.of(context).push(
           PageTransition(
-            child: NavbarScreen(),
+            child: QuestionsScreen(
+              subcategoryId: widget.subcategory.id,
+              subcategoryName: widget.subcategory.name,
+              user: widget.user,
+            ),
             type: PageTransitionType.rightToLeft,
             duration: const Duration(
               milliseconds: 300,

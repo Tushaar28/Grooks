@@ -3,7 +3,7 @@ import 'package:grooks_dev/models/category.dart';
 import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/user/navbar_screen.dart';
-import 'package:grooks_dev/widgets/custom_subcategory_card.dart';
+import 'package:grooks_dev/widgets/subcategory_card.dart';
 
 class SubcategoriesScreen extends StatefulWidget {
   final Category category;
@@ -81,6 +81,7 @@ class _SubcategoriesScreenState extends State<SubcategoriesScreen> {
             itemCount: _subcategories.length,
             itemBuilder: (context, index) {
               return CustomSubcategoryCard(
+                user: widget.user,
                 subcategory: _subcategories[index],
               );
             },
