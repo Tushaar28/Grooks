@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -7,8 +8,12 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:grooks_dev/constants/constants.dart';
 import 'package:grooks_dev/models/category.dart';
+import 'package:grooks_dev/models/question.dart';
+import 'package:grooks_dev/models/trade.dart';
+import 'package:grooks_dev/models/transaction.dart';
 import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/models/wallet.dart';
+import '../models/transaction.dart' as model;
 
 class FirebaseMethods {
   final FirebaseStorage storage = FirebaseStorage.instance;
@@ -367,6 +372,411 @@ class FirebaseMethods {
       return subcategories;
     } catch (error) {
       throw error.toString();
+    }
+  }
+
+  Future<List<Question>> getOpenQuestions({
+    required String subcategoryId,
+  }) async {
+    try {
+      List<Question> questions = [];
+      QuerySnapshot questionsSnapshot = await questionsCollection
+          .where('parent', isEqualTo: subcategoryId)
+          .where("answer", isNull: true)
+          .where("closedAt", isNull: true)
+          .where("isActive", isEqualTo: true)
+          .where("isDeleted", isEqualTo: false)
+          .get();
+
+      for (var element in questionsSnapshot.docs) {
+        if (element.exists) {
+          questions
+              .add(Question.fromMap(element.data() as Map<String, dynamic>));
+        }
+      }
+      return questions;
+    } catch (error) {
+      throw error.toString();
+    }
+  }
+
+  Future<List<Question>> getClosedQuestions({
+    required String subcategoryId,
+  }) async {
+    try {
+      List<Question> questions = [];
+      QuerySnapshot snapshot = await questionsCollection
+          .where('parent', isEqualTo: subcategoryId)
+          .where('answer', whereIn: [true, false])
+          .where("isActive", isEqualTo: false)
+          .get();
+      for (var element in snapshot.docs) {
+        if (element.exists) {
+          questions
+              .add(Question.fromMap(element.data() as Map<String, dynamic>));
+        }
+      }
+      return questions;
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<Question> getQuestionDetails({
+    required String questionId,
+  }) async {
+    try {
+      Question question;
+      QuerySnapshot snapshot =
+          await questionsCollection.where('id', isEqualTo: questionId).get();
+      question =
+          Question.fromMap(snapshot.docs.first.data() as Map<String, dynamic>);
+      return question;
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<void> placeTrade({
+    required String userId,
+    required bool response,
+    required String questionId,
+    required int bonusCoins,
+    required int redeemableCoins,
+    required int count,
+    required int bet,
+  }) async {
+    try {
+      if (bet > bonusCoins + redeemableCoins) throw "Insufficient coins";
+      QuerySnapshot walletSnapshot =
+          await walletsCollection.where('userId', isEqualTo: userId).get();
+      bool isQuestionActive =
+          (await questionsCollection.doc(questionId).get()).get('isActive');
+      if (isQuestionActive == false) throw "An error occured";
+      String walletId = walletSnapshot.docs.first.id;
+      DateTime currentDate = DateTime.now();
+      List<Trade> trades = [];
+      List<String> tradeIds = [];
+      List<model.Transaction> transactions = [];
+      int bonusCoinsUsed, redeemableCoinsUsed;
+      for (int i = 0; i < count; i++) {
+        int remainingExpense = bet;
+        bonusCoinsUsed = 0;
+        redeemableCoinsUsed = 0;
+        if (bonusCoins > 0) {
+          bool isBetTotallyFilledByBonus = (bonusCoins - bet >= 0);
+          bonusCoinsUsed = isBetTotallyFilledByBonus ? bet : bonusCoins;
+          remainingExpense =
+              isBetTotallyFilledByBonus ? 0 : remainingExpense - bonusCoins;
+          bonusCoins = isBetTotallyFilledByBonus ? bonusCoins - bet : 0;
+        }
+        if (remainingExpense > 0) {
+          redeemableCoins -= remainingExpense;
+          redeemableCoinsUsed = remainingExpense;
+        }
+        String tradeId = tradesCollection.doc().id;
+        Trade trade = Trade(
+          id: tradeId,
+          bonusCoinsUsed: bonusCoinsUsed,
+          redeemableCoinsUsed: redeemableCoinsUsed,
+          coins: bet,
+          createdAt: currentDate,
+          questionId: questionId,
+          response: response,
+          status: Status.ACTIVE_UNPAIRED,
+          userId: userId,
+          updatedAt: currentDate,
+        );
+        trades.add(trade);
+        tradeIds.add(tradeId);
+
+        String transactionId =
+            walletsCollection.doc(walletId).collection('transactions').doc().id;
+        model.Transaction transaction = model.Transaction(
+          id: transactionId,
+          createdAt: currentDate,
+          status: model.TransactionStatus.PROCESSED,
+          type: model.TransactionType.COINS_LOST,
+          amount: bet.toDouble(),
+          bonusCoins: bonusCoinsUsed,
+          redeemableCoins: redeemableCoinsUsed,
+          questionId: questionId,
+          updatedAt: currentDate,
+        );
+        transactions.add(transaction);
+      }
+
+      //Add to database
+      await firestore.runTransaction((transaction) async {
+        DocumentSnapshot questionSnapshot =
+            await questionsCollection.doc(questionId).get();
+
+        int currentOpenBets = questionSnapshot.get("openTradesCount");
+
+        //Update coins of user
+        await walletsCollection.doc(walletId).update({
+          'bonusCoins': bonusCoins,
+          'redeemableCoins': redeemableCoins,
+          'updatedAt': currentDate,
+        });
+
+        for (int i = 0; i < transactions.length; i++) {
+          walletsCollection
+              .doc(walletId)
+              .collection('transactions')
+              .doc(transactions[i].id)
+              .set(transactions[i].toMap(transactions[i])
+                  as Map<String, dynamic>);
+        }
+
+        await usersCollection.doc(userId).update({
+          'questions': FieldValue.arrayUnion([questionId]),
+        });
+
+        //Add list of bets in questions collection
+        if (response) {
+          await questionsCollection.doc(questionId).update({
+            'yesTrades': FieldValue.arrayUnion(tradeIds),
+            'openTradesCount': currentOpenBets + count,
+            'updatedAt': currentDate,
+          });
+        } else {
+          await questionsCollection.doc(questionId).update({
+            'noTrades': FieldValue.arrayUnion(tradeIds),
+            'openTradesCount': currentOpenBets + count,
+            'updatedAt': currentDate,
+          });
+        }
+
+        //Add trade document in trades colelction
+        for (int i = 0; i < trades.length; i++) {
+          await tradesCollection
+              .doc(trades[i].id)
+              .set(trades[i].toMap(trades[i]));
+        }
+      });
+    } catch (error) {
+      throw error.toString();
+    }
+  }
+
+  Future<QuerySnapshot> getTopTrades({
+    required String userId,
+    required String questionId,
+  }) async {
+    try {
+      QuerySnapshot data = await tradesCollection
+          .where('questionId', isEqualTo: questionId)
+          .where('status',
+              isEqualTo: Status.ACTIVE_UNPAIRED.toString().split('.').last)
+          .where('userId', isNotEqualTo: userId)
+          .orderBy('userId')
+          .orderBy('createdAt', descending: true)
+          .get();
+      return data;
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<List<Trade>> getTradesForQuestionForUser({
+    required String userId,
+    required String questionId,
+  }) async {
+    try {
+      List<Trade> trades = [];
+      QuerySnapshot data = await tradesCollection
+          .where('questionId', isEqualTo: questionId)
+          .where('userId', isEqualTo: userId)
+          .orderBy('createdAt', descending: true)
+          .get();
+      for (var element in data.docs) {
+        trades.add(Trade.fromMap(element.data() as Map<String, dynamic>));
+      }
+      return trades;
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<void> cancelTrade({
+    required Trade trade,
+    required String userId,
+  }) async {
+    try {
+      bool isQuestionActive =
+          (await questionsCollection.doc(trade.questionId).get())
+              .get('isActive');
+      if (isQuestionActive == false) throw "An error occured";
+      await firestore.runTransaction((transaction) async {
+        QuerySnapshot walletSnapshot =
+            await walletsCollection.where('userId', isEqualTo: userId).get();
+        DocumentSnapshot questionSnapshot =
+            await questionsCollection.doc(trade.questionId).get();
+        int currentOpenBets = questionSnapshot.get("openTradesCount");
+        String walletId = walletSnapshot.docs.first.id;
+        int currentBonusCoins = await getUserBonusCoins(userId: userId);
+        int currentRedeemableCoins =
+            await getUserRedeemableCoins(userId: userId);
+        int bonusCoinsUsed = trade.bonusCoinsUsed;
+        int redeemableCoinsUsed = trade.redeemableCoinsUsed;
+        DateTime currentDate = DateTime.now();
+
+        String transactionId =
+            walletsCollection.doc(walletId).collection('transactions').doc().id;
+        model.Transaction transaction = model.Transaction(
+          id: transactionId,
+          createdAt: currentDate,
+          status: model.TransactionStatus.PROCESSED,
+          type: model.TransactionType.COINS_ADDED,
+          amount: trade.coins.toDouble(),
+          bonusCoins: trade.bonusCoinsUsed,
+          redeemableCoins: trade.redeemableCoinsUsed,
+          questionId: trade.questionId,
+          updatedAt: currentDate,
+        );
+
+        await questionsCollection.doc(trade.questionId).update({
+          'openTradesCount': currentOpenBets - 1,
+          'updatedAt': currentDate,
+        });
+
+        await walletsCollection.doc(walletId).update({
+          'updatedAt': currentDate,
+          'bonusCoins': currentBonusCoins + bonusCoinsUsed,
+          'redeemableCoins': currentRedeemableCoins + redeemableCoinsUsed,
+        });
+
+        await walletsCollection
+            .doc(walletId)
+            .collection('transactions')
+            .doc(transactionId)
+            .set(transaction.toMap(transaction) as Map<String, dynamic>);
+
+        await tradesCollection.doc(trade.id).update({
+          'status': Status.CANCELLED_BY_USER.toString().split('.').last,
+          'cancelledAt': currentDate,
+          'updatedAt': currentDate,
+        });
+      });
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<void> pairTrade({
+    required Trade firstTrade,
+    required String userId,
+  }) async {
+    try {
+      bool isQuestionActive =
+          (await questionsCollection.doc(firstTrade.questionId).get())
+              .get('isActive');
+      if (isQuestionActive == false) throw "An error occured";
+      await firestore.runTransaction((transaction) async {
+        DocumentSnapshot questionSnapshot =
+            await questionsCollection.doc(firstTrade.questionId).get();
+
+        QuerySnapshot walletSnapshot =
+            await walletsCollection.where('userId', isEqualTo: userId).get();
+        String walletId = walletSnapshot.docs.first.id;
+        int currentBonusCoins = await getUserBonusCoins(userId: userId);
+        int currentRedeemableCoins =
+            await getUserRedeemableCoins(userId: userId);
+        int bet = 100 - firstTrade.coins;
+        if (bet > currentBonusCoins + currentRedeemableCoins) {
+          throw "Insufficient coins";
+        }
+        int bonusCoinsUsed = min(currentBonusCoins, bet);
+        int redeemableCoinsUsed =
+            bet > currentBonusCoins ? bet - currentBonusCoins : 0;
+        int currentOpenBets = questionSnapshot.get("openTradesCount");
+        int currentPairedBets = questionSnapshot.get("pairedTradesCount");
+        String tradeId = tradesCollection.doc().id;
+        DateTime pairedDateTime = DateTime.now();
+        Trade trade = Trade(
+          id: tradeId,
+          bonusCoinsUsed: bonusCoinsUsed,
+          redeemableCoinsUsed: redeemableCoinsUsed,
+          coins: bet,
+          createdAt: DateTime.now(),
+          questionId: firstTrade.questionId,
+          response: !firstTrade.response,
+          status: Status.ACTIVE_PAIRED,
+          userId: userId,
+          pairedAt: pairedDateTime,
+          pairedTradeId: firstTrade.id,
+          updatedAt: pairedDateTime,
+        );
+        await tradesCollection.doc(tradeId).set(trade.toMap(trade));
+        await tradesCollection.doc(firstTrade.id).update({
+          'status': Status.ACTIVE_PAIRED.toString(),
+          'pairedAt': pairedDateTime,
+          'updatedAt': DateTime.now(),
+          'pairedTradeId': firstTrade.id,
+        });
+
+        String transactionId =
+            walletsCollection.doc(walletId).collection('transactions').doc().id;
+        model.Transaction transaction = model.Transaction(
+          id: transactionId,
+          createdAt: DateTime.now(),
+          status: model.TransactionStatus.PROCESSED,
+          type: TransactionType.COINS_LOST,
+          amount: bet.toDouble(),
+          bonusCoins: bonusCoinsUsed,
+          redeemableCoins: redeemableCoinsUsed,
+          updatedAt: DateTime.now(),
+        );
+        await walletsCollection
+            .doc(walletId)
+            .collection('transactions')
+            .doc(transactionId)
+            .set(transaction.toMap(transaction) as Map<String, dynamic>);
+
+        await walletsCollection.doc(walletId).update({
+          'updatedAt': DateTime.now(),
+          'bonusCoins': currentBonusCoins - bonusCoinsUsed,
+          'redeemableCoinsUsed': currentRedeemableCoins - redeemableCoinsUsed,
+        });
+
+        await usersCollection.doc(userId).update({
+          'questions': FieldValue.arrayUnion([firstTrade.questionId])
+        });
+
+        if (firstTrade.response == false) {
+          await questionsCollection.doc(firstTrade.questionId).update({
+            'yesTrades': FieldValue.arrayUnion([trade.id]),
+            'openTradesCount': currentOpenBets - 1,
+            'pairedTradesCount': currentPairedBets + 1,
+            'lastTradedPrice': bet,
+            'updatedAt': pairedDateTime,
+          });
+        } else {
+          await questionsCollection.doc(firstTrade.questionId).update({
+            'noBets': FieldValue.arrayUnion([trade.id]),
+            'openTradesCount': currentOpenBets - 1,
+            'pairedTradesCount': currentPairedBets + 1,
+            'lastTradedPrice': firstTrade.coins,
+            'updatedAt': pairedDateTime,
+          });
+        }
+      });
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<String> getUserNameFromUserId({
+    required String userId,
+  }) async {
+    try {
+      String name;
+      DocumentSnapshot userSnapshot = await usersCollection.doc(userId).get();
+      name = userSnapshot.get('name');
+      return name;
+    } catch (error) {
+      rethrow;
     }
   }
 }
