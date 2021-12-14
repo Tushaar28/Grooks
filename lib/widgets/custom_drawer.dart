@@ -2,6 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
+import 'package:grooks_dev/screens/user/coins_transfer_screen.dart';
 import 'package:grooks_dev/services/auth.dart';
 import 'package:grooks_dev/widgets/swipe_button.dart';
 import 'package:page_transition/page_transition.dart';
@@ -152,32 +153,32 @@ class CustomDrawer extends StatelessWidget {
             child: Column(
               children: [
                 SizedBox(height: MediaQuery.of(context).size.height * 0.1),
-                // ListTile(
-                //   leading: Image.asset("assets/images/wallet.png"),
-                //   title: const AutoSizeText(
-                //     'Help your friends',
-                //     style: TextStyle(
-                //       color: Colors.black,
-                //       fontSize: 18,
-                //       fontWeight: FontWeight.w400,
-                //     ),
-                //   ),
-                //   trailing: const Icon(
-                //     Icons.arrow_forward_ios,
-                //     color: Colors.black87,
-                //   ),
-                //   onTap: () {
-                //     Navigator.of(context).pop();
-                //     Navigator.of(context).push(
-                //       PageTransition(
-                //         child: CoinsTransferWidget(user: this.user),
-                //         type: PageTransitionType.bottomToTop,
-                //         duration: const Duration(milliseconds: 300),
-                //         reverseDuration: const Duration(milliseconds: 300),
-                //       ),
-                //     );
-                //   },
-                // ),
+                ListTile(
+                  leading: Image.asset("assets/images/wallet.png"),
+                  title: const AutoSizeText(
+                    'Help your friends',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                  trailing: const Icon(
+                    Icons.arrow_forward_ios,
+                    color: Colors.black87,
+                  ),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).push(
+                      PageTransition(
+                        child: CoinsTransferScreen(user: user),
+                        type: PageTransitionType.bottomToTop,
+                        duration: const Duration(milliseconds: 300),
+                        reverseDuration: const Duration(milliseconds: 300),
+                      ),
+                    );
+                  },
+                ),
                 // ListTile(
                 //   leading: Image.asset("assets/images/share.png"),
                 //   title: const AutoSizeText(

@@ -7,7 +7,6 @@ import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/authentication/login_screen.dart';
 import 'package:grooks_dev/screens/user/navbar_screen.dart';
 import 'package:grooks_dev/widgets/swipe_button.dart';
-import 'package:share_plus/share_plus.dart';
 
 class MyTradesScreen extends StatefulWidget {
   final Users user;

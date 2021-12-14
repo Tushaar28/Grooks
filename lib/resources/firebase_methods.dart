@@ -74,6 +74,17 @@ class FirebaseMethods {
     return categories;
   }
 
+  Future<double> get getCoinsTransferCommission async {
+    try {
+      double commission;
+      QuerySnapshot qs = await settingsCollection.get();
+      commission = qs.docs.first.get('transferCommission').toDouble();
+      return commission;
+    } catch (error) {
+      rethrow;
+    }
+  }
+
   Future<bool> isNewUser({
     required String mobile,
   }) async {
@@ -777,6 +788,213 @@ class FirebaseMethods {
       return name;
     } catch (error) {
       rethrow;
+    }
+  }
+
+  Future<Users?> verifyMobileNumber({
+    required String mobile,
+  }) async {
+    try {
+      Users user;
+      QuerySnapshot snapshot =
+          await usersCollection.where('mobile', isEqualTo: mobile).get();
+      if (snapshot.size == 0) return null;
+      user = Users.fromMap(snapshot.docs.first.data() as Map<String, dynamic>);
+      return user;
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<void> transferCoins({
+    required String senderId,
+    required String receiverId,
+    required String senderName,
+    required String senderMobile,
+    required String receiverName,
+    required String receiverMobile,
+    required int deductCoins,
+    required int transferCoins,
+  }) async {
+    try {
+      await firestore.runTransaction(
+        (transaction) async {
+          DateTime currentDate = DateTime.now();
+          int senderCurrentRedeemableCoins =
+              await getUserRedeemableCoins(userId: senderId);
+          int receiverCurrentBonusCoins =
+              await getUserBonusCoins(userId: receiverId);
+
+          //Deduct redeemable coins from sender
+          QuerySnapshot walletSnapshot = await walletsCollection
+              .where('userId', isEqualTo: senderId)
+              .get();
+          String walletId = walletSnapshot.docs.first.id;
+          String docId = walletsCollection
+              .doc(walletId)
+              .collection('transactions')
+              .doc()
+              .id;
+          model.Transaction transaction = model.Transaction(
+            id: docId,
+            createdAt: currentDate,
+            type: TransactionType.COINS_SENT,
+            receiverId: receiverId,
+            redeemableCoins: deductCoins,
+            status: model.TransactionStatus.PROCESSED,
+            updatedAt: currentDate,
+          );
+          await walletsCollection
+              .doc(walletId)
+              .collection('transactions')
+              .doc(docId)
+              .set(transaction.toMap(transaction) as Map<String, dynamic>);
+
+          await walletsCollection.doc(walletId).update({
+            'redeemableCoins': senderCurrentRedeemableCoins - deductCoins,
+          });
+
+          // Add bonus coins to receiver
+          walletSnapshot = await walletsCollection
+              .where('userId', isEqualTo: receiverId)
+              .get();
+          walletId = walletSnapshot.docs.first.id;
+          docId = walletsCollection
+              .doc(walletId)
+              .collection('transactions')
+              .doc()
+              .id;
+          transaction = model.Transaction(
+            id: docId,
+            createdAt: DateTime.now(),
+            type: model.TransactionType.COINS_RECEIVED,
+            senderId: senderId,
+            bonusCoins: transferCoins,
+            status: model.TransactionStatus.PROCESSED,
+            updatedAt: currentDate,
+          );
+          await walletsCollection
+              .doc(walletId)
+              .collection('transactions')
+              .doc(docId)
+              .set(transaction.toMap(transaction) as Map<String, dynamic>);
+          await walletsCollection.doc(walletId).update({
+            'bonusCoins': receiverCurrentBonusCoins + transferCoins,
+          });
+        },
+        timeout: const Duration(seconds: 15),
+      );
+    } catch (error) {
+      throw error.toString();
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getUserTradeActivities({
+    required String userId,
+    DateTime? lastTradeDate,
+    String? lastTradeId,
+    int? pageSize,
+  }) async {
+    try {
+      List<Map<String, dynamic>> data = [];
+      QuerySnapshot tradesSnapshot;
+      List<QueryDocumentSnapshot> snapshotList = [];
+      if (lastTradeId != null) {
+        tradesSnapshot = await tradesCollection
+            .where('userId', isEqualTo: userId)
+            .orderBy('updatedAt', descending: true)
+            .orderBy('id', descending: true)
+            .startAfter([lastTradeDate, lastTradeId])
+            .limit(pageSize!)
+            .get();
+      } else {
+        tradesSnapshot = await tradesCollection
+            .where('userId', isEqualTo: userId)
+            .orderBy('updatedAt', descending: true)
+            .orderBy('id', descending: true)
+            .limit(pageSize!)
+            .get();
+      }
+      for (var element in tradesSnapshot.docs) {
+        snapshotList.add(element);
+      }
+      await Future.forEach(snapshotList, (QueryDocumentSnapshot element) async {
+        Trade trade = Trade.fromMap(element.data() as Map<String, dynamic>);
+        Question question =
+            await getQuestionDetails(questionId: trade.questionId);
+        data.add({
+          'question': question,
+          'trade': trade,
+        });
+      });
+      return data;
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getUserTransferActivities({
+    required String userId,
+    DateTime? lastTradeDate,
+    String? lastTradeId,
+    int? pageSize,
+  }) async {
+    try {
+      List<Map<String, dynamic>> data = [];
+      List<QueryDocumentSnapshot> snapshotList = [];
+      QuerySnapshot walletSnapshot =
+          await walletsCollection.where('userId', isEqualTo: userId).get();
+      String walletId = walletSnapshot.docs.first.id;
+      QuerySnapshot transfersSnapshot;
+      if (lastTradeDate != null &&
+          lastTradeId != null &&
+          lastTradeId.isNotEmpty) {
+        transfersSnapshot = await walletsCollection
+            .doc(walletId)
+            .collection('transactions')
+            .where('type', whereIn: [
+              model.TransactionType.COINS_RECEIVED.toString(),
+              model.TransactionType.COINS_SENT.toString(),
+            ])
+            .orderBy('updatedAt', descending: true)
+            .orderBy('id', descending: true)
+            .startAfter([lastTradeDate, lastTradeId])
+            .limit(pageSize!)
+            .get();
+      } else {
+        transfersSnapshot = await walletsCollection
+            .doc(walletId)
+            .collection('transactions')
+            .where('type', whereIn: [
+              model.TransactionType.COINS_RECEIVED.toString(),
+              model.TransactionType.COINS_SENT.toString(),
+            ])
+            .orderBy('updatedAt', descending: true)
+            .orderBy('id', descending: true)
+            .limit(pageSize!)
+            .get();
+      }
+      for (var element in transfersSnapshot.docs) {
+        snapshotList.add(element);
+      }
+      await Future.forEach(snapshotList, (QueryDocumentSnapshot element) async {
+        model.Transaction transfer =
+            model.Transaction.fromMap(element.data() as Map<String, dynamic>);
+        Users user;
+        if (transfer.receiverId != null) {
+          user = (await getUserDetails(userId: transfer.receiverId))!;
+        } else {
+          user = (await getUserDetails(userId: transfer.senderId))!;
+        }
+        data.add({
+          'user': user,
+          'transfer': transfer,
+        });
+      });
+      print("AFTER");
+      return data;
+    } catch (error) {
+      throw error.toString();
     }
   }
 }

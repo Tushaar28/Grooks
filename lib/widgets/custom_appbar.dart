@@ -1,8 +1,8 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:grooks_dev/constants/constants.dart';
-import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
+import 'package:grooks_dev/screens/user/activity_screen.dart';
 import 'package:page_transition/page_transition.dart';
 
 class CustomAppbar extends StatefulWidget implements PreferredSizeWidget {
@@ -70,20 +70,19 @@ class _CustomAppbarState extends State<CustomAppbar> {
       ),
       actions: [
         InkWell(
-          onTap: null,
-          // onTap: () => Navigator.push(
-          //   context,
-          //   PageTransition(
-          //     child: ActivityWidget(userId: widget.userId),
-          //     type: PageTransitionType.bottomToTop,
-          //     duration: const Duration(
-          //       milliseconds: 300,
-          //     ),
-          //     reverseDuration: const Duration(
-          //       milliseconds: 300,
-          //     ),
-          //   ),
-          // ),
+          onTap: () => Navigator.push(
+            context,
+            PageTransition(
+              child: ActivityScreen(userId: widget.userId),
+              type: PageTransitionType.bottomToTop,
+              duration: const Duration(
+                milliseconds: 300,
+              ),
+              reverseDuration: const Duration(
+                milliseconds: 300,
+              ),
+            ),
+          ),
           child: Container(
             padding: const EdgeInsets.fromLTRB(0, 0, 15, 0),
             child: Row(
