@@ -61,19 +61,11 @@ class _SplashScreenState extends State<SplashScreen> {
         future: checkVersion(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Stack(
-              children: [
-                Image.asset(
-                  "assets/images/splash_bg.png",
-                  fit: BoxFit.cover,
-                  alignment: Alignment.center,
-                  width: double.infinity,
-                  height: MediaQuery.of(context).size.height,
-                ),
-                Center(
-                  child: Image.asset("assets/images/splash_fg.png"),
-                ),
-              ],
+            return Container(
+              color: Colors.white,
+              child: Center(
+                child: Image.asset("assets/images/logo.png"),
+              ),
             );
           }
           if (_link != null && _link!.isNotEmpty) {

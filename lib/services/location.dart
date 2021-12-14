@@ -41,9 +41,10 @@ class _LocationState extends State<Location> {
   @override
   Widget build(BuildContext context) {
     if (dataLoaded == false) {
-      return const Center(
-        child: CircularProgressIndicator.adaptive(
-          backgroundColor: Colors.white,
+      return Container(
+        color: Colors.white,
+        child: Center(
+          child: Image.asset("assets/images/logo.png"),
         ),
       );
     } else {
