@@ -28,7 +28,7 @@ class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
   late TextEditingController _mobileController;
   late TextEditingController _coinsController;
   late final GlobalKey<FormState> _formKey;
-  late final double _transferCommission;
+  late double _transferCommission;
   final failureSnackbar = const SnackBar(
     content: AutoSizeText('An error occured. Please try agauin'),
     backgroundColor: Colors.red,
@@ -48,6 +48,8 @@ class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
   @override
   void initState() {
     super.initState();
+    _receiverUser = null;
+    _transferCommission = 0;
     _isLoading = _isMobileVerified = _isMobileValid = _isActive = _done = false;
     _isActive = true;
     _formKey = GlobalKey<FormState>();
@@ -67,7 +69,8 @@ class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
     try {
       int data = await _repository.getUserBonusCoins(userId: widget.user.id);
       _userCoins = data;
-      _transferCommission = await _repository.getCoinsTransferCommission;
+      double commission = await _repository.getCoinsTransferCommission;
+      _transferCommission = commission;
       return data;
     } catch (error) {
       throw error.toString();
@@ -125,13 +128,6 @@ class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
 
   @override
   Widget build(BuildContext context) {
-    if (_isActive == null) {
-      return const Center(
-        child: CircularProgressIndicator.adaptive(
-          backgroundColor: Colors.white,
-        ),
-      );
-    }
     if (_isActive == false) {
       _repository.signOut();
       SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
@@ -146,13 +142,13 @@ class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.black),
-        backgroundColor: Colors.transparent,
+        backgroundColor: Colors.white,
         automaticallyImplyLeading: true,
         title: const AutoSizeText(
           'Transfer Coins',
           style: TextStyle(
             fontFamily: 'Poppins',
-            fontSize: 16,
+            fontSize: 22,
             color: Colors.black,
           ),
         ),
@@ -525,10 +521,7 @@ class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
                                                 .validate()) {
                                               setState(() => _isLoading = true);
                                               await transferCoins();
-                                              setState(() {
-                                                _isLoading = false;
-                                                _done = true;
-                                              });
+
                                               ScaffoldMessenger.of(context)
                                                   .hideCurrentSnackBar();
                                               ScaffoldMessenger.of(context)
@@ -563,12 +556,28 @@ class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(
                                                       mobileVerificationfailureSnackbar);
+                                            } else if (error.toString() ==
+                                                'Insufficient coins') {
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                const SnackBar(
+                                                  content: Text(
+                                                      "Insufficient coins"),
+                                                  backgroundColor: Colors.red,
+                                                  duration:
+                                                      Duration(seconds: 2),
+                                                ),
+                                              );
                                             } else {
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(
                                                       failureSnackbar);
                                             }
                                             setState(() {});
+                                          } finally {
+                                            setState(() {
+                                              _isLoading = false;
+                                            });
                                           }
                                         },
                                       ),

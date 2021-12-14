@@ -20,6 +20,9 @@ class FirebaseRepository {
   Future<double> get getCoinsTransferCommission =>
       firebaseMethods.getCoinsTransferCommission;
 
+  Future<QuerySnapshot> get getFeedbackCategories =>
+      firebaseMethods.getFeedbackCategories;
+
   Future<bool> isNewUser({
     required String mobile,
   }) =>
@@ -217,4 +220,34 @@ class FirebaseRepository {
         lastTradeId: lastTradeId,
         pageSize: pageSize,
       );
+
+  Future<void> sendFeedback({
+    required String category,
+    required String subject,
+    required String description,
+    required Users user,
+    File? image,
+  }) =>
+      firebaseMethods.sendFeedback(
+        category: category,
+        subject: subject,
+        description: description,
+        user: user,
+        image: image,
+      );
+
+  Future<List<Trade>> getOpenTradesForUser({
+    required String userId,
+  }) =>
+      firebaseMethods.getOpenTradesForUser(userId: userId);
+
+  Future<String> getSubcategoryNameForQuestion({
+    required String questionId,
+  }) =>
+      firebaseMethods.getSubcategoryNameForQuestion(questionId: questionId);
+
+  Future<List<Trade>> getClosedTradesForUser({
+    required String userId,
+  }) =>
+      firebaseMethods.getClosedTradesForUser(userId: userId);
 }

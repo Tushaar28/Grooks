@@ -8,6 +8,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:grooks_dev/constants/constants.dart';
 import 'package:grooks_dev/models/category.dart';
+import 'package:grooks_dev/models/feedback.dart';
 import 'package:grooks_dev/models/question.dart';
 import 'package:grooks_dev/models/trade.dart';
 import 'package:grooks_dev/models/transaction.dart';
@@ -83,6 +84,11 @@ class FirebaseMethods {
     } catch (error) {
       rethrow;
     }
+  }
+
+  Future<QuerySnapshot> get getFeedbackCategories async {
+    QuerySnapshot data = await feedbackCategoriesCollection.get();
+    return data;
   }
 
   Future<bool> isNewUser({
@@ -819,6 +825,16 @@ class FirebaseMethods {
     try {
       await firestore.runTransaction(
         (transaction) async {
+          QuerySnapshot walletSnapshot = await walletsCollection
+              .where('userId', isEqualTo: senderId)
+              .get();
+          String walletId = walletSnapshot.docs.first.id;
+          int currentRedeemableCoins =
+              (await walletsCollection.doc(walletId).get())
+                  .get("redeemableCoins");
+          if (deductCoins > currentRedeemableCoins) {
+            throw "Insufficient coins";
+          }
           DateTime currentDate = DateTime.now();
           int senderCurrentRedeemableCoins =
               await getUserRedeemableCoins(userId: senderId);
@@ -826,10 +842,7 @@ class FirebaseMethods {
               await getUserBonusCoins(userId: receiverId);
 
           //Deduct redeemable coins from sender
-          QuerySnapshot walletSnapshot = await walletsCollection
-              .where('userId', isEqualTo: senderId)
-              .get();
-          String walletId = walletSnapshot.docs.first.id;
+
           String docId = walletsCollection
               .doc(walletId)
               .collection('transactions')
@@ -995,6 +1008,100 @@ class FirebaseMethods {
       return data;
     } catch (error) {
       throw error.toString();
+    }
+  }
+
+  Future<void> sendFeedback({
+    required String category,
+    required String subject,
+    required String description,
+    required Users user,
+    File? image,
+  }) async {
+    try {
+      String docId = feedbacksCollection.doc().id;
+      String? url;
+      if (image != null) {
+        url = await uploadPhoto(
+          image: image,
+          id: docId,
+          folderId: "feedbacks",
+        );
+      }
+      Feedback feedback = Feedback(
+        category: category,
+        createdAt: DateTime.now(),
+        description: description,
+        id: docId,
+        subject: subject,
+        userId: user.id,
+        image: url!.isEmpty ? null : url,
+      );
+      await feedbacksCollection.doc(docId).set(feedback.toMap(feedback));
+    } catch (error) {
+      throw error.toString();
+    }
+  }
+
+  Future<List<Trade>> getOpenTradesForUser({
+    required String userId,
+  }) async {
+    try {
+      List<Trade> openTrades = [];
+      QuerySnapshot tradesSnapshot = await tradesCollection
+          .where('userId', isEqualTo: userId)
+          .where('status', whereIn: [
+            Status.ACTIVE_PAIRED.toString().split('.').last,
+            Status.ACTIVE_UNPAIRED.toString().split('.').last
+          ])
+          .orderBy('updatedAt', descending: true)
+          .get();
+      for (var trade in tradesSnapshot.docs) {
+        openTrades.add(Trade.fromMap(trade.data() as Map<String, dynamic>));
+      }
+
+      return openTrades;
+    } catch (error) {
+      throw error.toString();
+    }
+  }
+
+  Future<String> getSubcategoryNameForQuestion({
+    required String questionId,
+  }) async {
+    try {
+      String name;
+      DocumentSnapshot questionSnapshot =
+          await questionsCollection.doc(questionId).get();
+      String categoryId = questionSnapshot.get('parent');
+      QuerySnapshot categorySnapshot =
+          await categoriesCollection.where('id', isEqualTo: categoryId).get();
+      name = categorySnapshot.docs.first.get('name');
+      return name;
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<List<Trade>> getClosedTradesForUser({
+    required String userId,
+  }) async {
+    try {
+      List<Trade> openTrades = [];
+      QuerySnapshot tradesSnapshot = await tradesCollection
+          .where('userId', isEqualTo: userId)
+          .where('status', whereIn: [
+            Status.LOST.toString().split('.').last,
+            Status.WON.toString().split('.').last
+          ])
+          .orderBy('updatedAt', descending: true)
+          .get();
+      for (var trade in tradesSnapshot.docs) {
+        openTrades.add(Trade.fromMap(trade.data() as Map<String, dynamic>));
+      }
+      return openTrades;
+    } catch (error) {
+      rethrow;
     }
   }
 }
