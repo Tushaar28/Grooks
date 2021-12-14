@@ -17,6 +17,9 @@ class FirebaseRepository {
   Future<List<Category>> get getAllCategories =>
       firebaseMethods.getAllCategories;
 
+  Future<double> get getCoinsTransferCommission =>
+      firebaseMethods.getCoinsTransferCommission;
+
   Future<bool> isNewUser({
     required String mobile,
   }) =>
@@ -162,4 +165,56 @@ class FirebaseRepository {
     required String userId,
   }) =>
       firebaseMethods.getUserNameFromUserId(userId: userId);
+
+  Future<Users?> verifyMobileNumber({
+    required String mobile,
+  }) =>
+      firebaseMethods.verifyMobileNumber(mobile: mobile);
+
+  Future<void> transferCoins({
+    required String senderId,
+    required String receiverId,
+    required String senderName,
+    required String senderMobile,
+    required String receiverName,
+    required String receiverMobile,
+    required int deductCoins,
+    required int transferCoins,
+  }) =>
+      firebaseMethods.transferCoins(
+        senderId: senderId,
+        receiverId: receiverId,
+        senderName: senderName,
+        senderMobile: senderMobile,
+        receiverName: receiverName,
+        receiverMobile: receiverMobile,
+        deductCoins: deductCoins,
+        transferCoins: transferCoins,
+      );
+
+  Future<List<Map<String, dynamic>>> getUserTradeActivities({
+    required String userId,
+    DateTime? lastTradeDate,
+    String? lastTradeId,
+    int? pageSize = 20,
+  }) =>
+      firebaseMethods.getUserTradeActivities(
+        userId: userId,
+        lastTradeDate: lastTradeDate,
+        lastTradeId: lastTradeId,
+        pageSize: pageSize,
+      );
+
+  Future<List<Map<String, dynamic>>> getUserTransferActivities({
+    required String userId,
+    DateTime? lastTradeDate,
+    String? lastTradeId,
+    int? pageSize = 20,
+  }) =>
+      firebaseMethods.getUserTransferActivities(
+        userId: userId,
+        lastTradeDate: lastTradeDate,
+        lastTradeId: lastTradeId,
+        pageSize: pageSize,
+      );
 }
