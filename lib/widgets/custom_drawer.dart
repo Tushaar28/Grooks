@@ -5,7 +5,7 @@ import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/authentication/login_screen.dart';
 import 'package:grooks_dev/screens/user/coins_transfer_screen.dart';
 import 'package:grooks_dev/screens/user/feedback_screen.dart';
-import 'package:grooks_dev/services/auth.dart';
+import 'package:grooks_dev/screens/user/how_to_trade_screen.dart';
 import 'package:grooks_dev/widgets/swipe_button.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -126,7 +126,7 @@ class CustomDrawer extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          user.mobile.substring(3),
+                          user.mobile?.substring(3) ?? "",
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 14,
@@ -154,6 +154,32 @@ class CustomDrawer extends StatelessWidget {
             color: Colors.transparent,
             child: Column(
               children: [
+                ListTile(
+                  leading: Image.asset("assets/images/how_to_trade.png"),
+                  title: const AutoSizeText(
+                    'How To Trade',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                  trailing: const Icon(
+                    Icons.arrow_forward_ios,
+                    color: Colors.black87,
+                  ),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).push(
+                      PageTransition(
+                        child: HowToTradeScreen(user: user),
+                        type: PageTransitionType.bottomToTop,
+                        duration: const Duration(milliseconds: 300),
+                        reverseDuration: const Duration(milliseconds: 300),
+                      ),
+                    );
+                  },
+                ),
                 ListTile(
                   leading: Image.asset("assets/images/wallet.png"),
                   title: const AutoSizeText(

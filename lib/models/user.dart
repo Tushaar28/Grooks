@@ -2,7 +2,7 @@ class Users {
   late String id;
   late String name;
   late String? email;
-  late String mobile;
+  late String? mobile;
   late String? city;
   late DateTime? dateOfBirth;
   late String referralCode;
@@ -25,9 +25,9 @@ class Users {
     required this.referralCode,
     required this.lastLoginAt,
     required this.createdAt,
-    required this.mobile,
     required this.updatedAt,
     this.isPanVerified = false,
+    this.mobile,
     this.email,
     this.city,
     this.dateOfBirth,
