@@ -22,10 +22,14 @@ class CoinsTransferScreen extends StatefulWidget {
 
 class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
   late int _userCoins;
-  late bool _isLoading, _isMobileValid, _isMobileVerified, _isActive, _done;
+  late bool _isLoading,
+      _isMobileOrEmailValid,
+      _isMobileOrEmailVerified,
+      _isActive,
+      _done;
   late Users? _receiverUser;
   late final FirebaseRepository _repository;
-  late TextEditingController _mobileController;
+  late TextEditingController _mobileOrEmailController;
   late TextEditingController _coinsController;
   late final GlobalKey<FormState> _formKey;
   late double _transferCommission;
@@ -39,8 +43,8 @@ class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
     backgroundColor: Colors.green,
     duration: Duration(seconds: 2),
   );
-  final mobileVerificationfailureSnackbar = const SnackBar(
-    content: AutoSizeText('Mobile verification failed. Please try again'),
+  final verificationfailureSnackbar = const SnackBar(
+    content: AutoSizeText('Verification failed. Please try again'),
     backgroundColor: Colors.red,
     duration: Duration(seconds: 2),
   );
@@ -50,14 +54,21 @@ class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
     super.initState();
     _receiverUser = null;
     _transferCommission = 0;
-    _isLoading = _isMobileVerified = _isMobileValid = _isActive = _done = false;
+    _isLoading = _isMobileOrEmailVerified =
+        _isMobileOrEmailValid = _isActive = _done = false;
     _isActive = true;
     _formKey = GlobalKey<FormState>();
     _repository = FirebaseRepository();
     getUserActiveStatus();
-    _mobileController = TextEditingController();
+    _mobileOrEmailController = TextEditingController();
     _coinsController = TextEditingController();
-    _mobileController.addListener(checkMobileValid);
+    _mobileOrEmailController.addListener(checkMobileValid);
+  }
+
+  @override
+  void dispose() {
+    _mobileOrEmailController.dispose();
+    super.dispose();
   }
 
   Future<void> getUserActiveStatus() async {
@@ -77,10 +88,10 @@ class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
     }
   }
 
-  Future<bool> verifyMobileNumber() async {
+  Future<bool> verifyMobileNumberOrEmail() async {
     try {
-      Users? data = await _repository.verifyMobileNumber(
-        mobile: '+91' + _mobileController.text,
+      Users? data = await _repository.verifyMobileNumberOrEmail(
+        value: _mobileOrEmailController.text.trim(),
       );
       if (data != null && data.id != widget.user.id) {
         setState(() {
@@ -98,10 +109,6 @@ class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
       await _repository.transferCoins(
         senderId: widget.user.id,
         receiverId: _receiverUser!.id,
-        senderName: widget.user.name,
-        senderMobile: widget.user.mobile,
-        receiverName: _receiverUser!.name,
-        receiverMobile: _receiverUser!.mobile,
         deductCoins: int.parse(_coinsController.text),
         transferCoins:
             ((1 - _transferCommission / 100) * int.parse(_coinsController.text))
@@ -113,14 +120,19 @@ class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
   }
 
   void checkMobileValid() {
-    Pattern pattern = r'^[6789]\d{9}$';
-    RegExp regex = RegExp(pattern.toString());
-    if (regex.hasMatch(_mobileController.text.trim())) {
-      setState(() => _isMobileValid = true);
+    Pattern mobilePattern = r'^[6789]\d{9}$';
+    RegExp mobileRegex = RegExp(mobilePattern.toString());
+    Pattern emailPattern =
+        r"^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,253}[a-zA-Z0-9])?)*$";
+    RegExp emailRegex = RegExp(emailPattern.toString());
+    if (mobileRegex.hasMatch(_mobileOrEmailController.text.trim())) {
+      setState(() => _isMobileOrEmailValid = true);
+    } else if (emailRegex.hasMatch(_mobileOrEmailController.text.trim())) {
+      setState(() => _isMobileOrEmailValid = true);
     } else {
       setState(() {
-        _isMobileValid = false;
-        _isMobileVerified = false;
+        _isMobileOrEmailValid = false;
+        _isMobileOrEmailVerified = false;
         _receiverUser = null;
       });
     }
@@ -216,17 +228,15 @@ class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
                         Padding(
                           padding: const EdgeInsets.fromLTRB(20, 40, 20, 0),
                           child: TextFormField(
-                            keyboardType: TextInputType.phone,
-                            controller: _mobileController,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly
-                            ],
+                            keyboardType: TextInputType.text,
+                            controller: _mobileOrEmailController,
                             obscureText: false,
                             decoration: InputDecoration(
-                              labelText: 'Mobile Number',
-                              hintText: "Enter your friend's mobile number",
-                              suffixIcon: _isMobileValid
-                                  ? _isMobileVerified
+                              labelText: 'Mobile / Email',
+                              hintText:
+                                  "Enter your friend's mobile number or email address",
+                              suffixIcon: _isMobileOrEmailValid
+                                  ? _isMobileOrEmailVerified
                                       ? const TextButton(
                                           child: AutoSizeText(
                                             'Verified',
@@ -248,10 +258,11 @@ class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
                                               FocusScope.of(context)
                                                   .requestFocus(FocusNode());
                                               bool isVerified =
-                                                  await verifyMobileNumber();
+                                                  await verifyMobileNumberOrEmail();
                                               if (isVerified) {
                                                 setState(() =>
-                                                    _isMobileVerified = true);
+                                                    _isMobileOrEmailVerified =
+                                                        true);
                                               } else {
                                                 throw 'Mobile not verified';
                                               }
@@ -260,7 +271,7 @@ class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
                                                   .showSnackBar(
                                                 const SnackBar(
                                                   content: AutoSizeText(
-                                                      'Mobile verification failed'),
+                                                      'Verification failed'),
                                                   backgroundColor: Colors.red,
                                                   duration:
                                                       Duration(seconds: 2),
@@ -297,15 +308,11 @@ class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
                               fontFamily: 'Poppins',
                               fontSize: 16,
                             ),
-                            validator: (String? value) {
-                              return value!.length != 10
-                                  ? 'Enter valid mobile number'
-                                  : null;
-                            },
+                            validator: (String? value) {},
                           ),
                         ),
                         if (_receiverUser != null) const AutoSizeText(''),
-                        if (_isMobileVerified && _receiverUser != null)
+                        if (_isMobileOrEmailVerified && _receiverUser != null)
                           Padding(
                             padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                             child: TextFormField(
@@ -446,7 +453,7 @@ class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
                             ],
                           ),
                         ),
-                        if (_isMobileValid && _isMobileVerified)
+                        if (_isMobileOrEmailValid && _isMobileOrEmailVerified)
                           Padding(
                             padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                             child: Row(
@@ -514,7 +521,8 @@ class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
                                         text: 'Swipe to transfer',
                                         onSwipeCallback: () async {
                                           try {
-                                            if (_isMobileVerified == false) {
+                                            if (_isMobileOrEmailVerified ==
+                                                false) {
                                               throw 'Mobile number not verified';
                                             }
                                             if (_formKey.currentState!
@@ -555,7 +563,7 @@ class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
                                                 'Mobile number not verified') {
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(
-                                                      mobileVerificationfailureSnackbar);
+                                                      verificationfailureSnackbar);
                                             } else if (error.toString() ==
                                                 'Insufficient coins') {
                                               ScaffoldMessenger.of(context)

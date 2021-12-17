@@ -295,7 +295,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                                     Users? user = await getUserDetails();
                                     var referalCode =
                                         await generateReferralCode(
-                                            user!.name, user.mobile);
+                                            user!.name, user.mobile!);
 
                                     saveReferralLink(referalCode);
                                     if (widget.sharedViewMap != null &&

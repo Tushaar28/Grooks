@@ -169,28 +169,20 @@ class FirebaseRepository {
   }) =>
       firebaseMethods.getUserNameFromUserId(userId: userId);
 
-  Future<Users?> verifyMobileNumber({
-    required String mobile,
+  Future<Users?> verifyMobileNumberOrEmail({
+    required String value,
   }) =>
-      firebaseMethods.verifyMobileNumber(mobile: mobile);
+      firebaseMethods.verifyMobileNumberOrEmail(value: value);
 
   Future<void> transferCoins({
     required String senderId,
     required String receiverId,
-    required String senderName,
-    required String senderMobile,
-    required String receiverName,
-    required String receiverMobile,
     required int deductCoins,
     required int transferCoins,
   }) =>
       firebaseMethods.transferCoins(
         senderId: senderId,
         receiverId: receiverId,
-        senderName: senderName,
-        senderMobile: senderMobile,
-        receiverName: receiverName,
-        receiverMobile: receiverMobile,
         deductCoins: deductCoins,
         transferCoins: transferCoins,
       );

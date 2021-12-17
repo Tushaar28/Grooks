@@ -7,6 +7,7 @@ import 'package:grooks_dev/models/question.dart';
 import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/authentication/otp_input_screen.dart';
+import 'package:grooks_dev/screens/user/navbar_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   final String? referralCode;
@@ -197,52 +198,57 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                           ),
                           onTap: () async {
-                            UserCredential user =
-                                await _repository.signInWithGoogle();
-                            Users? userDetails =
-                                await _repository.getUserDetails();
-                            if (userDetails != null &&
-                                userDetails.isActive == false) {
-                              await _repository.signOut();
-                              ScaffoldMessenger.of(context)
-                                  .hideCurrentSnackBar();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                    "Your account has been suspended",
-                                    style: TextStyle(
-                                      color: Colors.white,
+                            try {
+                              UserCredential user =
+                                  await _repository.signInWithGoogle();
+                              Users? userDetails =
+                                  await _repository.getUserDetails();
+                              if (userDetails != null &&
+                                  userDetails.isActive == false) {
+                                await _repository.signOut();
+                                ScaffoldMessenger.of(context)
+                                    .hideCurrentSnackBar();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text(
+                                      "Your account has been suspended",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                      ),
                                     ),
+                                    backgroundColor: Colors.red,
+                                    duration: Duration(seconds: 2),
                                   ),
-                                  backgroundColor: Colors.red,
-                                  duration: Duration(seconds: 2),
+                                );
+                                return;
+                              }
+                              if (userDetails == null ||
+                                  user.additionalUserInfo!.isNewUser) {
+                                await _repository.addUser(
+                                  name: user.user!.displayName!,
+                                  uid: user.user!.uid,
+                                  mobile: user.user?.phoneNumber,
+                                  profileUrl: user.user?.photoURL,
+                                  email: user.user!.email!,
+                                );
+                              }
+                              if (userDetails != null) {
+                                userDetails =
+                                    await _repository.getUserDetails();
+                              }
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => NavbarScreen(
+                                    user: userDetails,
+                                    initialPage: 'Home',
+                                  ),
                                 ),
+                                (Route<dynamic> route) => false,
                               );
-                              return;
+                            } catch (error) {
+                              print("ERROR = $error");
                             }
-                            if (userDetails == null ||
-                                user.additionalUserInfo!.isNewUser) {
-                              await _repository.addUser(
-                                name: user.user!.displayName!,
-                                uid: user.user!.uid,
-                                mobile: user.user!.phoneNumber,
-                                profileUrl: user.user!.photoURL,
-                                email: user.user!.email!,
-                              );
-                            }
-                            if (userDetails != null) {
-                              userDetails = await _repository.getUserDetails();
-                            }
-                            // Navigator.pushAndRemoveUntil(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //     builder: (context) => NavBarWidget(
-                            //       user: userDetails,
-                            //       initialPage: 'Home',
-                            //     ),
-                            //   ),
-                            //   (Route<dynamic> route) => false,
-                            // );
                           },
                         ),
                       ],

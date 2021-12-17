@@ -217,7 +217,7 @@ class FirebaseMethods {
       String refCode = generateReferralCode(userId: uid);
       Users user = Users(
         name: name,
-        mobile: mobile!,
+        mobile: mobile,
         email: email,
         id: uid,
         createdAt: currentDate,
@@ -797,15 +797,27 @@ class FirebaseMethods {
     }
   }
 
-  Future<Users?> verifyMobileNumber({
-    required String mobile,
+  Future<Users?> verifyMobileNumberOrEmail({
+    required String value,
   }) async {
     try {
       Users user;
-      QuerySnapshot snapshot =
-          await usersCollection.where('mobile', isEqualTo: mobile).get();
-      if (snapshot.size == 0) return null;
-      user = Users.fromMap(snapshot.docs.first.data() as Map<String, dynamic>);
+      Pattern mobilePattern = r'^[6789]\d{9}$';
+      RegExp mobileRegex = RegExp(mobilePattern.toString());
+      if (mobileRegex.hasMatch(value)) {
+        value = "+91" + value;
+        QuerySnapshot snapshot =
+            await usersCollection.where('mobile', isEqualTo: value).get();
+        if (snapshot.docs.isEmpty) return null;
+        user =
+            Users.fromMap(snapshot.docs.first.data() as Map<String, dynamic>);
+      } else {
+        QuerySnapshot snapshot =
+            await usersCollection.where('email', isEqualTo: value).get();
+        if (snapshot.size == 0) return null;
+        user =
+            Users.fromMap(snapshot.docs.first.data() as Map<String, dynamic>);
+      }
       return user;
     } catch (error) {
       rethrow;
@@ -815,10 +827,6 @@ class FirebaseMethods {
   Future<void> transferCoins({
     required String senderId,
     required String receiverId,
-    required String senderName,
-    required String senderMobile,
-    required String receiverName,
-    required String receiverMobile,
     required int deductCoins,
     required int transferCoins,
   }) async {
@@ -966,8 +974,8 @@ class FirebaseMethods {
             .doc(walletId)
             .collection('transactions')
             .where('type', whereIn: [
-              model.TransactionType.COINS_RECEIVED.toString(),
-              model.TransactionType.COINS_SENT.toString(),
+              model.TransactionType.COINS_RECEIVED.toString().split('.').last,
+              model.TransactionType.COINS_SENT.toString().split('.').last,
             ])
             .orderBy('updatedAt', descending: true)
             .orderBy('id', descending: true)
