@@ -743,7 +743,7 @@ class FirebaseMethods {
         );
         await tradesCollection.doc(tradeId).set(trade.toMap(trade));
         await tradesCollection.doc(firstTrade.id).update({
-          'status': Status.ACTIVE_PAIRED.toString(),
+          'status': Status.ACTIVE_PAIRED.toString().split('.').last,
           'pairedAt': pairedDateTime,
           'updatedAt': DateTime.now(),
           'pairedTradeId': firstTrade.id,

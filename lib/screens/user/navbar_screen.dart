@@ -6,7 +6,7 @@ import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/authentication/login_screen.dart';
 import 'package:grooks_dev/screens/user/favourite_trades_screen.dart';
 import 'package:grooks_dev/screens/user/home_screen.dart';
-import 'package:grooks_dev/screens/user/my_trades_sceen.dart';
+import 'package:grooks_dev/screens/user/my_trades_screen.dart';
 import 'package:grooks_dev/screens/user/profile_screen.dart';
 import 'package:grooks_dev/widgets/custom_appbar.dart';
 import 'package:grooks_dev/widgets/custom_drawer.dart';
