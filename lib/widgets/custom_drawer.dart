@@ -4,6 +4,7 @@ import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/authentication/login_screen.dart';
 import 'package:grooks_dev/screens/user/coins_transfer_screen.dart';
+import 'package:grooks_dev/screens/user/edit_profile_screen.dart';
 import 'package:grooks_dev/screens/user/feedback_screen.dart';
 import 'package:grooks_dev/screens/user/how_to_trade_screen.dart';
 import 'package:grooks_dev/widgets/swipe_button.dart';
@@ -104,7 +105,10 @@ class CustomDrawer extends StatelessWidget {
                               placeholder: "assets/images/user.png",
                               image: user.image!,
                             )
-                          : Image.asset("assets/images/user.png"),
+                          : Image.asset(
+                              "assets/images/user.png",
+                              fit: BoxFit.fill,
+                            ),
                     ),
                   ),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.01),
@@ -140,7 +144,15 @@ class CustomDrawer extends StatelessWidget {
                               color: Colors.white,
                               size: MediaQuery.of(context).size.height * 0.03,
                             ),
-                            onPressed: () {},
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      EditProfileScreen(user: user),
+                                ),
+                              );
+                            },
                           ),
                         ),
                       ],

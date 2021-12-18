@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:grooks_dev/screens/authentication/login_screen.dart';
 import 'package:grooks_dev/screens/user/location_denied_screen.dart';
+import 'package:grooks_dev/services/auth.dart';
 
 class Location extends StatefulWidget {
   const Location({Key? key}) : super(key: key);
@@ -51,7 +52,7 @@ class _LocationState extends State<Location> {
       if (position == null) {
         return LocationDeniedScreen();
       } else {
-        return const LoginScreen();
+        return const Auth();
       }
     }
   }
