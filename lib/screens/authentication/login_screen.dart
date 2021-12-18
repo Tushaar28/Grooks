@@ -249,16 +249,6 @@ class _LoginScreenState extends State<LoginScreen> {
                             } catch (error) {
                               print("ERROR = $error");
                             }
-                            // Navigator.pushAndRemoveUntil(
-                            //   context,
-                            //   MaterialPageRoute(
-                            //     builder: (context) => NavBarWidget(
-                            //       user: userDetails,
-                            //       initialPage: 'Home',
-                            //     ),
-                            //   ),
-                            //   (Route<dynamic> route) => false,
-                            // );
                           },
                         ),
                       ],
