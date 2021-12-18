@@ -78,7 +78,8 @@ class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
 
   Future<int> getUserDetails() async {
     try {
-      int data = await _repository.getUserBonusCoins(userId: widget.user.id);
+      int data =
+          await _repository.getUserRedeemableCoins(userId: widget.user.id);
       _userCoins = data;
       double commission = await _repository.getCoinsTransferCommission;
       _transferCommission = commission;
@@ -195,7 +196,7 @@ class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
                       mainAxisSize: MainAxisSize.max,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
+                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
                           child: Container(
                             width: MediaQuery.of(context).size.width * 0.3,
                             height: MediaQuery.of(context).size.width * 0.3,
@@ -222,6 +223,16 @@ class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
                                 fontFamily: 'Roboto',
                                 fontSize: 16,
                               ),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                          child: Text(
+                            "$_userCoins coins available for transfer",
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                         ),
