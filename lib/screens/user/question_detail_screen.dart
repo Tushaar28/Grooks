@@ -12,7 +12,7 @@ import 'package:grooks_dev/screens/user/trade_success_screen.dart';
 import 'package:grooks_dev/widgets/question_card.dart';
 import 'package:grooks_dev/widgets/swipe_button.dart';
 import 'error_screen.dart';
-import 'my_trades_sceen.dart';
+import 'my_trades_screen.dart';
 
 // ignore: must_be_immutable
 class QuestionDetailScreen extends StatefulWidget {
