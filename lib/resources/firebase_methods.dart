@@ -91,6 +91,24 @@ class FirebaseMethods {
     return data;
   }
 
+  Future<Map<String, dynamic>> get getMaintenanceStatus async {
+    try {
+      Map<String, dynamic> map = {};
+      QuerySnapshot qs = await settingsCollection.get();
+      String docId = qs.docs.first.id;
+      map['status'] = qs.docs.first.get('isUnderMaintenance');
+      map['message'] = qs.docs.first.get('maintenanceMessage');
+      if (map.containsKey('status') && map['status'] == true) {
+        await settingsCollection.doc(docId).update({
+          'lastMaintenanceAt': DateTime.now(),
+        });
+      }
+      return map;
+    } catch (error) {
+      rethrow;
+    }
+  }
+
   Future<bool> isNewUser({
     required String mobile,
   }) async {
@@ -315,13 +333,11 @@ class FirebaseMethods {
   }) async {
     try {
       String? profileUrl;
-      if (data.containsKey('profilePicture')) {
+      if (data.containsKey('image')) {
         profileUrl = await uploadPhoto(
-            image: data['profilePicture'],
-            id: userId,
-            folderId: "profilePictures");
+            image: data['image'], id: userId, folderId: "image");
       }
-      if (profileUrl != null) data['profilePicture'] = profileUrl;
+      if (profileUrl != null) data['image'] = profileUrl;
       await usersCollection.doc(userId).update(data);
     } catch (error) {
       throw error.toString();
@@ -987,8 +1003,8 @@ class FirebaseMethods {
             .doc(walletId)
             .collection('transactions')
             .where('type', whereIn: [
-              model.TransactionType.COINS_RECEIVED.toString(),
-              model.TransactionType.COINS_SENT.toString(),
+              model.TransactionType.COINS_RECEIVED.toString().split('.').last,
+              model.TransactionType.COINS_SENT.toString().split('.').last,
             ])
             .orderBy('updatedAt', descending: true)
             .orderBy('id', descending: true)

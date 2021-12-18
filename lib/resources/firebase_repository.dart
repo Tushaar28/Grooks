@@ -23,6 +23,9 @@ class FirebaseRepository {
   Future<QuerySnapshot> get getFeedbackCategories =>
       firebaseMethods.getFeedbackCategories;
 
+  Future<Map<String, dynamic>> get getMaintenanceStatus =>
+      firebaseMethods.getMaintenanceStatus;
+
   Future<bool> isNewUser({
     required String mobile,
   }) =>

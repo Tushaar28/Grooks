@@ -39,6 +39,8 @@ class _TransfersActivityScreenState extends State<TransfersActivityScreen> {
     getUserActiveStatus();
     _transfers = [];
     _pageSize = 20;
+    _lastDate = null;
+    _lastId = null;
     _isExpanded = _isLoading = _allLoaded = false;
     _isActive = true;
     _initialData = getUserTransferActivities();
@@ -56,6 +58,11 @@ class _TransfersActivityScreenState extends State<TransfersActivityScreen> {
   void dispose() {
     _scrollController.dispose();
     super.dispose();
+  }
+
+  Future<void> refresh() async {
+    // transfers.clear();
+    // initialData = getUserTradeActivities();
   }
 
   Future<void> getUserActiveStatus() async {
@@ -100,143 +107,147 @@ class _TransfersActivityScreenState extends State<TransfersActivityScreen> {
             (route) => false);
       });
     }
-    return FutureBuilder(
-      future: _initialData,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator.adaptive(
-              backgroundColor: Colors.white,
-            ),
-          );
-        }
-        return LayoutBuilder(
-          builder: (context, constraints) {
-            if (_transfers.isEmpty) {
-              return const Center(
-                child: Text('No transfers yet'),
-              );
-            } else {
-              return Stack(
-                children: [
-                  ListView.builder(
-                    controller: _scrollController,
-                    itemCount: _transfers.length + (_allLoaded ? 1 : 0),
-                    itemBuilder: (context, index) {
-                      if (index < _transfers.length) {
-                        model.Transaction transfer =
-                            _transfers[index]['transfer'];
-                        Users user = _transfers[index]['user'];
-                        return Scrollbar(
-                          child: Padding(
-                            padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-                            child: ExpansionTileCard(
-                              baseColor: Colors.blueGrey[50],
-                              expandedColor: Colors.blueGrey[100],
-                              elevation: 10,
-                              leading: SizedBox(
-                                width: MediaQuery.of(context).size.width * 0.2,
-                                height:
-                                    MediaQuery.of(context).size.height * 0.15,
-                                child: Align(
-                                  alignment: const Alignment(0, 0),
-                                  child: transfer.receiverId != null
-                                      ? AutoSizeText(
-                                          '-${transfer.redeemableCoins}',
-                                          style: const TextStyle(
-                                            fontFamily: 'Poppins',
-                                            fontSize: 22,
-                                            color: Colors.red,
+    return RefreshIndicator(
+      onRefresh: refresh,
+      child: FutureBuilder(
+        future: _initialData,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator.adaptive(
+                backgroundColor: Colors.white,
+              ),
+            );
+          }
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              if (_transfers.isEmpty) {
+                return const Center(
+                  child: Text('No transfers yet'),
+                );
+              } else {
+                return Stack(
+                  children: [
+                    ListView.builder(
+                      controller: _scrollController,
+                      itemCount: _transfers.length + (_allLoaded ? 1 : 0),
+                      itemBuilder: (context, index) {
+                        if (index < _transfers.length) {
+                          model.Transaction transfer =
+                              _transfers[index]['transfer'];
+                          Users user = _transfers[index]['user'];
+                          return Scrollbar(
+                            child: Padding(
+                              padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                              child: ExpansionTileCard(
+                                baseColor: Colors.blueGrey[50],
+                                expandedColor: Colors.blueGrey[100],
+                                elevation: 10,
+                                leading: SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.2,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.15,
+                                  child: Align(
+                                    alignment: const Alignment(0, 0),
+                                    child: transfer.receiverId != null
+                                        ? AutoSizeText(
+                                            '-${transfer.redeemableCoins}',
+                                            style: const TextStyle(
+                                              fontFamily: 'Poppins',
+                                              fontSize: 22,
+                                              color: Colors.red,
+                                            ),
+                                          )
+                                        : AutoSizeText(
+                                            '+${transfer.bonusCoins}',
+                                            style: TextStyle(
+                                              fontFamily: 'Poppins',
+                                              fontSize: 22,
+                                              color: Theme.of(context)
+                                                  .primaryColor,
+                                            ),
                                           ),
-                                        )
-                                      : AutoSizeText(
-                                          '+${transfer.bonusCoins}',
-                                          style: TextStyle(
-                                            fontFamily: 'Poppins',
-                                            fontSize: 22,
-                                            color:
-                                                Theme.of(context).primaryColor,
-                                          ),
-                                        ),
-                                ),
-                              ),
-                              title: AutoSizeText(
-                                transfer.receiverId != null
-                                    ? 'Sent to ${user.name}'
-                                    : 'Received from ${user.name}',
-                              ),
-                              children: [
-                                const Divider(
-                                  thickness: 1.0,
-                                  height: 1.0,
-                                ),
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16.0,
-                                      vertical: 8.0,
-                                    ),
-                                    child: AutoSizeText(
-                                      'Timestamp:  ${DateFormat.yMMMd().format(transfer.createdAt).toString()}',
-                                      style: const TextStyle(
-                                        fontFamily: 'Poppins',
-                                        fontSize: 12,
-                                      ),
-                                    ),
                                   ),
                                 ),
-                                Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16.0,
-                                      vertical: 8.0,
-                                    ),
-                                    child: AutoSizeText(
-                                        'Transaction ID:  ${transfer.id}',
+                                title: AutoSizeText(
+                                  transfer.receiverId != null
+                                      ? 'Sent to ${user.name}'
+                                      : 'Received from ${user.name}',
+                                ),
+                                children: [
+                                  const Divider(
+                                    thickness: 1.0,
+                                    height: 1.0,
+                                  ),
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 16.0,
+                                        vertical: 8.0,
+                                      ),
+                                      child: AutoSizeText(
+                                        'Timestamp:  ${DateFormat.yMMMd().format(transfer.createdAt).toString()}',
                                         style: const TextStyle(
                                           fontFamily: 'Poppins',
                                           fontSize: 12,
-                                        )),
+                                        ),
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ],
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 16.0,
+                                        vertical: 8.0,
+                                      ),
+                                      child: AutoSizeText(
+                                          'Transaction ID:  ${transfer.id}',
+                                          style: const TextStyle(
+                                            fontFamily: 'Poppins',
+                                            fontSize: 12,
+                                          )),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        );
-                      } else {
-                        return SizedBox(
+                          );
+                        } else {
+                          return SizedBox(
+                            width: widget.constraints.maxWidth,
+                            height: MediaQuery.of(context).size.height * 0.1,
+                            child: const Center(
+                              child: Text('All transfers loaded'),
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                    if (_isLoading) ...[
+                      Positioned(
+                        left: 0,
+                        bottom: 0,
+                        child: SizedBox(
                           width: widget.constraints.maxWidth,
                           height: MediaQuery.of(context).size.height * 0.1,
                           child: const Center(
-                            child: Text('All transfers loaded'),
-                          ),
-                        );
-                      }
-                    },
-                  ),
-                  if (_isLoading) ...[
-                    Positioned(
-                      left: 0,
-                      bottom: 0,
-                      child: SizedBox(
-                        width: widget.constraints.maxWidth,
-                        height: MediaQuery.of(context).size.height * 0.1,
-                        child: const Center(
-                          child: CircularProgressIndicator.adaptive(
-                            backgroundColor: Colors.white,
+                            child: CircularProgressIndicator.adaptive(
+                              backgroundColor: Colors.white,
+                            ),
                           ),
                         ),
                       ),
-                    ),
+                    ],
                   ],
-                ],
-              );
-            }
-          },
-        );
-      },
+                );
+              }
+            },
+          );
+        },
+      ),
     );
   }
 }
