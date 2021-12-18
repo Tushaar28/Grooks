@@ -376,13 +376,13 @@ class FirebaseMethods {
     String? userId,
   }) async {
     try {
-      Users user;
+      Users? user;
       if (userId != null && userId.isNotEmpty) {
         user = (await getUserDetails(userId: userId))!;
       } else {
-        user = (await getUserDetails())!;
+        user = await getUserDetails();
       }
-      return user.isActive;
+      return user?.isActive ?? true;
     } catch (error) {
       rethrow;
     }
@@ -770,7 +770,7 @@ class FirebaseMethods {
         await walletsCollection.doc(walletId).update({
           'updatedAt': DateTime.now(),
           'bonusCoins': currentBonusCoins - bonusCoinsUsed,
-          'redeemableCoinsUsed': currentRedeemableCoins - redeemableCoinsUsed,
+          'redeemableCoins': currentRedeemableCoins - redeemableCoinsUsed,
         });
 
         await usersCollection.doc(userId).update({

@@ -1,11 +1,9 @@
-import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:grooks_dev/models/question.dart';
 import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/authentication/login_screen.dart';
-import 'package:grooks_dev/screens/user/open_questions_widget.dart';
 import 'package:grooks_dev/screens/user/question_detail_screen.dart';
 import 'package:grooks_dev/widgets/question_card.dart';
 import 'package:page_transition/page_transition.dart';
