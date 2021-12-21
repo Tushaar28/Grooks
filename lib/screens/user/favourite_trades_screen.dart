@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:grooks_dev/models/user.dart';
-import 'package:grooks_dev/resources/firebase_repository.dart';
 
 import 'my_closed_trades_screen.dart';
 import 'my_open_trades_screen.dart';

@@ -54,9 +54,8 @@ class _QuestionCardState extends State<QuestionCard> {
                   child: AutoSizeText(
                     widget.question.name,
                     style: const TextStyle(
-                      fontSize: 16,
+                      fontSize: 12,
                       fontWeight: FontWeight.w500,
-                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ),
