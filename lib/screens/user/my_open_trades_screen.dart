@@ -120,6 +120,10 @@ class _MyOpenTradesScreenState extends State<MyOpenTradesScreen>
             return const Center(
               child: AutoSizeText(
                 "No open trades",
+                style: TextStyle(
+                  fontFamily: "Poppins",
+                  fontSize: 18,
+                ),
               ),
             );
           }

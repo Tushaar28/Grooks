@@ -166,32 +166,32 @@ class CustomDrawer extends StatelessWidget {
             color: Colors.transparent,
             child: Column(
               children: [
-                ListTile(
-                  leading: Image.asset("assets/images/how_to_trade.png"),
-                  title: const AutoSizeText(
-                    'How To Trade',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                  trailing: const Icon(
-                    Icons.arrow_forward_ios,
-                    color: Colors.black87,
-                  ),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).push(
-                      PageTransition(
-                        child: HowToTradeScreen(user: user),
-                        type: PageTransitionType.bottomToTop,
-                        duration: const Duration(milliseconds: 300),
-                        reverseDuration: const Duration(milliseconds: 300),
-                      ),
-                    );
-                  },
-                ),
+                // ListTile(
+                //   leading: Image.asset("assets/images/how_to_trade.png"),
+                //   title: const AutoSizeText(
+                //     'How To Trade',
+                //     style: TextStyle(
+                //       color: Colors.black,
+                //       fontSize: 18,
+                //       fontWeight: FontWeight.w400,
+                //     ),
+                //   ),
+                //   trailing: const Icon(
+                //     Icons.arrow_forward_ios,
+                //     color: Colors.black87,
+                //   ),
+                //   onTap: () {
+                //     Navigator.of(context).pop();
+                //     Navigator.of(context).push(
+                //       PageTransition(
+                //         child: HowToTradeScreen(user: user),
+                //         type: PageTransitionType.bottomToTop,
+                //         duration: const Duration(milliseconds: 300),
+                //         reverseDuration: const Duration(milliseconds: 300),
+                //       ),
+                //     );
+                //   },
+                // ),
                 ListTile(
                   leading: Image.asset("assets/images/wallet.png"),
                   title: const AutoSizeText(

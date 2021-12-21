@@ -332,7 +332,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Text(
-                            "If Final Outcome is ${isYes ? "Yes" : "No"} :",
+                            "If Final Outcome is : ${isYes ? "Yes" : "No"}",
                             style: const TextStyle(
                               color: Colors.grey,
                               fontSize: 14,
@@ -340,7 +340,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                             ),
                           ),
                           Text(
-                            "You make profit of ${100 - _currentTrade} coins :",
+                            "You make profit of : ${100 - _currentTrade} coins",
                             style: const TextStyle(
                               color: Colors.grey,
                               fontSize: 14,
@@ -348,7 +348,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                             ),
                           ),
                           Text(
-                            "Else you will lose $_currentTrade coins :",
+                            "Else you will lose : $_currentTrade coins",
                             style: const TextStyle(
                               color: Colors.grey,
                               fontSize: 14,
@@ -507,11 +507,11 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
             iconTheme: const IconThemeData(color: Colors.black),
             backgroundColor: Colors.white,
             automaticallyImplyLeading: true,
-            title: AutoSizeText(
-              _question!.name,
-              style: const TextStyle(
+            title: const AutoSizeText(
+              "Details",
+              style: TextStyle(
                 fontFamily: 'Poppins',
-                fontSize: 18,
+                fontSize: 22,
                 color: Colors.black,
               ),
             ),

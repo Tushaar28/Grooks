@@ -1028,7 +1028,7 @@ class FirebaseMethods {
           'transfer': transfer,
         });
       });
-      print("AFTER");
+
       return data;
     } catch (error) {
       throw error.toString();
@@ -1059,7 +1059,7 @@ class FirebaseMethods {
         id: docId,
         subject: subject,
         userId: user.id,
-        image: url!.isEmpty ? null : url,
+        image: url,
       );
       await feedbacksCollection.doc(docId).set(feedback.toMap(feedback));
     } catch (error) {
