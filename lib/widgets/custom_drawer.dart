@@ -98,12 +98,20 @@ class CustomDrawer extends StatelessWidget {
                       0,
                       MediaQuery.of(context).size.height * 0.01,
                     ),
-                    child: CircleAvatar(
-                      radius: MediaQuery.of(context).size.width * 0.08,
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * 0.15,
+                      height: MediaQuery.of(context).size.width * 0.15,
+                      clipBehavior: Clip.antiAlias,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                      ),
                       child: user.image != null && user.image!.isNotEmpty
-                          ? FadeInImage.assetNetwork(
-                              placeholder: "assets/images/user.png",
-                              image: user.image!,
+                          ? ClipOval(
+                              child: FadeInImage.assetNetwork(
+                                placeholder: "assets/images/user.png",
+                                image: user.image!,
+                                fit: BoxFit.cover,
+                              ),
                             )
                           : Image.asset(
                               "assets/images/user.png",

@@ -116,18 +116,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               children: [
                                 Container(
                                   width:
-                                      MediaQuery.of(context).size.width * 0.2,
+                                      MediaQuery.of(context).size.width * 0.15,
                                   height:
-                                      MediaQuery.of(context).size.width * 0.2,
+                                      MediaQuery.of(context).size.width * 0.15,
                                   clipBehavior: Clip.antiAlias,
                                   decoration: const BoxDecoration(
                                     shape: BoxShape.circle,
                                   ),
                                   child: snapshot.data!.image != null &&
                                           snapshot.data!.image!.isNotEmpty
-                                      ? FadeInImage.assetNetwork(
-                                          placeholder: "assets/images/user.png",
-                                          image: snapshot.data!.image!,
+                                      ? ClipOval(
+                                          child: FadeInImage.assetNetwork(
+                                            placeholder:
+                                                "assets/images/user.png",
+                                            image: snapshot.data!.image!,
+                                            fit: BoxFit.cover,
+                                          ),
                                         )
                                       : Image.asset("assets/images/user.png"),
                                 ),
