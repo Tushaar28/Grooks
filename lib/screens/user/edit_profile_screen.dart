@@ -31,6 +31,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   dynamic _pickImageError;
   late bool _isLoading, _done;
   late bool? _isActive;
+  late bool _dataLoaded;
 
   final updateSuccessSnackbar = const SnackBar(
     content: AutoSizeText('Details updated'),
@@ -47,10 +48,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   void initState() {
     super.initState();
     _scaffoldKey = GlobalKey<ScaffoldState>();
+    _dataLoaded = false;
     _isActive = null;
     _repository = FirebaseRepository();
     getUserActiveStatus();
     _nameController = TextEditingController();
+    getUserDetails();
     _isLoading = _done = false;
     _picker = ImagePicker();
     _newProfilePicture = null;
@@ -102,6 +105,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         throw "An error occured";
       }
       _nameController.text = _user!.name;
+      setState(() => _dataLoaded = true);
     } catch (error) {
       rethrow;
     }
@@ -169,208 +173,192 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         },
       );
     }
-    return FutureBuilder(
-      future: getUserDetails(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator.adaptive(
-              backgroundColor: Colors.white,
-            ),
-          );
-        }
-        if (snapshot.hasError || _user == null) {
-          return const Center(
-            child: Text(
-              "An error occured while loading details",
-              style: TextStyle(
-                fontSize: 16,
-              ),
-            ),
-          );
-        }
-        return Scaffold(
-          appBar: AppBar(
-            iconTheme: const IconThemeData(color: Colors.black),
-            backgroundColor: Colors.transparent,
-            automaticallyImplyLeading: true,
-            title: const AutoSizeText(
-              'Profile',
-              style: TextStyle(
-                fontFamily: 'Poppins',
-                fontSize: 20,
-                color: Colors.black,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            actions: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(10, 0, 20, 0),
-                child: _isLoading || _done
-                    ? null
-                    : TextButton(
-                        onPressed: () async {
-                          try {
-                            if (_newProfilePicture == null &&
-                                widget.user.name.trim() ==
-                                    _nameController.text.trim()) {
-                              ScaffoldMessenger.of(context)
-                                  .hideCurrentSnackBar();
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text("No changes to save"),
-                                  backgroundColor: Colors.red,
-                                  duration: Duration(seconds: 2),
-                                ),
-                              );
-                              return;
-                            }
-                            setState(() => _isLoading = true);
-                            await updateUser();
-                            setState(() {
-                              _isLoading = false;
-                              _done = true;
-                            });
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(updateSuccessSnackbar);
-                          } catch (error) {
-                            setState(() {
-                              _isLoading = false;
-                              _done = true;
-                            });
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(updateFailureSnackbar);
-                          } finally {
-                            Future.delayed(
-                                const Duration(seconds: 2),
-                                () => Navigator.of(context).pushAndRemoveUntil(
-                                    MaterialPageRoute(
-                                      builder: (context) => NavbarScreen(),
-                                    ),
-                                    (route) => false));
-                          }
-                        },
-                        child: AutoSizeText(
-                          'Save',
-                          style: TextStyle(
-                            fontFamily: 'Poppins',
-                            fontSize: 16,
-                            color: Theme.of(context).primaryColor,
-                          ),
-                        ),
-                      ),
-              ),
-            ],
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(
-                bottom: Radius.circular(20),
-              ),
-            ),
-            centerTitle: false,
-            elevation: 0,
+    if (_dataLoaded == false) {
+      return const Center(
+        child: CircularProgressIndicator.adaptive(
+          backgroundColor: Colors.white,
+        ),
+      );
+    }
+    return Scaffold(
+      key: _scaffoldKey,
+      appBar: AppBar(
+        iconTheme: const IconThemeData(color: Colors.black),
+        backgroundColor: Colors.transparent,
+        automaticallyImplyLeading: true,
+        title: const AutoSizeText(
+          'Profile',
+          style: TextStyle(
+            fontFamily: 'Poppins',
+            fontSize: 20,
+            color: Colors.black,
+            fontWeight: FontWeight.w500,
           ),
-          body: SafeArea(
-            child: Align(
-              alignment: const Alignment(0, 0),
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                child: Stack(
-                  children: [
-                    Column(
-                      mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                          child: Container(
-                            width: MediaQuery.of(context).size.width * 0.15,
-                            height: MediaQuery.of(context).size.width * 0.15,
-                            clipBehavior: Clip.antiAlias,
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
+        ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(10, 0, 20, 0),
+            child: _isLoading || _done
+                ? null
+                : TextButton(
+                    onPressed: () async {
+                      try {
+                        if (_newProfilePicture == null &&
+                            widget.user.name.trim() ==
+                                _nameController.text.trim()) {
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("No changes to save"),
+                              backgroundColor: Colors.red,
+                              duration: Duration(seconds: 2),
                             ),
-                            child: getProfilePicture(),
-                          ),
+                          );
+                          return;
+                        }
+                        setState(() => _isLoading = true);
+                        await updateUser();
+                        setState(() {
+                          _isLoading = false;
+                          _done = true;
+                        });
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(updateSuccessSnackbar);
+                      } catch (error) {
+                        setState(() {
+                          _isLoading = false;
+                          _done = true;
+                        });
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(updateFailureSnackbar);
+                      } finally {
+                        Future.delayed(
+                            const Duration(seconds: 2),
+                            () => Navigator.of(context).pushAndRemoveUntil(
+                                MaterialPageRoute(
+                                  builder: (context) => NavbarScreen(),
+                                ),
+                                (route) => false));
+                      }
+                    },
+                    child: AutoSizeText(
+                      'Save',
+                      style: TextStyle(
+                        fontFamily: 'Poppins',
+                        fontSize: 16,
+                        color: Theme.of(context).primaryColor,
+                      ),
+                    ),
+                  ),
+          ),
+        ],
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(20),
+          ),
+        ),
+        centerTitle: false,
+        elevation: 0,
+      ),
+      body: SafeArea(
+        child: Align(
+          alignment: const Alignment(0, 0),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+            child: Stack(
+              children: [
+                Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 0.15,
+                        height: MediaQuery.of(context).size.width * 0.15,
+                        clipBehavior: Clip.antiAlias,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
                         ),
-                        TextButton(
-                          onPressed: () async {
-                            _onImageButtonPressed(ImageSource.gallery,
-                                context: context, isMultiImage: false);
-                          },
-                          child: const AutoSizeText('Change Profile Photo'),
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width,
-                          child: SingleChildScrollView(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.max,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(5, 55, 5, 5),
-                                  child: TextFormField(
-                                    controller: _nameController,
-                                    obscureText: false,
-                                    textAlign: TextAlign.center,
-                                    decoration: const InputDecoration(
-                                      labelText: 'Name',
-                                      hintText: 'Enter your name',
-                                      contentPadding: EdgeInsets.symmetric(
-                                          vertical: 10, horizontal: 20),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(32),
-                                        ),
-                                      ),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: Colors.lightBlueAccent,
-                                          width: 1,
-                                        ),
-                                        borderRadius: BorderRadius.all(
-                                          Radius.circular(32),
-                                        ),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                            color: Colors.lightBlueAccent,
-                                            width: 2.0),
-                                        borderRadius: BorderRadius.all(
-                                            Radius.circular(32.0)),
-                                      ),
+                        child: getProfilePicture(),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () async {
+                        _onImageButtonPressed(ImageSource.gallery,
+                            context: context, isMultiImage: false);
+                      },
+                      child: const AutoSizeText('Change Profile Photo'),
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(5, 55, 5, 5),
+                              child: TextFormField(
+                                controller: _nameController,
+                                obscureText: false,
+                                textAlign: TextAlign.center,
+                                decoration: const InputDecoration(
+                                  labelText: 'Name',
+                                  hintText: 'Enter your name',
+                                  contentPadding: EdgeInsets.symmetric(
+                                      vertical: 10, horizontal: 20),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(32),
                                     ),
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontFamily: 'Poppins',
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                      color: Colors.lightBlueAccent,
+                                      width: 1,
                                     ),
-                                    maxLines: 1,
-                                    validator: (String? value) {
-                                      return value!.isEmpty
-                                          ? 'Name is required'
-                                          : null;
-                                    },
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(32),
+                                    ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Colors.lightBlueAccent,
+                                        width: 2.0),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(32.0)),
                                   ),
                                 ),
-                              ],
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontFamily: 'Poppins',
+                                ),
+                                maxLines: 1,
+                                validator: (String? value) {
+                                  return value!.isEmpty
+                                      ? 'Name is required'
+                                      : null;
+                                },
+                              ),
                             ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    if (_isLoading)
-                      const Center(
-                        child: CircularProgressIndicator.adaptive(
-                          backgroundColor: Colors.white,
+                          ],
                         ),
                       ),
+                    ),
                   ],
                 ),
-              ),
+                if (_isLoading)
+                  const Center(
+                    child: CircularProgressIndicator.adaptive(
+                      backgroundColor: Colors.white,
+                    ),
+                  ),
+              ],
             ),
           ),
-        );
-      },
+        ),
+      ),
     );
   }
 }
