@@ -223,7 +223,7 @@ class FirebaseMethods {
       String? url = profileUrl;
       Users? referringUser = null;
       DateTime currentDate = DateTime.now();
-      if (url != null && url.isNotEmpty && profilePicture != null) {
+      if (profilePicture != null) {
         url = await uploadPhoto(
             image: profilePicture, id: uid, folderId: "profilePictures");
       }
@@ -241,7 +241,7 @@ class FirebaseMethods {
         createdAt: currentDate,
         image: url,
         lastLoginAt: currentDate,
-        referredBy: referringUser != null ? referringUser.id : '',
+        referredBy: referringUser?.id,
         referralCode: refCode,
         updatedAt: currentDate,
       );

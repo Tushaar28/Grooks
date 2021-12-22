@@ -63,6 +63,33 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     super.dispose();
   }
 
+  Widget getProfilePicture() {
+    if (_newProfilePicture != null) {
+      return ClipOval(
+        child: Image.file(
+          _newProfilePicture!,
+          fit: BoxFit.cover,
+        ),
+      );
+    }
+    if (_user!.image == null) {
+      return ClipOval(
+        child: FadeInImage.assetNetwork(
+          placeholder: "assets/images/user.png",
+          image: "",
+          fit: BoxFit.cover,
+        ),
+      );
+    }
+    return ClipOval(
+      child: FadeInImage.assetNetwork(
+        placeholder: "assets/images/user.png",
+        image: _user!.image!,
+        fit: BoxFit.cover,
+      ),
+    );
+  }
+
   Future<void> getUserActiveStatus() async {
     bool data = await _repository.getUserActiveStatus(userId: widget.user.id);
     setState(() => _isActive = data);
@@ -88,8 +115,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     try {
       final pickedFile = await _picker.getImage(
         source: source,
-        maxHeight: 256,
-        maxWidth: 256,
+        maxHeight: 150,
+        maxWidth: 150,
+        imageQuality: 50,
       );
       setState(() {
         _imageFile = pickedFile;
@@ -255,23 +283,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         Padding(
                           padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
                           child: Container(
-                            width: MediaQuery.of(context).size.width * 0.3,
-                            height: MediaQuery.of(context).size.width * 0.3,
+                            width: MediaQuery.of(context).size.width * 0.15,
+                            height: MediaQuery.of(context).size.width * 0.15,
                             clipBehavior: Clip.antiAlias,
                             decoration: const BoxDecoration(
                               shape: BoxShape.circle,
                             ),
-                            child: _newProfilePicture != null
-                                ? Image.file(_newProfilePicture!)
-                                : _user!.image == null
-                                    ? FadeInImage.assetNetwork(
-                                        placeholder: "assets/images/user.png",
-                                        image: "",
-                                      )
-                                    : FadeInImage.assetNetwork(
-                                        placeholder: "assets/images/user.png",
-                                        image: _user!.image!,
-                                      ),
+                            child: getProfilePicture(),
                           ),
                         ),
                         TextButton(
