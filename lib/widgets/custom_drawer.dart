@@ -227,7 +227,7 @@ class CustomDrawer extends StatelessWidget {
                   },
                 ),
                 ListTile(
-                  leading: Image.asset("assets/images/how_to_trade.png"),
+                  leading: Image.asset("assets/images/chat.png"),
                   title: const AutoSizeText(
                     'Support',
                     style: TextStyle(

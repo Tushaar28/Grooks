@@ -45,8 +45,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             SizedBox(
-                height: MediaQuery.of(context).size.height * 0.9,
-                child: CustomCarousel(pages: pages)),
+              height: MediaQuery.of(context).size.height * 0.9,
+              child: CustomCarousel(pages: pages),
+            ),
             Expanded(
               child: Align(
                 alignment: Alignment.bottomCenter,
