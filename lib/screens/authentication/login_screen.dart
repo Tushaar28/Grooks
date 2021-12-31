@@ -141,7 +141,7 @@ class _LoginScreenState extends State<LoginScreen> {
                               MaterialPageRoute(
                                 builder: (context) => OTPInputScreen(
                                   mobile: _mobileController.text.trim(),
-                                  referralCode: '',
+                                  referralCode: widget.referralCode,
                                 ),
                               ),
                             );
@@ -246,9 +246,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                                 (Route<dynamic> route) => false,
                               );
-                            } catch (error) {
-                              print("ERROR = $error");
-                            }
+                            } catch (error) {}
                           },
                         ),
                       ],

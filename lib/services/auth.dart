@@ -7,9 +7,14 @@ import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/authentication/login_screen.dart';
 import 'package:grooks_dev/screens/user/maintenance_screen.dart';
 import 'package:grooks_dev/screens/user/navbar_screen.dart';
+import 'package:grooks_dev/services/dynamic_link.dart';
 
 class Auth extends StatefulWidget {
-  const Auth({Key? key}) : super(key: key);
+  final String? referralCode;
+  const Auth({
+    Key? key,
+    this.referralCode,
+  }) : super(key: key);
 
   @override
   _AuthState createState() => _AuthState();
@@ -18,6 +23,7 @@ class Auth extends StatefulWidget {
 class _AuthState extends State<Auth> {
   late final FirebaseRepository _repository;
   late final FirebaseMessaging _messaging;
+  late final DynamicLinkApi _dynamicLink;
   late Users? _user;
   late Map<String, dynamic>? _maintenanceStatus;
   late bool? _isActive;
@@ -26,11 +32,18 @@ class _AuthState extends State<Auth> {
   void initState() {
     super.initState();
     _isActive = null;
+    _dynamicLink = DynamicLinkApi();
     _repository = FirebaseRepository();
     getUserActiveStatus();
     _messaging = FirebaseMessaging.instance;
     _user = null;
     _maintenanceStatus = null;
+    if (widget.referralCode == null) {
+      () async {
+        await Future.delayed(Duration.zero);
+        _dynamicLink.handleDynamicLink(context);
+      }();
+    }
   }
 
   Future<void> getUserActiveStatus() async {
@@ -60,6 +73,7 @@ class _AuthState extends State<Auth> {
 
   @override
   Widget build(BuildContext context) {
+    print("CALLED");
     if (_isActive == null) {
       return const Center(
         child: CircularProgressIndicator.adaptive(
@@ -118,12 +132,16 @@ class _AuthState extends State<Auth> {
 
                             return NavbarScreen(user: _user);
                           } else {
-                            return const LoginScreen();
+                            return LoginScreen(
+                              referralCode: widget.referralCode,
+                            );
                           }
                         }
                       });
                 } else {
-                  return const LoginScreen();
+                  return LoginScreen(
+                    referralCode: widget.referralCode,
+                  );
                 }
               },
             );

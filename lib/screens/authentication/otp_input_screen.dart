@@ -135,6 +135,7 @@ class _OTPInputScreenState extends State<OTPInputScreen> {
                   user: user.user!,
                   sharedViewMap: widget.sharedViewMap,
                   question: widget.question,
+                  referralCode: widget.referralCode,
                 ),
               ),
               (route) => false);
