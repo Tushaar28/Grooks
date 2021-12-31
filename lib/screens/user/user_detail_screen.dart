@@ -274,40 +274,6 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                      child: TextFormField(
-                        readOnly: true,
-                        initialValue: widget.referralCode,
-                        obscureText: false,
-                        decoration: const InputDecoration(
-                          labelText: 'Referral Code',
-                          contentPadding: EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 20),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(32),
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.lightBlueAccent,
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(32),
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Colors.lightBlueAccent, width: 2.0),
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(32.0),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.03,
                     ),
