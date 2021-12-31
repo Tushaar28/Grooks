@@ -270,6 +270,15 @@ class FirebaseMethods {
           'id': docId,
           'userId': user.id,
         });
+        QuerySnapshot refferingUserWalletSnapshot = await walletsCollection
+            .where('userId', isEqualTo: referringUser.id)
+            .get();
+        int referringUserCurrrentBonusCoins =
+            refferingUserWalletSnapshot.docs.first.get('bonusCoins');
+        String referringUserWalletId =
+            refferingUserWalletSnapshot.docs.first.id;
+        await walletsCollection.doc(referringUserWalletId).update(
+            {'bonusCoins': referringUserCurrrentBonusCoins + referralCoins});
         String walletId = walletsCollection.doc().id;
         Wallet wallet = Wallet(
           bonusCoins: welcomeCoins + referralCoins,
