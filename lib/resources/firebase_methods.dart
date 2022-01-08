@@ -117,8 +117,14 @@ class FirebaseMethods {
 
   Future<String> get getUrlPrefix async {
     String prefix =
-        (await settingsCollection.get()).docs.first.get("urlPrefix");
+        (await settingsCollection.get()).docs.first.get("referralUrlPrefix");
     return prefix;
+  }
+
+  Future<String> get getReferralFallbackUrl async {
+    String url =
+        (await settingsCollection.get()).docs.first.get("referralFallbackUrl");
+    return url;
   }
 
   Future<bool> isNewUser({

@@ -66,6 +66,7 @@ dependencies:
   ota_update: ^4.0.1
   firebase_messaging: ^11.2.3
   intl: ^0.17.0
+  firebase_crashlytics: ^2.4.5
 
 dev_dependencies:
   flutter_test:
