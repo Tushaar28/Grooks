@@ -109,6 +109,18 @@ class FirebaseMethods {
     }
   }
 
+  Future<String> get getPackageName async {
+    String package =
+        (await settingsCollection.get()).docs.first.get("packageName");
+    return package;
+  }
+
+  Future<String> get getUrlPrefix async {
+    String prefix =
+        (await settingsCollection.get()).docs.first.get("urlPrefix");
+    return prefix;
+  }
+
   Future<bool> isNewUser({
     required String mobile,
   }) async {
