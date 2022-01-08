@@ -4,17 +4,29 @@ import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'auth.dart';
 
 class DynamicLinkApi {
-  final FirebaseDynamicLinks _dynamicLink = FirebaseDynamicLinks.instance;
   final FirebaseRepository _repository = FirebaseRepository();
+  final FirebaseDynamicLinks _dynamicLink = FirebaseDynamicLinks.instance;
+  late String _packageName;
 
-  final String _urlPrefix = "https://bagoyo.page.link";
+  late String _urlPrefix;
+
+  Future<void> getPackageName() async {
+    _packageName = await _repository.getPackageName;
+  }
+
+  Future<void> getUrlPrefix() async {
+    _urlPrefix = await _repository.getUrlPrefix;
+  }
 
   Future<String> createReferralLink(String referralCode) async {
+    await getPackageName();
+    await getUrlPrefix();
     final DynamicLinkParameters dynamicLinkParameters = DynamicLinkParameters(
       uriPrefix: _urlPrefix,
       link: Uri.parse('$_urlPrefix/refer?code=$referralCode'),
-      androidParameters: const AndroidParameters(
-        packageName: 'com.bagoyo.grooks_dev',
+      androidParameters: AndroidParameters(
+        packageName: _packageName,
+        fallbackUrl: Uri.parse("https://grooks.webflow.io/"),
       ),
       socialMetaTagParameters: const SocialMetaTagParameters(
         title: 'Refer A Friend',

@@ -26,6 +26,10 @@ class FirebaseRepository {
   Future<Map<String, dynamic>> get getMaintenanceStatus =>
       firebaseMethods.getMaintenanceStatus;
 
+  Future<String> get getPackageName => firebaseMethods.getPackageName;
+
+  Future<String> get getUrlPrefix => firebaseMethods.getUrlPrefix;
+
   Future<bool> isNewUser({
     required String mobile,
   }) =>
