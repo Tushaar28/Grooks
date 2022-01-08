@@ -30,6 +30,9 @@ class FirebaseRepository {
 
   Future<String> get getUrlPrefix => firebaseMethods.getUrlPrefix;
 
+  Future<String> get getReferralFallbackUrl =>
+      firebaseMethods.getReferralFallbackUrl;
+
   Future<bool> isNewUser({
     required String mobile,
   }) =>

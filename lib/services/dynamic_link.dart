@@ -7,7 +7,7 @@ class DynamicLinkApi {
   final FirebaseRepository _repository = FirebaseRepository();
   final FirebaseDynamicLinks _dynamicLink = FirebaseDynamicLinks.instance;
   late String _packageName;
-
+  late String _fallbackUrl;
   late String _urlPrefix;
 
   Future<void> getPackageName() async {
@@ -18,15 +18,20 @@ class DynamicLinkApi {
     _urlPrefix = await _repository.getUrlPrefix;
   }
 
+  Future<void> getFallbackUrl() async {
+    _fallbackUrl = await _repository.getReferralFallbackUrl;
+  }
+
   Future<String> createReferralLink(String referralCode) async {
     await getPackageName();
     await getUrlPrefix();
+    await getFallbackUrl();
     final DynamicLinkParameters dynamicLinkParameters = DynamicLinkParameters(
       uriPrefix: _urlPrefix,
       link: Uri.parse('$_urlPrefix/refer?code=$referralCode'),
       androidParameters: AndroidParameters(
         packageName: _packageName,
-        fallbackUrl: Uri.parse("https://grooks.webflow.io/"),
+        fallbackUrl: Uri.parse(_fallbackUrl),
       ),
       socialMetaTagParameters: const SocialMetaTagParameters(
         title: 'Refer A Friend',

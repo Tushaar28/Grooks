@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -129,7 +130,8 @@ class _AuthState extends State<Auth> {
                             _repository.updateUser(userId: _user!.id, data: {
                               'lastLoginAt': DateTime.now(),
                             });
-
+                            FirebaseCrashlytics.instance
+                                .setUserIdentifier(_user!.id);
                             return NavbarScreen(user: _user);
                           } else {
                             return LoginScreen(

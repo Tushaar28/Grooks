@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/services/dynamic_link.dart';
+import 'package:grooks_dev/widgets/custom_button.dart';
 import 'package:share_plus/share_plus.dart';
 
 class ReferralWidget extends StatefulWidget {
@@ -19,7 +20,7 @@ class ReferralWidget extends StatefulWidget {
 
 class _ReferralWidgetState extends State<ReferralWidget> {
   late final FirebaseRepository repository;
-  DynamicLinkApi dynamicLink = new DynamicLinkApi();
+  DynamicLinkApi dynamicLink = DynamicLinkApi();
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final copySuccessSnakbar = const SnackBar(
     content: AutoSizeText('Copied'),
@@ -191,39 +192,48 @@ class _ReferralWidgetState extends State<ReferralWidget> {
                 ),
               ),
               Padding(
-                padding: EdgeInsets.fromLTRB(20, 40, 20, 0),
+                padding: const EdgeInsets.fromLTRB(20, 40, 20, 0),
                 child: showSpinner
                     ? const CircularProgressIndicator.adaptive(
                         backgroundColor: Colors.white)
-                    : TextButton(
-                        onPressed: () async {
-                          setState(() => showSpinner = true);
-                          var referalLink = await dynamicLink
-                              .createReferralLink(widget.user.referralCode);
-                          Share.share(referalLink);
-                          Future.delayed(
-                            const Duration(milliseconds: 500),
-                            () => setState(() => showSpinner = false),
-                          );
-                        },
-                        child: const Text("Share"),
+                    : SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        height: MediaQuery.of(context).size.height * 0.05,
+                        child: CustomButton(
+                          text: "Share",
+                          textStyle: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white,
+                          ),
+                          onPressed: () async {
+                            setState(() => showSpinner = true);
+                            var referalLink = await dynamicLink
+                                .createReferralLink(widget.user.referralCode);
+                            Share.share(referalLink);
+                            Future.delayed(
+                              const Duration(milliseconds: 500),
+                              () => setState(() => showSpinner = false),
+                            );
+                          },
+                        ),
                       ),
               ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 40, 20, 0),
-                child: TextButton(
-                  child: AutoSizeText(
-                    'View Referrals',
-                    style: TextStyle(
-                      fontFamily: 'Poppins',
-                      color: Theme.of(context).primaryColor,
-                      fontWeight: FontWeight.w500,
-                      fontSize: 16,
-                    ),
-                  ),
-                  onPressed: null,
-                ),
-              ),
+              // Padding(
+              //   padding: const EdgeInsets.fromLTRB(20, 40, 20, 0),
+              //   child: TextButton(
+              //     child: AutoSizeText(
+              //       'View Referrals',
+              //       style: TextStyle(
+              //         fontFamily: 'Poppins',
+              //         color: Theme.of(context).primaryColor,
+              //         fontWeight: FontWeight.w500,
+              //         fontSize: 16,
+              //       ),
+              //     ),
+              //     onPressed: null,
+              //   ),
+              // ),
             ],
           ),
         ),
