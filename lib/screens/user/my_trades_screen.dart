@@ -250,37 +250,6 @@ class _MyTradesScreenState extends State<MyTradesScreen>
                                     ),
                                   ),
                                 ),
-                      widget.question.answer != null
-                          ? const SizedBox(
-                              width: 0,
-                            )
-                          : _trades[index].status != Status.ACTIVE_UNPAIRED
-                              ? const SizedBox(
-                                  width: 0,
-                                )
-                              : SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.2,
-                                  child: IconButton(
-                                    onPressed: () async {
-                                      try {
-                                        // var referalLink =
-                                        //     await dynamicLink
-                                        //         .createViewShareLink(
-                                        //   response:
-                                        //       _trades[index].response,
-                                        //   amount: _trades[index].coins,
-                                        //   questionId: widget.question.id,
-                                        // );
-                                        // Share.share(referalLink);
-                                      } catch (error) {}
-                                    },
-                                    icon: const Icon(
-                                      Icons.share,
-                                      color: Colors.grey,
-                                    ),
-                                  ),
-                                ),
                     ],
                   ),
                 ),

@@ -74,7 +74,7 @@ class _QuestionsScreenState extends State<QuestionsScreen> {
             child: Container(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height * 0.895,
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Color(0xFFFFFFFF),
               ),
               child: Column(

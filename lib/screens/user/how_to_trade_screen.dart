@@ -17,13 +17,11 @@ class HowToTradeScreen extends StatefulWidget {
 
 class _HowToTradeScreenState extends State<HowToTradeScreen> {
   late final GlobalKey<ScaffoldState> _scaffoldKey;
-  late final FirebaseRepository _repository;
 
   @override
   void initState() {
     super.initState();
     _scaffoldKey = GlobalKey<ScaffoldState>();
-    _repository = FirebaseRepository();
   }
 
   @override
@@ -47,16 +45,16 @@ class _HowToTradeScreenState extends State<HowToTradeScreen> {
             bottom: Radius.circular(20),
           ),
         ),
-        actions: [
-          SizedBox(
-            child: IconButton(
-              onPressed: () {},
-              icon: const Icon(Icons.play_circle_outline_outlined),
-              iconSize: 40,
-              color: Colors.grey,
-            ),
-          ),
-        ],
+        // actions: [
+        //   SizedBox(
+        //     child: IconButton(
+        //       onPressed: () {},
+        //       icon: const Icon(Icons.play_circle_outline_outlined),
+        //       iconSize: 40,
+        //       color: Colors.grey,
+        //     ),
+        //   ),
+        // ],
         centerTitle: false,
         elevation: 0,
       ),
