@@ -97,7 +97,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: SafeArea(
             child: Container(
               width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height * 0.845,
+              height: MediaQuery.of(context).size.height,
               decoration: const BoxDecoration(
                 color: Colors.transparent,
               ),
@@ -121,10 +121,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           tabBuilder: (context, index) {
                             _index = index;
                             return Tab(
+                              height: MediaQuery.of(context).size.height * 0.1,
                               text: _categories[_index].name,
                               icon: CircleAvatar(
                                 radius:
-                                    MediaQuery.of(context).size.width * 0.035,
+                                    MediaQuery.of(context).size.width * 0.07,
                                 backgroundColor: Colors.transparent,
                                 child: _categories[index].image != null &&
                                         _categories[index].image!.isNotEmpty
@@ -133,6 +134,9 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             );
                           },
+                        ),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.015,
                         ),
                         Expanded(
                           child: SubcategoriesScreen(

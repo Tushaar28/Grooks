@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:grooks_dev/models/user.dart';
-import 'package:grooks_dev/widgets/custom_button.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
 class HowToTradeCarousel extends StatefulWidget {
@@ -16,7 +15,6 @@ class HowToTradeCarousel extends StatefulWidget {
 
 class _HowToTradeCarouselState extends State<HowToTradeCarousel> {
   late final List<String> _pages;
-  late int _index;
 
   @override
   void initState() {
@@ -28,7 +26,6 @@ class _HowToTradeCarouselState extends State<HowToTradeCarousel> {
       "assets/images/Trade4.jpg",
       "assets/images/Trade5.jpg",
     ];
-    _index = 0;
   }
 
   @override
