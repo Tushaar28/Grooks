@@ -49,6 +49,7 @@ class _CustomSubcategoryCardState extends State<CustomSubcategoryCard> {
             clipBehavior: Clip.antiAliasWithSaveLayer,
             color: Colors.transparent,
             elevation: 5,
+            shadowColor: const Color(0x1A1C3857),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(15),
             ),
@@ -172,6 +173,10 @@ class _CustomSubcategoryCardState extends State<CustomSubcategoryCard> {
                                     MediaQuery.of(context).size.height * 0.06,
                                 decoration: const BoxDecoration(
                                   color: Colors.transparent,
+                                ),
+                                padding: EdgeInsets.only(
+                                  top: MediaQuery.of(context).size.height *
+                                      0.012,
                                 ),
                                 child: AutoSizeText(
                                   '${widget.subcategory.openEvents} event(s) live',

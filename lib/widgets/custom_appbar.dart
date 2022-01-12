@@ -1,5 +1,6 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:grooks_dev/constants/constants.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/user/activity_screen.dart';
@@ -59,13 +60,12 @@ class _CustomAppbarState extends State<CustomAppbar> {
       ),
       backgroundColor: Colors.transparent,
       automaticallyImplyLeading: false,
-      title: const AutoSizeText(
-        APP_NAME,
-        style: TextStyle(
-          fontFamily: 'Poppins',
-          color: Colors.black,
-          fontSize: 24,
-          fontWeight: FontWeight.w400,
+      title: SizedBox(
+        height: MediaQuery.of(context).size.height * 0.03,
+        width: MediaQuery.of(context).size.width * 0.25,
+        child: SvgPicture.asset(
+          "assets/images/appbar.svg",
+          color: const Color(0xFF1C3857),
         ),
       ),
       actions: [
