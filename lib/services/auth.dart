@@ -74,7 +74,6 @@ class _AuthState extends State<Auth> {
 
   @override
   Widget build(BuildContext context) {
-    print("CALLED");
     if (_isActive == null) {
       return const Center(
         child: CircularProgressIndicator.adaptive(
