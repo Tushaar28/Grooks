@@ -347,8 +347,8 @@ class _TopTradesScreenState extends State<TopTradesScreen>
                               ),
                             ),
                             Container(
-                              width: MediaQuery.of(context).size.width * 0.42,
-                              height: MediaQuery.of(context).size.height * 0.04,
+                              width: MediaQuery.of(context).size.width * 0.45,
+                              height: MediaQuery.of(context).size.height * 0.06,
                               padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
                               child: CustomButton(
                                 onPressed: () async {
