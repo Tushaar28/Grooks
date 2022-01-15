@@ -144,7 +144,7 @@ class _MyOpenTradesScreenState extends State<MyOpenTradesScreen>
                   } else {
                     Question question = snapshot.data!;
                     return SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.2,
+                      height: MediaQuery.of(context).size.height * 0.23,
                       child: InkWell(
                         onTap: () async {
                           Navigator.of(context).push(

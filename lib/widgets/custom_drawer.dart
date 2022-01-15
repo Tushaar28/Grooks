@@ -71,7 +71,7 @@ class CustomDrawer extends StatelessWidget {
         padding: EdgeInsets.zero,
         children: [
           Container(
-            height: MediaQuery.of(context).size.height * 0.275,
+            height: MediaQuery.of(context).size.height * 0.28,
             decoration: const BoxDecoration(
               color: Color(0xFF1C3857),
               borderRadius: BorderRadius.vertical(
@@ -173,7 +173,7 @@ class CustomDrawer extends StatelessWidget {
             ),
           ),
           Container(
-            height: MediaQuery.of(context).size.height * 0.35,
+            height: MediaQuery.of(context).size.height * 0.4,
             color: Colors.transparent,
             child: Column(
               children: [

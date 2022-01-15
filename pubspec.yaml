@@ -71,6 +71,7 @@ dependencies:
   cashfree_pg: ^2.0.6+26
   crypto: ^3.0.1
   cloud_functions: ^3.2.5
+  device_preview: ^1.0.0
 
 dev_dependencies:
   flutter_test:

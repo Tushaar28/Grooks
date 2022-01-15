@@ -23,7 +23,7 @@ class _CustomSubcategoryCardState extends State<CustomSubcategoryCard> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: MediaQuery.of(context).size.height * 0.155,
+      height: MediaQuery.of(context).size.height * 0.16,
       child: InkWell(
         onTap: () => Navigator.of(context).push(
           PageTransition(

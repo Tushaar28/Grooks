@@ -121,7 +121,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           tabBuilder: (context, index) {
                             _index = index;
                             return Tab(
-                              height: MediaQuery.of(context).size.height * 0.1,
+                              height: MediaQuery.of(context).size.height * 0.12,
                               text: _categories[_index].name,
                               icon: CircleAvatar(
                                 radius:
