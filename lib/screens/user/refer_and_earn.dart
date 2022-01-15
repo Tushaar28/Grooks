@@ -140,12 +140,17 @@ class _ReferralWidgetState extends State<ReferralWidget> {
                 padding: const EdgeInsets.fromLTRB(20, 40, 20, 0),
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
-                      width: MediaQuery.of(context).size.width * 0.8,
+                      width: MediaQuery.of(context).size.width * 0.75,
                       height: MediaQuery.of(context).size.height * 0.05,
                       decoration: const BoxDecoration(
                         color: Color(0x69BDBDBD),
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(10),
+                          bottomLeft: Radius.circular(10),
+                        ),
                       ),
                       child: Align(
                         alignment: const Alignment(0, 0),
@@ -163,29 +168,35 @@ class _ReferralWidgetState extends State<ReferralWidget> {
                       width: MediaQuery.of(context).size.width * 0.1,
                       height: MediaQuery.of(context).size.height * 0.05,
                       decoration: const BoxDecoration(
-                        color: Color(0xFFEEEEEE),
-                      ),
-                      child: IconButton(
-                        onPressed: () async {
-                          try {
-                            // await ClipboardManager.copyToClipBoard(
-                            //     widget.user.referralCode);
-                            await FlutterClipboard.copy(
-                                widget.user.referralCode);
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(copySuccessSnakbar);
-                          } catch (error) {
-                            print("ERROR = ${error.toString()}");
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(failureSnackbar);
-                          }
-                        },
-                        icon: const Icon(
-                          Icons.content_copy,
-                          color: Color(0xDD9E9E9E),
-                          size: 30,
+                        color: Color(0x69BDBDBD),
+                        borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(10),
+                          bottomRight: Radius.circular(10),
                         ),
-                        iconSize: 30,
+                      ),
+                      child: Center(
+                        child: IconButton(
+                          onPressed: () async {
+                            try {
+                              // await ClipboardManager.copyToClipBoard(
+                              //     widget.user.referralCode);
+                              await FlutterClipboard.copy(
+                                  widget.user.referralCode);
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(copySuccessSnakbar);
+                            } catch (error) {
+                              print("ERROR = ${error.toString()}");
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(failureSnackbar);
+                            }
+                          },
+                          icon: const Icon(
+                            Icons.copy_outlined,
+                            color: Color(0xFF000000),
+                            size: 25,
+                          ),
+                          iconSize: 30,
+                        ),
                       ),
                     )
                   ],

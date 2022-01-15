@@ -46,8 +46,8 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      resizeToAvoidBottomInset: false,
       backgroundColor: const Color(0xFFEDECEC),
+      resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: Stack(
           children: [
@@ -69,87 +69,85 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               alignment: Alignment.bottomCenter,
               color: Colors.transparent,
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.08,
-                      child: TextField(
-                        controller: _mobileController,
-                        obscureText: false,
-                        keyboardType: TextInputType.phone,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly
-                        ],
-                        decoration: const InputDecoration(
-                          fillColor: Colors.white,
-                          filled: true,
-                          hintText: 'Enter phone number',
-                          contentPadding: EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 20),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(10),
-                            ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.08,
+                    child: TextField(
+                      controller: _mobileController,
+                      obscureText: false,
+                      keyboardType: TextInputType.phone,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly
+                      ],
+                      decoration: const InputDecoration(
+                        fillColor: Colors.white,
+                        filled: true,
+                        hintText: 'Enter phone number',
+                        contentPadding: EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 20),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10),
                           ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(10),
-                            ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10),
                           ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(10.0),
-                            ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10.0),
                           ),
                         ),
                       ),
                     ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.053,
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          primary: Colors.black,
-                        ),
-                        child: const Text(
-                          "Send OTP",
-                          style: TextStyle(
-                            color: Colors.white,
-                          ),
-                        ),
-                        onPressed: () async {
-                          Pattern pattern = r'^[6789]\d{9}$';
-                          RegExp regex = RegExp(pattern.toString());
-                          if (!regex.hasMatch(_mobileController.text.trim())) {
-                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content:
-                                    AutoSizeText('Enter valid mobile number'),
-                                backgroundColor: Colors.red,
-                              ),
-                            );
-                            return;
-                          } else {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => OTPInputScreen(
-                                  mobile: _mobileController.text.trim(),
-                                  referralCode: widget.referralCode,
-                                ),
-                              ),
-                            );
-                          }
-                        },
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.053,
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        primary: Colors.black,
                       ),
+                      child: const Text(
+                        "Send OTP",
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
+                      ),
+                      onPressed: () async {
+                        Pattern pattern = r'^[6789]\d{9}$';
+                        RegExp regex = RegExp(pattern.toString());
+                        if (!regex.hasMatch(_mobileController.text.trim())) {
+                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content:
+                                  AutoSizeText('Enter valid mobile number'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                          return;
+                        } else {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => OTPInputScreen(
+                                mobile: _mobileController.text.trim(),
+                                referralCode: widget.referralCode,
+                              ),
+                            ),
+                          );
+                        }
+                      },
                     ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.03,
-                    ),
-                  ],
-                ),
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.03,
+                  ),
+                ],
               ),
             ),
           ],
