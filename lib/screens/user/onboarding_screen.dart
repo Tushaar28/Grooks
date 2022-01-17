@@ -66,7 +66,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     ),
                     text: "Get Started",
                     elevation: 80,
-                    color: const Color(0xFF1C3857),
+                    color: const Color(0x801C3857),
                     textStyle: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,

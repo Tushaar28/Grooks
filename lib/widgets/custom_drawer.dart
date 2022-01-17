@@ -173,7 +173,7 @@ class CustomDrawer extends StatelessWidget {
             ),
           ),
           Container(
-            height: MediaQuery.of(context).size.height * 0.4,
+            height: MediaQuery.of(context).size.height * 0.35,
             color: Colors.transparent,
             child: Column(
               children: [
