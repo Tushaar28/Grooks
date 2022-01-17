@@ -33,8 +33,8 @@ class CustomButton extends StatelessWidget {
       child: Text(
         text,
         style: textStyle ??
-            TextStyle(
-              color: Theme.of(context).primaryColor,
+            const TextStyle(
+              color: Colors.white,
               fontFamily: "Poppins",
               fontSize: 16,
               fontWeight: FontWeight.w500,
@@ -42,17 +42,12 @@ class CustomButton extends StatelessWidget {
       ),
       style: ElevatedButton.styleFrom(
         elevation: elevation ?? 10,
-        primary: color ?? Theme.of(context).primaryColor,
+        primary: color ?? const Color(0xFF1C3857),
         side: BorderSide(
           color: borderColor ?? Colors.transparent,
           width: borderWidth ?? 1,
         ),
-        shape: shape ??
-            const RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(
-                Radius.circular(10),
-              ),
-            ),
+        shape: shape,
       ),
     );
   }

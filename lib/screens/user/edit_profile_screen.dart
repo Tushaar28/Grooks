@@ -77,9 +77,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     }
     if (_user!.image == null) {
       return ClipOval(
-        child: FadeInImage.assetNetwork(
-          placeholder: "assets/images/user.png",
-          image: "",
+        child: Image.asset(
+          "assets/images/user.png",
           fit: BoxFit.cover,
         ),
       );
@@ -305,29 +304,25 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 textAlign: TextAlign.center,
                                 decoration: const InputDecoration(
                                   labelText: 'Name',
-                                  hintText: 'Enter your name',
+                                  labelStyle: TextStyle(
+                                    color: Colors.black,
+                                  ),
                                   contentPadding: EdgeInsets.symmetric(
                                       vertical: 10, horizontal: 20),
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.all(
-                                      Radius.circular(32),
+                                      Radius.circular(10),
                                     ),
                                   ),
                                   enabledBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                      color: Colors.lightBlueAccent,
-                                      width: 1,
-                                    ),
                                     borderRadius: BorderRadius.all(
-                                      Radius.circular(32),
+                                      Radius.circular(10),
                                     ),
                                   ),
                                   focusedBorder: OutlineInputBorder(
-                                    borderSide: BorderSide(
-                                        color: Colors.lightBlueAccent,
-                                        width: 2.0),
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(32.0)),
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(10.0),
+                                    ),
                                   ),
                                 ),
                                 style: const TextStyle(

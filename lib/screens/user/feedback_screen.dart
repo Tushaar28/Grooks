@@ -192,9 +192,9 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                             fontSize: 16,
                           ),
                           elevation: 10,
-                          borderColor: Colors.lightBlueAccent,
-                          borderWidth: 2,
-                          borderRadius: 30,
+                          borderColor: const Color(0xFF1C3857),
+                          borderWidth: 1,
+                          borderRadius: 10,
                           margin: const EdgeInsets.fromLTRB(8, 4, 8, 4),
                         ),
                       ),
@@ -205,28 +205,26 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                           obscureText: false,
                           decoration: const InputDecoration(
                             labelText: 'Subject',
+                            labelStyle: TextStyle(
+                              color: Colors.black,
+                            ),
                             hintText: 'Enter subject',
                             contentPadding: EdgeInsets.symmetric(
                                 vertical: 10, horizontal: 20),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.all(
-                                Radius.circular(32),
+                                Radius.circular(10),
                               ),
                             ),
                             enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.lightBlueAccent,
-                                width: 1,
-                              ),
                               borderRadius: BorderRadius.all(
-                                Radius.circular(32),
+                                Radius.circular(10),
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: Colors.lightBlueAccent, width: 2.0),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(32.0)),
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(10.0),
+                              ),
                             ),
                           ),
                           style: const TextStyle(
@@ -248,28 +246,26 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                           maxLines: 8,
                           decoration: const InputDecoration(
                             labelText: 'Description',
+                            labelStyle: TextStyle(
+                              color: Colors.black,
+                            ),
                             hintText: 'Enter description',
                             contentPadding: EdgeInsets.symmetric(
                                 vertical: 10, horizontal: 20),
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.all(
-                                Radius.circular(32),
+                                Radius.circular(10),
                               ),
                             ),
                             enabledBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                color: Colors.lightBlueAccent,
-                                width: 1,
-                              ),
                               borderRadius: BorderRadius.all(
-                                Radius.circular(32),
+                                Radius.circular(10),
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: Colors.lightBlueAccent, width: 2.0),
-                              borderRadius:
-                                  BorderRadius.all(Radius.circular(32.0)),
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(10.0),
+                              ),
                             ),
                           ),
                           style: const TextStyle(
@@ -293,7 +289,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                               child: const Text(
                                 "Upload photo",
                                 style: TextStyle(
-                                  color: Colors.blue,
+                                  color: Color(0xFF1C3857),
                                 ),
                               ),
                               onPressed: () async {
@@ -304,9 +300,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                               },
                             ),
                             Text(
-                              _uploadedPhoto == null
-                                  ? "No file is selected"
-                                  : "Image attached",
+                              _uploadedPhoto == null ? "" : "Image attached",
                               style: TextStyle(
                                 color: _uploadedPhoto == null
                                     ? Colors.black

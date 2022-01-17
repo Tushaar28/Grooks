@@ -140,8 +140,6 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                         children: [
                           CircleAvatar(
                             radius: 50,
-                            backgroundColor:
-                                _profilePicture == null ? Colors.grey : null,
                             backgroundImage: _profilePicture == null
                                 ? null
                                 : FileImage(_profilePicture!),
@@ -169,106 +167,108 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                         ],
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(10, 40, 10, 10),
-                      child: TextFormField(
-                        controller: _firstNameController,
-                        obscureText: false,
-                        decoration: const InputDecoration(
-                          labelText: 'First Name',
-                          hintText: 'Enter your first name',
-                          contentPadding: EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 20),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(32),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 40, 0, 10),
+                        child: TextFormField(
+                          controller: _firstNameController,
+                          obscureText: false,
+                          decoration: const InputDecoration(
+                            labelText: 'First name',
+                            labelStyle: TextStyle(
+                              color: Colors.black,
+                            ),
+                            hintText: 'Enter your first name',
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 20),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(10),
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(10),
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(10.0),
+                              ),
                             ),
                           ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.lightBlueAccent,
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(32),
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Colors.lightBlueAccent, width: 2.0),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(32.0)),
-                          ),
-                        ),
-                        validator: (String? value) {
-                          return value!.isEmpty
-                              ? 'First name is required'
-                              : null;
-                        },
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                      child: TextFormField(
-                        controller: _lastNameController,
-                        obscureText: false,
-                        decoration: const InputDecoration(
-                          labelText: 'Last Name',
-                          hintText: 'Enter your last name',
-                          contentPadding: EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 20),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(32),
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.lightBlueAccent,
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(32),
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Colors.lightBlueAccent, width: 2.0),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(32.0)),
-                          ),
+                          validator: (String? value) {
+                            return value!.isEmpty
+                                ? 'First name is required'
+                                : null;
+                          },
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                      child: TextFormField(
-                        readOnly: true,
-                        initialValue: widget.user.phoneNumber,
-                        obscureText: false,
-                        decoration: const InputDecoration(
-                          labelText: 'Mobile Number',
-                          contentPadding: EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 20),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(32),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                        child: TextFormField(
+                          controller: _lastNameController,
+                          obscureText: false,
+                          decoration: const InputDecoration(
+                            labelText: 'Last name',
+                            labelStyle: TextStyle(
+                              color: Colors.black,
+                            ),
+                            hintText: 'Enter your last name',
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 20),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(10),
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(10),
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(10.0),
+                              ),
                             ),
                           ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.lightBlueAccent,
-                              width: 1,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                        child: TextFormField(
+                          readOnly: true,
+                          initialValue: widget.user.phoneNumber,
+                          obscureText: false,
+                          decoration: const InputDecoration(
+                            labelText: 'Mobile Number',
+                            labelStyle: TextStyle(
+                              color: Colors.black,
                             ),
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(32),
+                            contentPadding: EdgeInsets.symmetric(
+                                vertical: 10, horizontal: 20),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(10),
+                              ),
                             ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Colors.lightBlueAccent, width: 2.0),
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(32.0),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(10),
+                              ),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(10.0),
+                              ),
                             ),
                           ),
                         ),

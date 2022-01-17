@@ -78,15 +78,13 @@ class _LoginScreenState extends State<LoginScreen> {
                       controller: _mobileController,
                       obscureText: false,
                       keyboardType: TextInputType.phone,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly
-                      ],
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       decoration: const InputDecoration(
                         fillColor: Colors.white,
                         filled: true,
                         hintText: 'Enter phone number',
-                        contentPadding: EdgeInsets.symmetric(
-                            vertical: 10, horizontal: 20),
+                        contentPadding:
+                            EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(
                             Radius.circular(10),

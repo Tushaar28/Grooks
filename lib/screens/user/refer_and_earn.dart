@@ -68,185 +68,157 @@ class _ReferralWidgetState extends State<ReferralWidget> {
         elevation: 0,
       ),
       body: SafeArea(
-        child: Container(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height * 1,
-          decoration: const BoxDecoration(
-            color: Colors.white,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
-                child: Container(
-                  width: MediaQuery.of(context).size.width * 0.4,
-                  height: MediaQuery.of(context).size.width * 0.4,
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
+        child: Stack(
+          children: [
+            SizedBox(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+              child: Image.asset(
+                "assets/images/refer.png",
+                fit: BoxFit.fill,
+              ),
+            ),
+            Container(
+              padding: EdgeInsets.fromLTRB(
+                0,
+                MediaQuery.of(context).size.height * 0.35,
+                0,
+                0,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height * 0.07,
+                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                    child: const Center(
+                      child: AutoSizeText(
+                        'Refer your friends and earn 500 coins on every successful referral',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
                   ),
-                  child: Container(
-                    width: 120,
-                    height: 120,
-                    clipBehavior: Clip.antiAlias,
+                  Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height * 0.08,
+                    padding: const EdgeInsets.fromLTRB(20, 30, 20, 0),
                     decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
+                      color: Colors.transparent,
                     ),
-                    child: Image.asset(
-                      'assets/images/refer.png',
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height * 0.07,
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                  ),
-                  child: const AutoSizeText(
-                    'Refer your friends and earn 500 coins on every successful referral',
-                    style: TextStyle(
-                      fontFamily: 'Poppins',
-                      fontSize: 14,
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 80, 20, 0),
-                child: Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height * 0.08,
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                  ),
-                  child: const Align(
-                    alignment: Alignment(0, 0),
-                    child: AutoSizeText(
-                      'Your Referral code',
-                      style: TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 18,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 40, 20, 0),
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.75,
-                      height: MediaQuery.of(context).size.height * 0.05,
-                      decoration: const BoxDecoration(
-                        color: Color(0x69BDBDBD),
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(10),
-                          bottomLeft: Radius.circular(10),
+                    child: const Center(
+                      child: AutoSizeText(
+                        'Your Referral code',
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontSize: 18,
                         ),
                       ),
-                      child: Align(
-                        alignment: const Alignment(0, 0),
-                        child: AutoSizeText(
-                          widget.user.referralCode,
-                          style: const TextStyle(
-                            fontFamily: 'Poppins',
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 40, 20, 0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.75,
+                          height: MediaQuery.of(context).size.height * 0.05,
+                          decoration: const BoxDecoration(
+                            color: Color(0x69BDBDBD),
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(10),
+                              bottomLeft: Radius.circular(10),
+                            ),
+                          ),
+                          child: Align(
+                            alignment: const Alignment(0, 0),
+                            child: AutoSizeText(
+                              widget.user.referralCode,
+                              style: const TextStyle(
+                                fontFamily: 'Poppins',
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
                           ),
                         ),
-                      ),
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.1,
+                          height: MediaQuery.of(context).size.height * 0.05,
+                          decoration: const BoxDecoration(
+                            color: Color(0x69BDBDBD),
+                            borderRadius: BorderRadius.only(
+                              topRight: Radius.circular(10),
+                              bottomRight: Radius.circular(10),
+                            ),
+                          ),
+                          child: Center(
+                            child: IconButton(
+                              onPressed: () async {
+                                try {
+                                  // await ClipboardManager.copyToClipBoard(
+                                  //     widget.user.referralCode);
+                                  await FlutterClipboard.copy(
+                                      widget.user.referralCode);
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(copySuccessSnakbar);
+                                } catch (error) {
+                                  print("ERROR = ${error.toString()}");
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(failureSnackbar);
+                                }
+                              },
+                              icon: const Icon(
+                                Icons.copy_outlined,
+                                color: Color(0xFF000000),
+                                size: 25,
+                              ),
+                              iconSize: 30,
+                            ),
+                          ),
+                        )
+                      ],
                     ),
-                    Container(
-                      width: MediaQuery.of(context).size.width * 0.1,
-                      height: MediaQuery.of(context).size.height * 0.05,
-                      decoration: const BoxDecoration(
-                        color: Color(0x69BDBDBD),
-                        borderRadius: BorderRadius.only(
-                          topRight: Radius.circular(10),
-                          bottomRight: Radius.circular(10),
-                        ),
-                      ),
-                      child: Center(
-                        child: IconButton(
-                          onPressed: () async {
-                            try {
-                              // await ClipboardManager.copyToClipBoard(
-                              //     widget.user.referralCode);
-                              await FlutterClipboard.copy(
-                                  widget.user.referralCode);
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(copySuccessSnakbar);
-                            } catch (error) {
-                              print("ERROR = ${error.toString()}");
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(failureSnackbar);
-                            }
-                          },
-                          icon: const Icon(
-                            Icons.copy_outlined,
-                            color: Color(0xFF000000),
-                            size: 25,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 40, 20, 0),
+                    child: showSpinner
+                        ? const CircularProgressIndicator.adaptive(
+                            backgroundColor: Colors.white)
+                        : SizedBox(
+                            width: MediaQuery.of(context).size.width * 0.8,
+                            height: MediaQuery.of(context).size.height * 0.05,
+                            child: CustomButton(
+                              text: "Share",
+                              textStyle: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.white,
+                              ),
+                              onPressed: () async {
+                                setState(() => showSpinner = true);
+                                var referalLink =
+                                    await dynamicLink.createReferralLink(
+                                        widget.user.referralCode);
+                                Share.share(referalLink);
+                                Future.delayed(
+                                  const Duration(milliseconds: 500),
+                                  () => setState(() => showSpinner = false),
+                                );
+                              },
+                            ),
                           ),
-                          iconSize: 30,
-                        ),
-                      ),
-                    )
-                  ],
-                ),
+                  ),
+                ],
               ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 40, 20, 0),
-                child: showSpinner
-                    ? const CircularProgressIndicator.adaptive(
-                        backgroundColor: Colors.white)
-                    : SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.8,
-                        height: MediaQuery.of(context).size.height * 0.05,
-                        child: CustomButton(
-                          text: "Share",
-                          textStyle: const TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white,
-                          ),
-                          onPressed: () async {
-                            setState(() => showSpinner = true);
-                            var referalLink = await dynamicLink
-                                .createReferralLink(widget.user.referralCode);
-                            Share.share(referalLink);
-                            Future.delayed(
-                              const Duration(milliseconds: 500),
-                              () => setState(() => showSpinner = false),
-                            );
-                          },
-                        ),
-                      ),
-              ),
-              // Padding(
-              //   padding: const EdgeInsets.fromLTRB(20, 40, 20, 0),
-              //   child: TextButton(
-              //     child: AutoSizeText(
-              //       'View Referrals',
-              //       style: TextStyle(
-              //         fontFamily: 'Poppins',
-              //         color: Theme.of(context).primaryColor,
-              //         fontWeight: FontWeight.w500,
-              //         fontSize: 16,
-              //       ),
-              //     ),
-              //     onPressed: null,
-              //   ),
-              // ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

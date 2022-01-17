@@ -54,6 +54,7 @@ class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
     super.initState();
     _receiverUser = null;
     _transferCommission = 0;
+    _userCoins = 0;
     _isLoading = _isMobileOrEmailVerified =
         _isMobileOrEmailValid = _isActive = _done = false;
     _isActive = true;
@@ -174,55 +175,49 @@ class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
         elevation: 0,
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: FutureBuilder(
-            future: getUserDetails(),
-            initialData: const Center(
-              child: CircularProgressIndicator.adaptive(
-                backgroundColor: Colors.white,
-              ),
+        child: FutureBuilder(
+          future: getUserDetails(),
+          initialData: const Center(
+            child: CircularProgressIndicator.adaptive(
+              backgroundColor: Colors.white,
             ),
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              return Container(
-                width: MediaQuery.of(context).size.width,
-                height: MediaQuery.of(context).size.height * 1,
-                decoration: const BoxDecoration(
-                  color: Colors.white,
+          ),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            return Stack(
+              children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                  child: Image.asset(
+                    "assets/images/transfer_coins.png",
+                    fit: BoxFit.fill,
+                  ),
                 ),
-                child: SingleChildScrollView(
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                  padding: EdgeInsets.fromLTRB(
+                    0,
+                    MediaQuery.of(context).size.height * 0.35,
+                    0,
+                    0,
+                  ),
                   child: Form(
                     key: _formKey,
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
                       children: [
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                          child: Container(
-                            width: MediaQuery.of(context).size.width * 0.3,
-                            height: MediaQuery.of(context).size.width * 0.3,
-                            clipBehavior: Clip.antiAlias,
-                            decoration: const BoxDecoration(
-                              shape: BoxShape.circle,
-                            ),
-                            child: Image.asset(
-                              'assets/images/transfer_coins.jpg',
-                            ),
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.8,
+                          height: MediaQuery.of(context).size.height * 0.06,
+                          decoration: const BoxDecoration(
+                            color: Colors.transparent,
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 30, 0, 0),
-                          child: Container(
-                            width: MediaQuery.of(context).size.width * 0.8,
-                            height: MediaQuery.of(context).size.height * 0.06,
-                            decoration: const BoxDecoration(
-                              color: Colors.transparent,
-                            ),
-                            child: const AutoSizeText(
-                              'A friend in need is a friend indeed. Help your friends by sharing your coins.',
-                              style: TextStyle(
-                                fontFamily: 'Roboto',
-                                fontSize: 16,
-                              ),
+                          child: const AutoSizeText(
+                            'A friend in need is a friend indeed. Help your friends by sharing your coins.',
+                            style: TextStyle(
+                              fontFamily: 'Roboto',
+                              fontSize: 16,
                             ),
                           ),
                         ),
@@ -237,13 +232,16 @@ class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
                           ),
                         ),
                         Padding(
-                          padding: const EdgeInsets.fromLTRB(20, 40, 20, 0),
+                          padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                           child: TextFormField(
                             keyboardType: TextInputType.text,
                             controller: _mobileOrEmailController,
                             obscureText: false,
                             decoration: InputDecoration(
                               labelText: 'Mobile / Email',
+                              labelStyle: const TextStyle(
+                                color: Colors.black,
+                              ),
                               hintText:
                                   "Enter your friend's mobile number or email address",
                               suffixIcon: _isMobileOrEmailValid
@@ -296,23 +294,18 @@ class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
                                   vertical: 10, horizontal: 20),
                               border: const OutlineInputBorder(
                                 borderRadius: BorderRadius.all(
-                                  Radius.circular(32),
+                                  Radius.circular(10),
                                 ),
                               ),
                               enabledBorder: const OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.lightBlueAccent,
-                                  width: 1,
-                                ),
                                 borderRadius: BorderRadius.all(
-                                  Radius.circular(32),
+                                  Radius.circular(10),
                                 ),
                               ),
                               focusedBorder: const OutlineInputBorder(
-                                borderSide: BorderSide(
-                                    color: Colors.lightBlueAccent, width: 2.0),
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(32.0)),
+                                borderRadius: BorderRadius.all(
+                                  Radius.circular(10.0),
+                                ),
                               ),
                             ),
                             style: const TextStyle(
@@ -325,35 +318,32 @@ class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
                         if (_receiverUser != null) const AutoSizeText(''),
                         if (_isMobileOrEmailVerified && _receiverUser != null)
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                            padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
                             child: TextFormField(
                               readOnly: true,
                               initialValue: _receiverUser!.name,
                               obscureText: false,
                               decoration: const InputDecoration(
                                 labelText: 'Name',
+                                labelStyle: TextStyle(
+                                  color: Colors.black,
+                                ),
                                 contentPadding: EdgeInsets.symmetric(
                                     vertical: 10, horizontal: 20),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.all(
-                                    Radius.circular(32),
+                                    Radius.circular(10),
                                   ),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Colors.lightBlueAccent,
-                                    width: 1,
-                                  ),
                                   borderRadius: BorderRadius.all(
-                                    Radius.circular(32),
+                                    Radius.circular(10),
                                   ),
                                 ),
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: Colors.lightBlueAccent,
-                                      width: 2.0),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(32.0)),
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(10.0),
+                                  ),
                                 ),
                               ),
                               style: const TextStyle(
@@ -364,7 +354,7 @@ class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
                           ),
                         if (_receiverUser != null)
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(20, 30, 20, 0),
+                            padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                             child: TextFormField(
                               keyboardType: TextInputType.phone,
                               textAlign: TextAlign.center,
@@ -376,29 +366,26 @@ class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
                               onChanged: (value) => setState(() {}),
                               decoration: const InputDecoration(
                                 labelText: 'Coins',
+                                labelStyle: TextStyle(
+                                  color: Colors.black,
+                                ),
                                 hintText: 'Enter number of coins to transfer',
                                 contentPadding: EdgeInsets.symmetric(
                                     vertical: 10, horizontal: 20),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.all(
-                                    Radius.circular(32),
+                                    Radius.circular(10),
                                   ),
                                 ),
                                 enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: Colors.lightBlueAccent,
-                                    width: 1,
-                                  ),
                                   borderRadius: BorderRadius.all(
-                                    Radius.circular(32),
+                                    Radius.circular(10),
                                   ),
                                 ),
                                 focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                      color: Colors.lightBlueAccent,
-                                      width: 2.0),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(32.0)),
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(10.0),
+                                  ),
                                 ),
                               ),
                               style: const TextStyle(
@@ -419,8 +406,11 @@ class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
                             ),
                           ),
                         Padding(
-                          padding: EdgeInsets.fromLTRB(20,
-                              MediaQuery.of(context).size.height * 0.05, 20, 0),
+                          padding: EdgeInsets.fromLTRB(
+                              20,
+                              MediaQuery.of(context).size.height * 0.015,
+                              20,
+                              0),
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -514,7 +504,7 @@ class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
                           ),
                         if (_coinsController.text.trim().isNotEmpty)
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(20, 40, 20, 0),
+                            padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
                             child: _isLoading
                                 ? const CircularProgressIndicator.adaptive(
                                     backgroundColor: Colors.white,
@@ -605,9 +595,9 @@ class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
                     ),
                   ),
                 ),
-              );
-            },
-          ),
+              ],
+            );
+          },
         ),
       ),
     );
