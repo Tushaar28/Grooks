@@ -59,35 +59,36 @@ class _SubcategoriesScreenState extends State<SubcategoriesScreen> {
         ),
       );
     }
-    if (_subcategories.isEmpty) {
-      return const Center(
-        child: Text(
-          "No events",
-          style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.w400,
-          ),
-        ),
-      );
-    }
 
     return RefreshIndicator(
       onRefresh: () => refresh(context: context),
       child: FutureBuilder(
-        future: getSubcategoriesFromCategory(),
-        builder: (context, snapshot) => Align(
-          alignment: Alignment.center,
-          child: ListView.builder(
-            itemCount: _subcategories.length,
-            itemBuilder: (context, index) {
-              return CustomSubcategoryCard(
-                user: widget.user,
-                subcategory: _subcategories[index],
+          future: getSubcategoriesFromCategory(),
+          builder: (context, snapshot) {
+            if (_subcategories.isEmpty) {
+              return const Center(
+                child: Text(
+                  "No events",
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
               );
-            },
-          ),
-        ),
-      ),
+            }
+            return Align(
+              alignment: Alignment.center,
+              child: ListView.builder(
+                itemCount: _subcategories.length,
+                itemBuilder: (context, index) {
+                  return CustomSubcategoryCard(
+                    user: widget.user,
+                    subcategory: _subcategories[index],
+                  );
+                },
+              ),
+            );
+          }),
     );
   }
 }
