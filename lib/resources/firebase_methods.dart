@@ -814,7 +814,7 @@ class FirebaseMethods {
           });
         } else {
           await questionsCollection.doc(firstTrade.questionId).update({
-            'noBets': FieldValue.arrayUnion([trade.id]),
+            'noTrades': FieldValue.arrayUnion([trade.id]),
             'openTradesCount': currentOpenBets - 1,
             'pairedTradesCount': currentPairedBets + 1,
             'lastTradedPrice': firstTrade.coins,
