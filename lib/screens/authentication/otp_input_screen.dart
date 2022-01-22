@@ -86,12 +86,6 @@ class _OTPInputScreenState extends State<OTPInputScreen> {
     super.dispose();
   }
 
-  Future<void> initDeviceToken() async {
-    _messaging.subscribeToTopic('test');
-    String? token = await _messaging.getToken();
-    _repository.saveDeviceToken(token);
-  }
-
   void startTimer() {
     const onSec = Duration(seconds: 1);
     _timer = Timer.periodic(onSec, (timer) {
@@ -361,7 +355,6 @@ class _OTPInputScreenState extends State<OTPInputScreen> {
                                       setState(() => _isLoading = true);
                                       UserCredential credential =
                                           await onSubmitted(context);
-                                      initDeviceToken();
 
                                       Users? userDetails =
                                           await _repository.getUserDetails();

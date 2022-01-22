@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:grooks_dev/constants/constants.dart';
@@ -20,6 +21,7 @@ class FirebaseMethods {
   final FirebaseStorage storage = FirebaseStorage.instance;
   final FirebaseDynamicLinks dynamicLink = FirebaseDynamicLinks.instance;
   final FirebaseAuth auth = FirebaseAuth.instance;
+  late final FirebaseMessaging _messaging;
   static final FirebaseFirestore firestore = FirebaseFirestore.instance;
   static final CollectionReference usersCollection =
       firestore.collection(USERS_COLLECTION);
@@ -251,6 +253,7 @@ class FirebaseMethods {
         );
       }
       String refCode = generateReferralCode(userId: uid);
+      String? token = await _messaging.getToken();
       Users user = Users(
         name: name,
         mobile: mobile,
@@ -265,6 +268,7 @@ class FirebaseMethods {
       );
 
       await usersCollection.doc(uid).set(user.toMap(user));
+      await saveDeviceToken(token);
 
       int? welcomeCoins =
           (await settingsCollection.get()).docs.first.get("welcomeCoins");
