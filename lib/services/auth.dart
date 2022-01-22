@@ -61,12 +61,6 @@ class _AuthState extends State<Auth> {
     }
   }
 
-  Future<void> initDeviceToken() async {
-    _messaging.subscribeToTopic('test');
-    String? token = await _messaging.getToken();
-    _repository.saveDeviceToken(token);
-  }
-
   Future<void> getUserDetails() async {
     _user = await _repository.getUserDetails();
     return;
@@ -125,7 +119,6 @@ class _AuthState extends State<Auth> {
                           );
                         } else {
                           if (_user != null) {
-                            initDeviceToken();
                             _repository.updateUser(userId: _user!.id, data: {
                               'lastLoginAt': DateTime.now(),
                             });
