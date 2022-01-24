@@ -700,10 +700,19 @@ class FirebaseMethods {
           updatedAt: currentDate,
         );
 
-        await questionsCollection.doc(trade.questionId).update({
-          'openTradesCount': currentOpenBets - 1,
-          'updatedAt': currentDate,
-        });
+        if (trade.response) {
+          await questionsCollection.doc(trade.questionId).update({
+            'yesTrades': FieldValue.arrayRemove([trade.id]),
+            'openTradesCount': currentOpenBets - 1,
+            'updatedAt': currentDate,
+          });
+        } else {
+          await questionsCollection.doc(trade.questionId).update({
+            'noTrades': FieldValue.arrayUnion([trade.id]),
+            'openTradesCount': currentOpenBets - 1,
+            'updatedAt': currentDate,
+          });
+        }
 
         await walletsCollection.doc(walletId).update({
           'updatedAt': currentDate,

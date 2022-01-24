@@ -363,6 +363,39 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                               fontWeight: FontWeight.w400,
                             ),
                           ),
+                          Row(
+                            children: [
+                              const Text(
+                                "10 ",
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              Image.asset(
+                                "assets/images/coins.png",
+                                scale: 1.2
+                                ),
+                              const Text(
+                                " = ₹1 ",
+                                style: TextStyle(
+                                  color: Colors.grey,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+
+                            ],
+                          ),
+                          const Text(
+                            "So you can earn equivalent of ₹10 from 1 trade.",
+                            style: TextStyle(
+                              color: Colors.grey,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
                         ],
                       ),
                     ),
