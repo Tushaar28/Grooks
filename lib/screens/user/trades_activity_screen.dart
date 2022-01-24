@@ -170,10 +170,14 @@ class _TradesActivityScreenState extends State<TradesActivityScreen> {
                                   height:
                                       MediaQuery.of(context).size.width * 0.15,
                                   child: AutoSizeText(
-                                    '${trade.coins}',
+                                    trade.status == Status.LOST
+                                        ? '-${trade.coinsWon ?? trade.coins}'
+                                        : '+${trade.coinsWon ?? trade.coins}',
                                     style: TextStyle(
                                       fontFamily: 'Poppins',
-                                      color: Theme.of(context).primaryColor,
+                                      color: trade.status == Status.LOST
+                                          ? Colors.red
+                                          : Theme.of(context).primaryColor,
                                       fontSize: 22,
                                     ),
                                   ),

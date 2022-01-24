@@ -153,6 +153,8 @@ class _TopTradesScreenState extends State<TopTradesScreen>
                             );
                           }
                           rethrow;
+                        } finally {
+                          setState(() => _isLoading = false);
                         }
                       },
                     ),
