@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:cashfree_pg/cashfree_pg.dart';
@@ -16,6 +17,7 @@ class StoreScreen extends StatefulWidget {
 
 class _StoreScreenState extends State<StoreScreen> {
   late bool _isLoading;
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -92,38 +94,93 @@ class _StoreScreenState extends State<StoreScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: _isLoading
-            ? const CircularProgressIndicator.adaptive(
-                backgroundColor: Colors.white,
-              )
-            : TextButton(
-                child: const Text(
-                  "PAY",
-                  style: TextStyle(
-                    fontSize: 24,
+      key: _scaffoldKey,
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        iconTheme: const IconThemeData(color: Colors.black),
+        backgroundColor: Colors.white,
+        automaticallyImplyLeading: true,
+        title: const AutoSizeText(
+          'Store',
+          style: TextStyle(
+            fontFamily: 'Poppins',
+            color: Colors.black,
+            fontSize: 22,
+          ),
+        ),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(20),
+          ),
+        ),
+        centerTitle: false,
+        elevation: 0,
+      ),
+      body: SafeArea(
+        child: SizedBox(
+          height: MediaQuery.of(context).size.height,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                height: MediaQuery.of(context).size.height * 0.35,
+                color: Colors.transparent,
+                padding: EdgeInsets.fromLTRB(
+                  MediaQuery.of(context).size.width * 0.025,
+                  MediaQuery.of(context).size.height * 0.025,
+                  MediaQuery.of(context).size.width * 0.025,
+                  0,
+                ),
+                child: GridView.builder(
+                  itemCount: 6,
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 4.0,
+                    mainAxisSpacing: 4.0,
+                  ),
+                  itemBuilder: (context, index) => const Card(
+                    color: Colors.greenAccent,
+                    elevation: 20,
+                    shadowColor: Colors.transparent,
                   ),
                 ),
-                onPressed: () async {
-                  try {
-                    await makePayment();
-                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text("Payment successful"),
-                      backgroundColor: Colors.green,
-                      duration: Duration(seconds: 2),
-                    ));
-                  } catch (error) {
-                    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text("An error occured"),
-                      backgroundColor: Colors.red,
-                      duration: Duration(seconds: 2),
-                    ));
-                  }
-                },
               ),
+            ],
+          ),
+        ),
       ),
+      // body: Center(
+      //   child: _isLoading
+      //       ? const CircularProgressIndicator.adaptive(
+      //           backgroundColor: Colors.white,
+      //         )
+      //       : TextButton(
+      //           child: const Text(
+      //             "PAY",
+      //             style: TextStyle(
+      //               fontSize: 24,
+      //             ),
+      //           ),
+      //           onPressed: () async {
+      //             try {
+      //               await makePayment();
+      //               ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      //               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      //                 content: Text("Payment successful"),
+      //                 backgroundColor: Colors.green,
+      //                 duration: Duration(seconds: 2),
+      //               ));
+      //             } catch (error) {
+      //               ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      //               ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      //                 content: Text("An error occured"),
+      //                 backgroundColor: Colors.red,
+      //                 duration: Duration(seconds: 2),
+      //               ));
+      //             }
+      //           },
+      //         ),
+      // ),
     );
   }
 }

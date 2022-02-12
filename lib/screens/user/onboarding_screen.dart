@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/screens/user/navbar_screen.dart';
 import 'package:grooks_dev/widgets/custom_button.dart';
-import 'package:grooks_dev/widgets/custom_carousel.dart';
 import 'package:page_transition/page_transition.dart';
 
 class OnboardingScreen extends StatefulWidget {
@@ -17,7 +17,8 @@ class OnboardingScreen extends StatefulWidget {
 }
 
 class _OnboardingScreenState extends State<OnboardingScreen> {
-  final List<Map<String, String>> pages = [
+  late int _index;
+  final List<Map<String, String>> _pages = [
     {
       "image": "onboarding1.svg",
       "title": "Page 1",
@@ -36,6 +37,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   ];
 
   @override
+  void initState() {
+    super.initState();
+    _index = 0;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
@@ -46,7 +53,21 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
           children: [
             SizedBox(
               height: MediaQuery.of(context).size.height * 0.9,
-              child: CustomCarousel(pages: pages),
+              child: PageView.builder(
+                itemCount: _pages.length,
+                itemBuilder: (BuildContext context, int index) => Container(
+                  height: MediaQuery.of(context).size.height * 0.9,
+                  width: MediaQuery.of(context).size.width,
+                  padding: EdgeInsets.fromLTRB(
+                    MediaQuery.of(context).size.width * 0.09,
+                    MediaQuery.of(context).size.height * 0.01,
+                    0,
+                    0,
+                  ),
+                  child: SvgPicture.asset(
+                      "assets/images/${_pages[_index]["image"]}"),
+                ),
+              ),
             ),
             Expanded(
               child: Align(
@@ -55,16 +76,22 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                   width: double.infinity,
                   height: MediaQuery.of(context).size.height * 0.06,
                   child: CustomButton(
-                    onPressed: () => Navigator.of(context).pushReplacement(
-                      PageTransition(
-                        child: NavbarScreen(
-                          user: widget.user,
-                        ),
-                        type: PageTransitionType.bottomToTop,
-                        duration: const Duration(milliseconds: 300),
-                      ),
-                    ),
-                    text: "Get Started",
+                    onPressed: () {
+                      if (_index < _pages.length - 1) {
+                        setState(() => ++_index);
+                      } else {
+                        Navigator.of(context).pushReplacement(
+                          PageTransition(
+                            child: NavbarScreen(
+                              user: widget.user,
+                            ),
+                            type: PageTransitionType.bottomToTop,
+                            duration: const Duration(milliseconds: 300),
+                          ),
+                        );
+                      }
+                    },
+                    text: _index < _pages.length - 1 ? "Next" : "Get Started",
                     elevation: 80,
                     textStyle: const TextStyle(
                       color: Colors.white,

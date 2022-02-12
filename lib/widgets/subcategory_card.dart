@@ -75,19 +75,16 @@ class _CustomSubcategoryCardState extends State<CustomSubcategoryCard> {
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       Container(
-                        width: MediaQuery.of(context).size.width * 0.2,
-                        height: MediaQuery.of(context).size.height * 0.1,
+                        width: MediaQuery.of(context).size.width * 0.25,
+                        height: MediaQuery.of(context).size.height * 0.15,
                         decoration: const BoxDecoration(
                           color: Colors.transparent,
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(20),
-                          child: widget.subcategory.image != null
-                              ? FadeInImage.assetNetwork(
-                                  placeholder: "assets/images/user.png",
-                                  image: widget.subcategory.image!,
-                                )
-                              : Image.asset("assets/images/user.png"),
+                          child: FadeInImage.assetNetwork(
+                              placeholder: "assets/images/fallback.png",
+                              image: widget.subcategory.image ?? ""),
                         ),
                       ),
                       Padding(
@@ -103,50 +100,30 @@ class _CustomSubcategoryCardState extends State<CustomSubcategoryCard> {
                           decoration: const BoxDecoration(
                             color: Colors.transparent,
                           ),
-                          child: Column(
-                            mainAxisSize: MainAxisSize.max,
-                            children: [
-                              Container(
-                                width: MediaQuery.of(context).size.width * 0.35,
-                                height:
-                                    MediaQuery.of(context).size.height * 0.06,
-                                decoration: const BoxDecoration(
-                                  color: Colors.transparent,
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsetsDirectional.fromSTEB(
-                                    0,
-                                    10,
-                                    0,
-                                    0,
-                                  ),
-                                  child: AutoSizeText(
-                                    widget.subcategory.name,
-                                    style: const TextStyle(
-                                      fontFamily: 'Roboto',
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
+                          child: Container(
+                            width: MediaQuery.of(context).size.width * 0.3,
+                            height: MediaQuery.of(context).size.height * 0.06,
+                            decoration: const BoxDecoration(
+                              color: Colors.transparent,
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsetsDirectional.fromSTEB(
+                                0,
+                                10,
+                                0,
+                                0,
                               ),
-                              Container(
-                                width: MediaQuery.of(context).size.width * 0.35,
-                                height:
-                                    MediaQuery.of(context).size.height * 0.05,
-                                decoration: const BoxDecoration(
-                                  color: Colors.transparent,
-                                ),
+                              child: Center(
                                 child: AutoSizeText(
-                                  'Related to all categories',
-                                  style: GoogleFonts.getFont(
-                                    'Roboto',
-                                    color: Colors.grey,
-                                    fontSize: 8,
+                                  widget.subcategory.name,
+                                  style: const TextStyle(
+                                    fontFamily: 'Roboto',
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
                               ),
-                            ],
+                            ),
                           ),
                         ),
                       ),
@@ -158,7 +135,7 @@ class _CustomSubcategoryCardState extends State<CustomSubcategoryCard> {
                           0,
                         ),
                         child: Container(
-                          width: MediaQuery.of(context).size.width * 0.2,
+                          width: MediaQuery.of(context).size.width * 0.15,
                           height: MediaQuery.of(context).size.height * 0.13,
                           decoration: const BoxDecoration(
                             color: Colors.transparent,

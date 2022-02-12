@@ -178,7 +178,10 @@ class CustomDrawer extends StatelessWidget {
             child: Column(
               children: [
                 ListTile(
-                  leading: Image.asset("assets/images/how_to_trade.png"),
+                  leading: Image.asset(
+                    "assets/images/refer_drawer.png",
+                    height: 40,
+                  ),
                   title: const AutoSizeText(
                     'Refer and Earn',
                     style: TextStyle(
@@ -204,7 +207,10 @@ class CustomDrawer extends StatelessWidget {
                   },
                 ),
                 ListTile(
-                  leading: Image.asset("assets/images/wallet.png"),
+                  leading: Image.asset(
+                    "assets/images/help_your_friends_drawer.png",
+                    height: 40,
+                  ),
                   title: const AutoSizeText(
                     'Help your friends',
                     style: TextStyle(
@@ -230,7 +236,10 @@ class CustomDrawer extends StatelessWidget {
                   },
                 ),
                 ListTile(
-                  leading: Image.asset("assets/images/how_to_trade.png"),
+                  leading: Image.asset(
+                    "assets/images/how_to_trade_drawer.png",
+                    height: 40,
+                  ),
                   title: const AutoSizeText(
                     'How to trade',
                     style: TextStyle(
@@ -256,7 +265,10 @@ class CustomDrawer extends StatelessWidget {
                   },
                 ),
                 ListTile(
-                  leading: Image.asset("assets/images/chat.png"),
+                  leading: Image.asset(
+                    "assets/images/support_drawer.png",
+                    height: 40,
+                  ),
                   title: const AutoSizeText(
                     'Support',
                     style: TextStyle(
@@ -281,32 +293,32 @@ class CustomDrawer extends StatelessWidget {
                     );
                   },
                 ),
-                // ListTile(
-                //   leading: Image.asset("assets/images/how_to_trade.png"),
-                //   title: const AutoSizeText(
-                //     'Store',
-                //     style: TextStyle(
-                //       color: Colors.black,
-                //       fontSize: 18,
-                //       fontWeight: FontWeight.w400,
-                //     ),
-                //   ),
-                //   trailing: const Icon(
-                //     Icons.arrow_forward_ios,
-                //     color: Colors.black87,
-                //   ),
-                //   onTap: () {
-                //     Navigator.of(context).pop();
-                //     Navigator.of(context).push(
-                //       PageTransition(
-                //         child: StoreScreen(user: user),
-                //         type: PageTransitionType.bottomToTop,
-                //         duration: const Duration(milliseconds: 300),
-                //         reverseDuration: const Duration(milliseconds: 300),
-                //       ),
-                //     );
-                //   },
-                // ),
+                ListTile(
+                  leading: Image.asset("assets/images/how_to_trade.png"),
+                  title: const AutoSizeText(
+                    'Store',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                  trailing: const Icon(
+                    Icons.arrow_forward_ios,
+                    color: Colors.black87,
+                  ),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).push(
+                      PageTransition(
+                        child: StoreScreen(user: user),
+                        type: PageTransitionType.bottomToTop,
+                        duration: const Duration(milliseconds: 300),
+                        reverseDuration: const Duration(milliseconds: 300),
+                      ),
+                    );
+                  },
+                ),
               ],
             ),
           ),

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:grooks_dev/models/question.dart';
@@ -76,10 +78,10 @@ class _QuestionCardState extends State<QuestionCard> {
                       width: MediaQuery.of(context).size.width * 0.3,
                       child: widget.question.image != null
                           ? FadeInImage.assetNetwork(
-                              placeholder: "assets/images/user.png",
+                              placeholder: "assets/images/fallback.png",
                               image: widget.question.image!,
                             )
-                          : Image.asset("assets/images/user.png"),
+                          : Image.asset("assets/images/fallback.png"),
                     ),
                     FutureBuilder<int>(
                       initialData: 50,
@@ -93,10 +95,12 @@ class _QuestionCardState extends State<QuestionCard> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Container(
-                              width: MediaQuery.of(context).size.width *
-                                  0.38 *
-                                  snapshot.data!.toInt() /
-                                  100,
+                              width: max(
+                                  MediaQuery.of(context).size.width * 0.15,
+                                  MediaQuery.of(context).size.width *
+                                      0.38 *
+                                      snapshot.data!.toInt() /
+                                      100),
                               decoration: BoxDecoration(
                                 color: const Color(0x402DEB51),
                                 borderRadius: BorderRadius.circular(
@@ -116,9 +120,11 @@ class _QuestionCardState extends State<QuestionCard> {
                               ),
                             ),
                             Container(
-                              width: MediaQuery.of(context).size.width *
-                                  0.38 *
-                                  (1 - snapshot.data!.toInt() / 100),
+                              width: max(
+                                  MediaQuery.of(context).size.width * 0.15,
+                                  MediaQuery.of(context).size.width *
+                                      0.38 *
+                                      (1 - snapshot.data!.toInt() / 100)),
                               decoration: BoxDecoration(
                                 color: const Color(0x40EB6821),
                                 borderRadius: BorderRadius.circular(
