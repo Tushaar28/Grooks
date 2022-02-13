@@ -1,9 +1,9 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:grooks_dev/constants/constants.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/user/activity_screen.dart';
+import 'package:grooks_dev/screens/user/wallet_screen.dart';
 import 'package:page_transition/page_transition.dart';
 
 class CustomAppbar extends StatefulWidget implements PreferredSizeWidget {
@@ -73,7 +73,7 @@ class _CustomAppbarState extends State<CustomAppbar> {
           onTap: () => Navigator.push(
             context,
             PageTransition(
-              child: ActivityScreen(userId: widget.userId),
+              child: WalletScreen(userId: widget.userId),
               type: PageTransitionType.bottomToTop,
               duration: const Duration(
                 milliseconds: 300,

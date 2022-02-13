@@ -2,7 +2,10 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:cashfree_pg/cashfree_pg.dart';
+import 'package:flutter/services.dart';
 import 'package:grooks_dev/models/user.dart';
+import 'package:grooks_dev/resources/firebase_repository.dart';
+import 'package:grooks_dev/widgets/custom_button.dart';
 
 class StoreScreen extends StatefulWidget {
   final Users user;
@@ -16,13 +19,44 @@ class StoreScreen extends StatefulWidget {
 }
 
 class _StoreScreenState extends State<StoreScreen> {
-  late bool _isLoading;
+  late TextEditingController _coinsController;
+  late final FirebaseRepository _repository;
+  late bool _isLoading, _hasDataLoaded;
+  late double _paymentGatewayCommission, _price, _paymentCharges, _totalAmount;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
+    _hasDataLoaded = false;
+    _repository = FirebaseRepository();
+    getPaymentGatewayCommission();
     _isLoading = false;
+    _price = 0;
+    _paymentCharges = 0;
+    _totalAmount = 0;
+    _coinsController = TextEditingController();
+  }
+
+  Future<void> getPaymentGatewayCommission() async {
+    _paymentGatewayCommission = await _repository.getPaymentGatewayCommission;
+    setState(() => _hasDataLoaded = true);
+  }
+
+  bool isCoinsValid() {
+    bool isValid = int.tryParse(_coinsController.text) != null &&
+        int.tryParse(_coinsController.text)! >= 100;
+    if (isValid) {
+      _price = int.parse(_coinsController.text) / 10;
+      _paymentCharges = _paymentGatewayCommission /
+          100 *
+          (int.parse(_coinsController.text) / 10);
+      _totalAmount = (int.parse(_coinsController.text) / 10) +
+          (_paymentGatewayCommission /
+              100 *
+              (int.parse(_coinsController.text) / 10));
+    }
+    return isValid;
   }
 
   Future<void> makePayment() async {
@@ -38,11 +72,11 @@ class _StoreScreenState extends State<StoreScreen> {
           .httpsCallable("generateTokenForPayment")
           .call({
         "orderId": orderId,
-        "orderAmount": "13.54",
+        "orderAmount": _totalAmount.toStringAsFixed(2),
         "orderCurrency": "INR",
       });
       String stage = "TEST";
-      String orderAmount = "13.54";
+      String orderAmount = _totalAmount.toStringAsFixed(2);
       String tokenData = result.data["cftoken"];
       String customerName = "Tushaar";
       String orderNote = "Order_Note";
@@ -68,9 +102,9 @@ class _StoreScreenState extends State<StoreScreen> {
       CashfreePGSDK.doPayment(inputParams).then((mapData) async {
         try {
           String transactionStatus = mapData!["txStatus"];
-          // mapData!.forEach((key, value) {
-          //   print("KEY = $key  VALUE = $value");
-          // });
+          mapData.forEach((key, value) {
+            print("KEY = $key  VALUE = $value");
+          });
           var result = await FirebaseFunctions.instance
               .httpsCallable("verifySignature")
               .call(mapData);
@@ -80,6 +114,11 @@ class _StoreScreenState extends State<StoreScreen> {
           if (transactionStatus != "SUCCESS") {
             throw "An error occured";
           }
+          await updateTransactionDetails(
+            transactionId: mapData["referenceId"],
+            transactionStatus: transactionStatus,
+            userId: widget.user.id,
+          );
         } catch (error) {
           rethrow;
         }
@@ -91,10 +130,24 @@ class _StoreScreenState extends State<StoreScreen> {
     }
   }
 
+  Future<void> updateTransactionDetails({
+    required String transactionStatus,
+    required bool transactionId,
+    required String userId,
+  }) async {
+    bool isSuccess = transactionStatus == "SUCCESS" ? true : false;
+    await _repository.updateTransactionDetails(
+      transactionStatus: isSuccess,
+      transactionId: transactionId,
+      userId: userId,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
+      resizeToAvoidBottomInset: false,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.black),
@@ -116,39 +169,183 @@ class _StoreScreenState extends State<StoreScreen> {
         centerTitle: false,
         elevation: 0,
       ),
-      body: SafeArea(
-        child: SizedBox(
-          height: MediaQuery.of(context).size.height,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                height: MediaQuery.of(context).size.height * 0.35,
-                color: Colors.transparent,
+      body: !_hasDataLoaded
+          ? const Center(
+              child: CircularProgressIndicator.adaptive(
+                backgroundColor: Colors.white,
+              ),
+            )
+          : SafeArea(
+              child: Container(
+                height: MediaQuery.of(context).size.height,
                 padding: EdgeInsets.fromLTRB(
                   MediaQuery.of(context).size.width * 0.025,
-                  MediaQuery.of(context).size.height * 0.025,
+                  0,
                   MediaQuery.of(context).size.width * 0.025,
                   0,
                 ),
-                child: GridView.builder(
-                  itemCount: 6,
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    crossAxisSpacing: 4.0,
-                    mainAxisSpacing: 4.0,
-                  ),
-                  itemBuilder: (context, index) => const Card(
-                    color: Colors.greenAccent,
-                    elevation: 20,
-                    shadowColor: Colors.transparent,
-                  ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      height: MediaQuery.of(context).size.height * 0.5,
+                      color: Colors.transparent,
+                      padding: EdgeInsets.fromLTRB(
+                        0,
+                        MediaQuery.of(context).size.height * 0.025,
+                        0,
+                        0,
+                      ),
+                      child: GridView.builder(
+                        itemCount: 4,
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: 0,
+                          mainAxisSpacing: 0.0,
+                        ),
+                        itemBuilder: (context, index) => Card(
+                          child: Image.asset("assets/images/pack1.png"),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(
+                        top: MediaQuery.of(context).size.height * 0.03,
+                      ),
+                      child: TextField(
+                        controller: _coinsController,
+                        keyboardType: TextInputType.phone,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                        ],
+                        obscureText: false,
+                        decoration: const InputDecoration(
+                          labelText: 'Coins',
+                          hintText: 'Enter coins (Minimum 100 coins)',
+                          contentPadding: EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 20),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(10),
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.lightBlueAccent,
+                              width: 1,
+                            ),
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(10),
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: Colors.lightBlueAccent, width: 2.0),
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                          ),
+                        ),
+                      ),
+                    ),
+                    if (isCoinsValid()) ...[
+                      Container(
+                        height: MediaQuery.of(context).size.height * 0.2,
+                        padding: EdgeInsets.fromLTRB(
+                          0,
+                          MediaQuery.of(context).size.height * 0.01,
+                          0,
+                          0,
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.3,
+                                  child: const Text("Price"),
+                                ),
+                                SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.2,
+                                  child: Center(
+                                    child: Text("Rs $_price"),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.3,
+                                  child: const Text("Payment charges"),
+                                ),
+                                SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.2,
+                                  child: Center(
+                                    child: Text(
+                                        "Rs ${_paymentCharges.toStringAsFixed(2)}"),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.3,
+                                  child: const Text("Total Amount"),
+                                ),
+                                SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.2,
+                                  child: Center(
+                                    child: Text(
+                                        "Rs ${_totalAmount.toStringAsFixed(2)}"),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        child: _isLoading
+                            ? const Center(
+                                child: CircularProgressIndicator.adaptive(
+                                  backgroundColor: Colors.white,
+                                ),
+                              )
+                            : CustomButton(
+                                onPressed: () async {
+                                  try {
+                                    setState(() => _isLoading = true);
+                                    await makePayment();
+                                  } catch (error) {
+                                    print("ERROR = $error");
+                                  } finally {
+                                    setState(() => _isLoading = false);
+                                  }
+                                },
+                                text: "BUY",
+                              ),
+                      ),
+                    ],
+                  ],
                 ),
               ),
-            ],
-          ),
-        ),
-      ),
+            ),
       // body: Center(
       //   child: _isLoading
       //       ? const CircularProgressIndicator.adaptive(

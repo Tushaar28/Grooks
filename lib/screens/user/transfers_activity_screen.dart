@@ -2,11 +2,11 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:expansion_tile_card/expansion_tile_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:grooks_dev/models/transfer.dart';
 import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/authentication/login_screen.dart';
 import 'package:intl/intl.dart';
-import '../../models/transaction.dart' as model;
 
 class TransfersActivityScreen extends StatefulWidget {
   final String userId;
@@ -133,8 +133,7 @@ class _TransfersActivityScreenState extends State<TransfersActivityScreen> {
                       itemCount: _transfers.length + (_allLoaded ? 1 : 0),
                       itemBuilder: (context, index) {
                         if (index < _transfers.length) {
-                          model.Transaction transfer =
-                              _transfers[index]['transfer'];
+                          Transfer transfer = _transfers[index]['transfer'];
                           Users user = _transfers[index]['user'];
                           return Scrollbar(
                             child: Padding(
@@ -152,7 +151,7 @@ class _TransfersActivityScreenState extends State<TransfersActivityScreen> {
                                     alignment: const Alignment(0, 0),
                                     child: transfer.receiverId != null
                                         ? AutoSizeText(
-                                            '-${transfer.redeemableCoins}',
+                                            '-${transfer.coins}',
                                             style: const TextStyle(
                                               fontFamily: 'Poppins',
                                               fontSize: 22,
@@ -160,7 +159,7 @@ class _TransfersActivityScreenState extends State<TransfersActivityScreen> {
                                             ),
                                           )
                                         : AutoSizeText(
-                                            '+${transfer.bonusCoins}',
+                                            '+${transfer.coins}',
                                             style: TextStyle(
                                               fontFamily: 'Poppins',
                                               fontSize: 22,

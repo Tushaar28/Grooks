@@ -13,6 +13,7 @@ import 'package:grooks_dev/models/feedback.dart';
 import 'package:grooks_dev/models/question.dart';
 import 'package:grooks_dev/models/trade.dart';
 import 'package:grooks_dev/models/transaction.dart';
+import 'package:grooks_dev/models/transfer.dart';
 import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/models/wallet.dart';
 import '../models/transaction.dart' as model;
@@ -127,6 +128,17 @@ class FirebaseMethods {
     String url =
         (await settingsCollection.get()).docs.first.get("referralFallbackUrl");
     return url;
+  }
+
+  Future<double> get getPaymentGatewayCommission async {
+    try {
+      QuerySnapshot qs = await settingsCollection.get();
+      double? commission = qs.docs.first.get("paymentGatewayCommission");
+      if (commission == null) throw "An error occured";
+      return commission;
+    } catch (error) {
+      throw error.toString();
+    }
   }
 
   Future<bool> isNewUser({
@@ -522,7 +534,7 @@ class FirebaseMethods {
       DateTime currentDate = DateTime.now();
       List<Trade> trades = [];
       List<String> tradeIds = [];
-      List<model.Transaction> transactions = [];
+      //List<model.Transaction> transactions = [];
       int bonusCoinsUsed, redeemableCoinsUsed;
       for (int i = 0; i < count; i++) {
         int remainingExpense = bet;
@@ -555,20 +567,16 @@ class FirebaseMethods {
         trades.add(trade);
         tradeIds.add(tradeId);
 
-        String transactionId =
-            walletsCollection.doc(walletId).collection('transactions').doc().id;
-        model.Transaction transaction = model.Transaction(
-          id: transactionId,
-          createdAt: currentDate,
-          status: model.TransactionStatus.PROCESSED,
-          type: model.TransactionType.COINS_LOST,
-          amount: bet.toDouble(),
-          bonusCoins: bonusCoinsUsed,
-          redeemableCoins: redeemableCoinsUsed,
-          questionId: questionId,
-          updatedAt: currentDate,
-        );
-        transactions.add(transaction);
+        // String transactionId =
+        //     walletsCollection.doc(walletId).collection('transactions').doc().id;
+        // model.Transaction transaction = model.Transaction(
+        //   id: transactionId,
+        //   createdAt: currentDate,
+        //   status: model.TransactionStatus.PROCESSED,
+        //   amount: bet.toDouble(),
+        //   updatedAt: currentDate,
+        // );
+        // transactions.add(transaction);
       }
 
       //Add to database
@@ -585,20 +593,20 @@ class FirebaseMethods {
           'updatedAt': currentDate,
         });
 
-        for (int i = 0; i < transactions.length; i++) {
-          walletsCollection
-              .doc(walletId)
-              .collection('transactions')
-              .doc(transactions[i].id)
-              .set(transactions[i].toMap(transactions[i])
-                  as Map<String, dynamic>);
-        }
+        // for (int i = 0; i < transactions.length; i++) {
+        //   walletsCollection
+        //       .doc(walletId)
+        //       .collection('transactions')
+        //       .doc(transactions[i].id)
+        //       .set(transactions[i].toMap(transactions[i])
+        //           as Map<String, dynamic>);
+        // }
 
         await usersCollection.doc(userId).update({
           'questions': FieldValue.arrayUnion([questionId]),
         });
 
-        //Add list of bets in questions collection
+        //Add list of trades in questions collection
         if (response) {
           await questionsCollection.doc(questionId).update({
             'yesTrades': FieldValue.arrayUnion(tradeIds),
@@ -687,19 +695,19 @@ class FirebaseMethods {
         int redeemableCoinsUsed = trade.redeemableCoinsUsed;
         DateTime currentDate = DateTime.now();
 
-        String transactionId =
-            walletsCollection.doc(walletId).collection('transactions').doc().id;
-        model.Transaction transaction = model.Transaction(
-          id: transactionId,
-          createdAt: currentDate,
-          status: model.TransactionStatus.PROCESSED,
-          type: model.TransactionType.COINS_ADDED,
-          amount: trade.coins.toDouble(),
-          bonusCoins: trade.bonusCoinsUsed,
-          redeemableCoins: trade.redeemableCoinsUsed,
-          questionId: trade.questionId,
-          updatedAt: currentDate,
-        );
+        // String transactionId =
+        //     walletsCollection.doc(walletId).collection('transactions').doc().id;
+        // model.Transaction transaction = model.Transaction(
+        //   id: transactionId,
+        //   createdAt: currentDate,
+        //   status: model.TransactionStatus.PROCESSED,
+        //   type: model.TransactionType.COINS_ADDED,
+        //   amount: trade.coins.toDouble(),
+        //   bonusCoins: trade.bonusCoinsUsed,
+        //   redeemableCoins: trade.redeemableCoinsUsed,
+        //   questionId: trade.questionId,
+        //   updatedAt: currentDate,
+        // );
 
         if (trade.response) {
           await questionsCollection.doc(trade.questionId).update({
@@ -721,11 +729,11 @@ class FirebaseMethods {
           'redeemableCoins': currentRedeemableCoins + redeemableCoinsUsed,
         });
 
-        await walletsCollection
-            .doc(walletId)
-            .collection('transactions')
-            .doc(transactionId)
-            .set(transaction.toMap(transaction) as Map<String, dynamic>);
+        // await walletsCollection
+        //     .doc(walletId)
+        //     .collection('transactions')
+        //     .doc(transactionId)
+        //     .set(transaction.toMap(transaction) as Map<String, dynamic>);
 
         await tradesCollection.doc(trade.id).update({
           'status': Status.CANCELLED_BY_USER.toString().split('.').last,
@@ -790,23 +798,23 @@ class FirebaseMethods {
           'pairedTradeId': firstTrade.id,
         });
 
-        String transactionId =
-            walletsCollection.doc(walletId).collection('transactions').doc().id;
-        model.Transaction transaction = model.Transaction(
-          id: transactionId,
-          createdAt: DateTime.now(),
-          status: model.TransactionStatus.PROCESSED,
-          type: TransactionType.COINS_LOST,
-          amount: bet.toDouble(),
-          bonusCoins: bonusCoinsUsed,
-          redeemableCoins: redeemableCoinsUsed,
-          updatedAt: DateTime.now(),
-        );
-        await walletsCollection
-            .doc(walletId)
-            .collection('transactions')
-            .doc(transactionId)
-            .set(transaction.toMap(transaction) as Map<String, dynamic>);
+        // String transactionId =
+        //     walletsCollection.doc(walletId).collection('transactions').doc().id;
+        // model.Transaction transaction = model.Transaction(
+        //   id: transactionId,
+        //   createdAt: DateTime.now(),
+        //   status: model.TransactionStatus.PROCESSED,
+        //   type: TransactionType.COINS_LOST,
+        //   amount: bet.toDouble(),
+        //   bonusCoins: bonusCoinsUsed,
+        //   redeemableCoins: redeemableCoinsUsed,
+        //   updatedAt: DateTime.now(),
+        // );
+        // await walletsCollection
+        //     .doc(walletId)
+        //     .collection('transactions')
+        //     .doc(transactionId)
+        //     .set(transaction.toMap(transaction) as Map<String, dynamic>);
 
         await walletsCollection.doc(walletId).update({
           'updatedAt': DateTime.now(),
@@ -908,57 +916,74 @@ class FirebaseMethods {
 
           //Deduct redeemable coins from sender
 
-          String docId = walletsCollection
-              .doc(walletId)
-              .collection('transactions')
-              .doc()
-              .id;
-          model.Transaction transaction = model.Transaction(
+          String docId =
+              walletsCollection.doc(walletId).collection('transfers').doc().id;
+          Transfer transfer = Transfer(
             id: docId,
+            coins: deductCoins,
             createdAt: currentDate,
-            type: TransactionType.COINS_SENT,
-            receiverId: receiverId,
-            redeemableCoins: deductCoins,
-            status: model.TransactionStatus.PROCESSED,
             updatedAt: currentDate,
+            isSuccess: true,
+            receiverId: receiverId,
+            senderId: senderId,
           );
-          await walletsCollection
-              .doc(walletId)
-              .collection('transactions')
-              .doc(docId)
-              .set(transaction.toMap(transaction) as Map<String, dynamic>);
+          // model.Transaction transaction = model.Transaction(
+          //   id: docId,
+          //   createdAt: currentDate,
+          //   type: TransactionType.COINS_SENT,
+          //   receiverId: receiverId,
+          //   redeemableCoins: deductCoins,
+          //   status: model.TransactionStatus.PROCESSED,
+          //   updatedAt: currentDate,
+          // );
 
           await walletsCollection.doc(walletId).update({
             'redeemableCoins': senderCurrentRedeemableCoins - deductCoins,
+            'updatedAt': currentDate,
           });
+
+          await walletsCollection
+              .doc(walletId)
+              .collection('transfers')
+              .doc(docId)
+              .set(transfer.toMap(transfer) as Map<String, dynamic>);
 
           // Add bonus coins to receiver
           walletSnapshot = await walletsCollection
               .where('userId', isEqualTo: receiverId)
               .get();
           walletId = walletSnapshot.docs.first.id;
-          docId = walletsCollection
-              .doc(walletId)
-              .collection('transactions')
-              .doc()
-              .id;
-          transaction = model.Transaction(
+          docId =
+              walletsCollection.doc(walletId).collection('transfers').doc().id;
+          transfer = Transfer(
             id: docId,
-            createdAt: DateTime.now(),
-            type: model.TransactionType.COINS_RECEIVED,
-            senderId: senderId,
-            bonusCoins: transferCoins,
-            status: model.TransactionStatus.PROCESSED,
+            createdAt: currentDate,
             updatedAt: currentDate,
+            coins: transferCoins,
+            isSuccess: true,
+            receiverId: receiverId,
+            senderId: senderId,
           );
-          await walletsCollection
-              .doc(walletId)
-              .collection('transactions')
-              .doc(docId)
-              .set(transaction.toMap(transaction) as Map<String, dynamic>);
+          // transaction = model.Transaction(
+          //   id: docId,
+          //   createdAt: DateTime.now(),
+          //   type: model.TransactionType.COINS_RECEIVED,
+          //   senderId: senderId,
+          //   bonusCoins: transferCoins,
+          //   status: model.TransactionStatus.PROCESSED,
+          //   updatedAt: currentDate,
+          // );
+
           await walletsCollection.doc(walletId).update({
             'bonusCoins': receiverCurrentBonusCoins + transferCoins,
+            'updatedAt': currentDate,
           });
+
+          await walletsCollection
+              .doc(walletId)
+              .collection('transfers')
+              .doc(docId)
+              .set(transfer.toMap(transfer) as Map<String, dynamic>);
         },
         timeout: const Duration(seconds: 15),
       );
@@ -1029,11 +1054,7 @@ class FirebaseMethods {
           lastTradeId.isNotEmpty) {
         transfersSnapshot = await walletsCollection
             .doc(walletId)
-            .collection('transactions')
-            .where('type', whereIn: [
-              model.TransactionType.COINS_RECEIVED.toString().split('.').last,
-              model.TransactionType.COINS_SENT.toString().split('.').last,
-            ])
+            .collection('transfers')
             .orderBy('updatedAt', descending: true)
             .orderBy('id', descending: true)
             .startAfter([lastTradeDate, lastTradeId])
@@ -1042,11 +1063,7 @@ class FirebaseMethods {
       } else {
         transfersSnapshot = await walletsCollection
             .doc(walletId)
-            .collection('transactions')
-            .where('type', whereIn: [
-              model.TransactionType.COINS_RECEIVED.toString().split('.').last,
-              model.TransactionType.COINS_SENT.toString().split('.').last,
-            ])
+            .collection('transfers')
             .orderBy('updatedAt', descending: true)
             .orderBy('id', descending: true)
             .limit(pageSize!)
@@ -1056,8 +1073,8 @@ class FirebaseMethods {
         snapshotList.add(element);
       }
       await Future.forEach(snapshotList, (QueryDocumentSnapshot element) async {
-        model.Transaction transfer =
-            model.Transaction.fromMap(element.data() as Map<String, dynamic>);
+        Transfer transfer =
+            Transfer.fromMap(element.data() as Map<String, dynamic>);
         Users user;
         if (transfer.receiverId != null) {
           user = (await getUserDetails(userId: transfer.receiverId))!;
@@ -1167,6 +1184,30 @@ class FirebaseMethods {
       return openTrades;
     } catch (error) {
       rethrow;
+    }
+  }
+
+  Future<void> updateTransactionDetails({
+    required bool transactionStatus,
+    required bool transactionId,
+    required String userId,
+  }) async {
+    try {
+      DateTime currentDate = DateTime.now();
+      String walletId =
+          (await walletsCollection.where("userId", isEqualTo: userId).get())
+              .docs
+              .first
+              .id;
+      String id = walletsCollection.doc(walletId).id;
+      // model.Transaction transaction = model.Transaction(
+      //   id: id,
+      //   createdAt: currentDate,
+      //   updatedAt: currentDate,
+      //   status:
+      // );
+    } catch (error) {
+      throw error.toString();
     }
   }
 }

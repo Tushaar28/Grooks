@@ -153,7 +153,7 @@ class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
       });
     }
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      resizeToAvoidBottomInset: true,
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.black),
         backgroundColor: Colors.white,
@@ -193,196 +193,117 @@ class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
                     fit: BoxFit.fill,
                   ),
                 ),
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
-                  padding: EdgeInsets.fromLTRB(
-                    0,
-                    MediaQuery.of(context).size.height * 0.35,
-                    0,
-                    0,
-                  ),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Container(
-                          width: MediaQuery.of(context).size.width * 0.8,
-                          height: MediaQuery.of(context).size.height * 0.06,
-                          decoration: const BoxDecoration(
-                            color: Colors.transparent,
-                          ),
-                          child: const AutoSizeText(
-                            'A friend in need is a friend indeed. Help your friends by sharing your coins.',
-                            style: TextStyle(
-                              fontFamily: 'Roboto',
-                              fontSize: 16,
+                SingleChildScrollView(
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    height: MediaQuery.of(context).size.height,
+                    padding: EdgeInsets.fromLTRB(
+                      0,
+                      MediaQuery.of(context).size.height * 0.35,
+                      0,
+                      0,
+                    ),
+                    child: Form(
+                      key: _formKey,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Container(
+                            width: MediaQuery.of(context).size.width * 0.8,
+                            height: MediaQuery.of(context).size.height * 0.06,
+                            decoration: const BoxDecoration(
+                              color: Colors.transparent,
                             ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-                          child: Text(
-                            "$_userCoins coins available for transfer",
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-                          child: TextFormField(
-                            keyboardType: TextInputType.text,
-                            controller: _mobileOrEmailController,
-                            obscureText: false,
-                            decoration: InputDecoration(
-                              labelText: 'Mobile / Email',
-                              labelStyle: const TextStyle(
-                                color: Colors.black,
-                              ),
-                              hintText:
-                                  "Enter your friend's mobile number or email address",
-                              suffixIcon: _isMobileOrEmailValid
-                                  ? _isMobileOrEmailVerified
-                                      ? const TextButton(
-                                          child: AutoSizeText(
-                                            'Verified',
-                                            style:
-                                                TextStyle(color: Colors.green),
-                                          ),
-                                          onPressed: null,
-                                        )
-                                      : TextButton(
-                                          child: AutoSizeText(
-                                            'Verify',
-                                            style: TextStyle(
-                                              color: Theme.of(context)
-                                                  .primaryColor,
-                                            ),
-                                          ),
-                                          onPressed: () async {
-                                            try {
-                                              FocusScope.of(context)
-                                                  .requestFocus(FocusNode());
-                                              bool isVerified =
-                                                  await verifyMobileNumberOrEmail();
-                                              if (isVerified) {
-                                                setState(() =>
-                                                    _isMobileOrEmailVerified =
-                                                        true);
-                                              } else {
-                                                throw 'Mobile not verified';
-                                              }
-                                            } catch (error) {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                const SnackBar(
-                                                  content: AutoSizeText(
-                                                      'Verification failed'),
-                                                  backgroundColor: Colors.red,
-                                                  duration:
-                                                      Duration(seconds: 2),
-                                                ),
-                                              );
-                                            }
-                                          },
-                                        )
-                                  : null,
-                              contentPadding: const EdgeInsets.symmetric(
-                                  vertical: 10, horizontal: 20),
-                              border: const OutlineInputBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(10),
-                                ),
-                              ),
-                              enabledBorder: const OutlineInputBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(10),
-                                ),
-                              ),
-                              focusedBorder: const OutlineInputBorder(
-                                borderRadius: BorderRadius.all(
-                                  Radius.circular(10.0),
-                                ),
-                              ),
-                            ),
-                            style: const TextStyle(
-                              fontFamily: 'Poppins',
-                              fontSize: 16,
-                            ),
-                            validator: (String? value) {},
-                          ),
-                        ),
-                        if (_receiverUser != null) const AutoSizeText(''),
-                        if (_isMobileOrEmailVerified && _receiverUser != null)
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                            child: TextFormField(
-                              readOnly: true,
-                              initialValue: _receiverUser!.name,
-                              obscureText: false,
-                              decoration: const InputDecoration(
-                                labelText: 'Name',
-                                labelStyle: TextStyle(
-                                  color: Colors.black,
-                                ),
-                                contentPadding: EdgeInsets.symmetric(
-                                    vertical: 10, horizontal: 20),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(10),
-                                  ),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(10),
-                                  ),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.all(
-                                    Radius.circular(10.0),
-                                  ),
-                                ),
-                              ),
-                              style: const TextStyle(
-                                fontFamily: 'Poppins',
+                            child: const AutoSizeText(
+                              'A friend in need is a friend indeed. Help your friends by sharing your coins.',
+                              style: TextStyle(
+                                fontFamily: 'Roboto',
                                 fontSize: 16,
                               ),
                             ),
                           ),
-                        if (_receiverUser != null)
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                            child: Text(
+                              "$_userCoins coins available for transfer",
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ),
                           Padding(
                             padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                             child: TextFormField(
-                              keyboardType: TextInputType.phone,
-                              textAlign: TextAlign.center,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly
-                              ],
-                              controller: _coinsController,
+                              keyboardType: TextInputType.text,
+                              controller: _mobileOrEmailController,
                               obscureText: false,
-                              onChanged: (value) => setState(() {}),
-                              decoration: const InputDecoration(
-                                labelText: 'Coins',
-                                labelStyle: TextStyle(
+                              decoration: InputDecoration(
+                                labelText: 'Mobile / Email',
+                                labelStyle: const TextStyle(
                                   color: Colors.black,
                                 ),
-                                hintText: 'Enter number of coins to transfer',
-                                contentPadding: EdgeInsets.symmetric(
+                                hintText:
+                                    "Enter your friend's mobile number or email address",
+                                suffixIcon: _isMobileOrEmailValid
+                                    ? _isMobileOrEmailVerified
+                                        ? const TextButton(
+                                            child: AutoSizeText(
+                                              'Verified',
+                                              style: TextStyle(
+                                                  color: Colors.green),
+                                            ),
+                                            onPressed: null,
+                                          )
+                                        : TextButton(
+                                            child: AutoSizeText(
+                                              'Verify',
+                                              style: TextStyle(
+                                                color: Theme.of(context)
+                                                    .primaryColor,
+                                              ),
+                                            ),
+                                            onPressed: () async {
+                                              try {
+                                                FocusScope.of(context)
+                                                    .requestFocus(FocusNode());
+                                                bool isVerified =
+                                                    await verifyMobileNumberOrEmail();
+                                                if (isVerified) {
+                                                  setState(() =>
+                                                      _isMobileOrEmailVerified =
+                                                          true);
+                                                } else {
+                                                  throw 'Mobile not verified';
+                                                }
+                                              } catch (error) {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  const SnackBar(
+                                                    content: AutoSizeText(
+                                                        'Verification failed'),
+                                                    backgroundColor: Colors.red,
+                                                    duration:
+                                                        Duration(seconds: 2),
+                                                  ),
+                                                );
+                                              }
+                                            },
+                                          )
+                                    : null,
+                                contentPadding: const EdgeInsets.symmetric(
                                     vertical: 10, horizontal: 20),
-                                border: OutlineInputBorder(
+                                border: const OutlineInputBorder(
                                   borderRadius: BorderRadius.all(
                                     Radius.circular(10),
                                   ),
                                 ),
-                                enabledBorder: OutlineInputBorder(
+                                enabledBorder: const OutlineInputBorder(
                                   borderRadius: BorderRadius.all(
                                     Radius.circular(10),
                                   ),
                                 ),
-                                focusedBorder: OutlineInputBorder(
+                                focusedBorder: const OutlineInputBorder(
                                   borderRadius: BorderRadius.all(
                                     Radius.circular(10.0),
                                   ),
@@ -392,71 +313,105 @@ class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
                                 fontFamily: 'Poppins',
                                 fontSize: 16,
                               ),
-                              validator: (String? value) {
-                                try {
-                                  int coins = int.tryParse(value!)!;
-                                  if (coins > _userCoins) {
-                                    return 'Insufficient coins';
-                                  }
-                                  return null;
-                                } on FormatException catch (_) {
-                                  return 'Invalid amount';
-                                }
-                              },
+                              validator: (String? value) {},
                             ),
                           ),
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(
-                              20,
-                              MediaQuery.of(context).size.height * 0.015,
-                              20,
-                              0),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              Container(
-                                width: MediaQuery.of(context).size.width * 0.5,
-                                height:
-                                    MediaQuery.of(context).size.height * 0.05,
-                                decoration: const BoxDecoration(
-                                  color: Colors.transparent,
-                                ),
-                                child: AutoSizeText(
-                                  'Transfer charges ($_transferCommission%)',
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    fontFamily: 'Poppins',
+                          if (_receiverUser != null) const AutoSizeText(''),
+                          if (_isMobileOrEmailVerified && _receiverUser != null)
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                              child: TextFormField(
+                                readOnly: true,
+                                initialValue: _receiverUser!.name,
+                                obscureText: false,
+                                decoration: const InputDecoration(
+                                  labelText: 'Name',
+                                  labelStyle: TextStyle(
+                                    color: Colors.black,
                                   ),
-                                ),
-                              ),
-                              Container(
-                                width: MediaQuery.of(context).size.width * 0.3,
-                                height:
-                                    MediaQuery.of(context).size.height * 0.05,
-                                decoration: const BoxDecoration(
-                                  color: Colors.transparent,
-                                ),
-                                child: Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(20, 0, 0, 0),
-                                  child: AutoSizeText(
-                                    _coinsController.text.isEmpty
-                                        ? '0'
-                                        : '${(int.parse(_coinsController.text) * _transferCommission / 100).ceil()}',
-                                    style: const TextStyle(
-                                      fontFamily: 'Poppins',
-                                      fontSize: 14,
+                                  contentPadding: EdgeInsets.symmetric(
+                                      vertical: 10, horizontal: 20),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(10),
+                                    ),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(10),
+                                    ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(10.0),
                                     ),
                                   ),
                                 ),
-                              )
-                            ],
-                          ),
-                        ),
-                        if (_isMobileOrEmailValid && _isMobileOrEmailVerified)
+                                style: const TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ),
+                          if (_receiverUser != null)
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                              child: TextFormField(
+                                keyboardType: TextInputType.phone,
+                                textAlign: TextAlign.center,
+                                inputFormatters: [
+                                  FilteringTextInputFormatter.digitsOnly
+                                ],
+                                controller: _coinsController,
+                                obscureText: false,
+                                onChanged: (value) => setState(() {}),
+                                decoration: const InputDecoration(
+                                  labelText: 'Coins',
+                                  labelStyle: TextStyle(
+                                    color: Colors.black,
+                                  ),
+                                  hintText: 'Enter number of coins to transfer',
+                                  contentPadding: EdgeInsets.symmetric(
+                                      vertical: 10, horizontal: 20),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(10),
+                                    ),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(10),
+                                    ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.all(
+                                      Radius.circular(10.0),
+                                    ),
+                                  ),
+                                ),
+                                style: const TextStyle(
+                                  fontFamily: 'Poppins',
+                                  fontSize: 16,
+                                ),
+                                validator: (String? value) {
+                                  try {
+                                    int coins = int.tryParse(value!)!;
+                                    if (coins > _userCoins) {
+                                      return 'Insufficient coins';
+                                    }
+                                    return null;
+                                  } on FormatException catch (_) {
+                                    return 'Invalid amount';
+                                  }
+                                },
+                              ),
+                            ),
                           Padding(
-                            padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                            padding: EdgeInsets.fromLTRB(
+                                20,
+                                MediaQuery.of(context).size.height * 0.015,
+                                20,
+                                0),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
                               mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -469,9 +424,9 @@ class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
                                   decoration: const BoxDecoration(
                                     color: Colors.transparent,
                                   ),
-                                  child: const AutoSizeText(
-                                    'Final Coins to be transferred',
-                                    style: TextStyle(
+                                  child: AutoSizeText(
+                                    'Transfer charges ($_transferCommission%)',
+                                    style: const TextStyle(
                                       fontSize: 14,
                                       fontFamily: 'Poppins',
                                     ),
@@ -491,7 +446,7 @@ class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
                                     child: AutoSizeText(
                                       _coinsController.text.isEmpty
                                           ? '0'
-                                          : '${(int.parse(_coinsController.text) * (1 - (_transferCommission / 100))).floor()}',
+                                          : '${(int.parse(_coinsController.text) * _transferCommission / 100).ceil()}',
                                       style: const TextStyle(
                                         fontFamily: 'Poppins',
                                         fontSize: 14,
@@ -502,96 +457,151 @@ class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
                               ],
                             ),
                           ),
-                        if (_coinsController.text.trim().isNotEmpty)
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
-                            child: _isLoading
-                                ? const CircularProgressIndicator.adaptive(
-                                    backgroundColor: Colors.white,
+                          if (_isMobileOrEmailValid && _isMobileOrEmailVerified)
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.5,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.05,
+                                    decoration: const BoxDecoration(
+                                      color: Colors.transparent,
+                                    ),
+                                    child: const AutoSizeText(
+                                      'Final Coins to be transferred',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontFamily: 'Poppins',
+                                      ),
+                                    ),
+                                  ),
+                                  Container(
+                                    width:
+                                        MediaQuery.of(context).size.width * 0.3,
+                                    height: MediaQuery.of(context).size.height *
+                                        0.05,
+                                    decoration: const BoxDecoration(
+                                      color: Colors.transparent,
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          20, 0, 0, 0),
+                                      child: AutoSizeText(
+                                        _coinsController.text.isEmpty
+                                            ? '0'
+                                            : '${(int.parse(_coinsController.text) * (1 - (_transferCommission / 100))).floor()}',
+                                        style: const TextStyle(
+                                          fontFamily: 'Poppins',
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
                                   )
-                                : _done
-                                    ? const SizedBox()
-                                    : SwipeButton(
-                                        backgroundColorEnd:
-                                            Colors.blueAccent[100],
-                                        color: Theme.of(context).primaryColor,
-                                        width: 300,
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.06,
-                                        text: 'Swipe to transfer',
-                                        onSwipeCallback: () async {
-                                          try {
-                                            if (_isMobileOrEmailVerified ==
-                                                false) {
-                                              throw 'Mobile number not verified';
-                                            }
-                                            if (_formKey.currentState!
-                                                .validate()) {
-                                              setState(() => _isLoading = true);
-                                              await transferCoins();
+                                ],
+                              ),
+                            ),
+                          if (_coinsController.text.trim().isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+                              child: _isLoading
+                                  ? const CircularProgressIndicator.adaptive(
+                                      backgroundColor: Colors.white,
+                                    )
+                                  : _done
+                                      ? const SizedBox()
+                                      : SwipeButton(
+                                          backgroundColorEnd:
+                                              Colors.blueAccent[100],
+                                          color: Theme.of(context).primaryColor,
+                                          width: 300,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.06,
+                                          text: 'Swipe to transfer',
+                                          onSwipeCallback: () async {
+                                            try {
+                                              if (_isMobileOrEmailVerified ==
+                                                  false) {
+                                                throw 'Mobile number not verified';
+                                              }
+                                              if (_formKey.currentState!
+                                                  .validate()) {
+                                                setState(
+                                                    () => _isLoading = true);
+                                                await transferCoins();
 
+                                                ScaffoldMessenger.of(context)
+                                                    .hideCurrentSnackBar();
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                        successSnackbar);
+                                                Future.delayed(
+                                                  const Duration(
+                                                      milliseconds: 2100),
+                                                  () =>
+                                                      Navigator.pushReplacement(
+                                                    context,
+                                                    PageTransition(
+                                                      child: ActivityScreen(
+                                                        userId: widget.user.id,
+                                                        chosenOption:
+                                                            'Transfers',
+                                                      ),
+                                                      type: PageTransitionType
+                                                          .rightToLeft,
+                                                      duration: const Duration(
+                                                          milliseconds: 300),
+                                                      reverseDuration:
+                                                          const Duration(
+                                                              milliseconds:
+                                                                  300),
+                                                    ),
+                                                  ),
+                                                );
+                                              }
+                                            } catch (error) {
                                               ScaffoldMessenger.of(context)
                                                   .hideCurrentSnackBar();
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                      successSnackbar);
-                                              Future.delayed(
-                                                const Duration(
-                                                    milliseconds: 2100),
-                                                () => Navigator.pushReplacement(
-                                                  context,
-                                                  PageTransition(
-                                                    child: ActivityScreen(
-                                                      userId: widget.user.id,
-                                                      chosenOption: 'Transfers',
-                                                    ),
-                                                    type: PageTransitionType
-                                                        .rightToLeft,
-                                                    duration: const Duration(
-                                                        milliseconds: 300),
-                                                    reverseDuration:
-                                                        const Duration(
-                                                            milliseconds: 300),
+                                              if (error.toString() ==
+                                                  'Mobile number not verified') {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                        verificationfailureSnackbar);
+                                              } else if (error.toString() ==
+                                                  'Insufficient coins') {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                  const SnackBar(
+                                                    content: Text(
+                                                        "Insufficient coins"),
+                                                    backgroundColor: Colors.red,
+                                                    duration:
+                                                        Duration(seconds: 2),
                                                   ),
-                                                ),
-                                              );
+                                                );
+                                              } else {
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(
+                                                        failureSnackbar);
+                                              }
+                                              setState(() {});
+                                            } finally {
+                                              setState(() {
+                                                _isLoading = false;
+                                              });
                                             }
-                                          } catch (error) {
-                                            ScaffoldMessenger.of(context)
-                                                .hideCurrentSnackBar();
-                                            if (error.toString() ==
-                                                'Mobile number not verified') {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                      verificationfailureSnackbar);
-                                            } else if (error.toString() ==
-                                                'Insufficient coins') {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                const SnackBar(
-                                                  content: Text(
-                                                      "Insufficient coins"),
-                                                  backgroundColor: Colors.red,
-                                                  duration:
-                                                      Duration(seconds: 2),
-                                                ),
-                                              );
-                                            } else {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                      failureSnackbar);
-                                            }
-                                            setState(() {});
-                                          } finally {
-                                            setState(() {
-                                              _isLoading = false;
-                                            });
-                                          }
-                                        },
-                                      ),
-                          ),
-                      ],
+                                          },
+                                        ),
+                            ),
+                        ],
+                      ),
                     ),
                   ),
                 ),

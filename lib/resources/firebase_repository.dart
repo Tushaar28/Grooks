@@ -33,6 +33,9 @@ class FirebaseRepository {
   Future<String> get getReferralFallbackUrl =>
       firebaseMethods.getReferralFallbackUrl;
 
+  Future<double> get getPaymentGatewayCommission =>
+      firebaseMethods.getPaymentGatewayCommission;
+
   Future<bool> isNewUser({
     required String mobile,
   }) =>
@@ -252,4 +255,15 @@ class FirebaseRepository {
     required String userId,
   }) =>
       firebaseMethods.getClosedTradesForUser(userId: userId);
+
+  Future<void> updateTransactionDetails({
+    required bool transactionStatus,
+    required bool transactionId,
+    required String userId,
+  }) =>
+      firebaseMethods.updateTransactionDetails(
+        transactionStatus: transactionStatus,
+        transactionId: transactionId,
+        userId: userId,
+      );
 }
