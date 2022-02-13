@@ -75,6 +75,8 @@ class FirebaseMethods {
     for (var element in snapshot.docs) {
       categories.add(Category.fromMap(element.data() as Map<String, dynamic>));
     }
+
+    categories.sort((a, b) => a.priority.compareTo(b.priority));
     return categories;
   }
 
