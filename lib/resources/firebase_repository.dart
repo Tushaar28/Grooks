@@ -258,12 +258,23 @@ class FirebaseRepository {
 
   Future<void> updateTransactionDetails({
     required bool transactionStatus,
-    required bool transactionId,
+    required String transactionId,
     required String userId,
+    required double amount,
+    required int coins,
   }) =>
       firebaseMethods.updateTransactionDetails(
         transactionStatus: transactionStatus,
         transactionId: transactionId,
+        userId: userId,
+        amount: amount,
+        coins: coins,
+      );
+
+  Future<bool> getPanVerificationStatus({
+    required String userId,
+  }) =>
+      firebaseMethods.getPanVerificationStatus(
         userId: userId,
       );
 }

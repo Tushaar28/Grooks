@@ -2,6 +2,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/user/activity_screen.dart';
+import 'package:grooks_dev/screens/user/pan_verification_screen.dart';
 import 'package:grooks_dev/widgets/custom_button.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -19,8 +20,13 @@ class WalletScreen extends StatefulWidget {
 class _WalletScreenState extends State<WalletScreen> {
   late final GlobalKey<ScaffoldState> _scaffoldKey;
   late final FirebaseRepository _repository;
-  late bool _isLoading, _hasDataLoaded;
+  late bool _isLoading,
+      _hasDataLoaded,
+      _is250Selected,
+      _is500Selected,
+      _is1000Selected;
   late int _bonusCoins, _redeemableCoins;
+  late int _coinsUsed;
 
   @override
   void initState() {
@@ -28,6 +34,8 @@ class _WalletScreenState extends State<WalletScreen> {
     _repository = FirebaseRepository();
     _isLoading = false;
     _hasDataLoaded = false;
+    _is1000Selected = _is250Selected = _is500Selected = false;
+    _coinsUsed = -1;
     getUserCoins();
     _scaffoldKey = GlobalKey<ScaffoldState>();
   }
@@ -41,6 +49,139 @@ class _WalletScreenState extends State<WalletScreen> {
       throw error.toString();
     } finally {
       setState(() => _hasDataLoaded = true);
+    }
+  }
+
+  Future<void> showRedeemDialog() async {
+    try {
+      await showDialog(
+        context: context,
+        builder: (context) => StatefulBuilder(
+          builder: (context, setState) => AlertDialog(
+            content: SizedBox(
+              height: MediaQuery.of(context).size.height * 0.22,
+              child: Column(
+                children: [
+                  const Text("Choose amount to withdraw"),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(
+                      0,
+                      MediaQuery.of(context).size.height * 0.02,
+                      0,
+                      0,
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        TextButton(
+                          child: Text(
+                            "Rs 250",
+                            style: TextStyle(
+                              color:
+                                  _is250Selected ? Colors.blue : Colors.black,
+                            ),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _coinsUsed = 2500;
+                              _is250Selected = true;
+                              _is1000Selected = false;
+                              _is500Selected = false;
+                            });
+                          },
+                        ),
+                        TextButton(
+                          child: Text(
+                            "Rs 500",
+                            style: TextStyle(
+                              color:
+                                  _is500Selected ? Colors.blue : Colors.black,
+                            ),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _coinsUsed = 5000;
+                              _is250Selected = false;
+                              _is1000Selected = false;
+                              _is500Selected = true;
+                            });
+                          },
+                        ),
+                        TextButton(
+                          child: Text(
+                            "Rs 1000",
+                            style: TextStyle(
+                              color:
+                                  _is1000Selected ? Colors.blue : Colors.black,
+                            ),
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _coinsUsed = 10000;
+                              _is250Selected = false;
+                              _is1000Selected = true;
+                              _is500Selected = false;
+                            });
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (_coinsUsed != -1)
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(
+                        0,
+                        MediaQuery.of(context).size.height * 0.02,
+                        0,
+                        0,
+                      ),
+                      child: Text("Coins to be used: $_coinsUsed"),
+                    ),
+                  if (_coinsUsed != -1 && _redeemableCoins >= _coinsUsed)
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(
+                        0,
+                        MediaQuery.of(context).size.height * 0.02,
+                        0,
+                        0,
+                      ),
+                      child: _isLoading
+                          ? const Center(
+                              child: CircularProgressIndicator.adaptive(
+                              backgroundColor: Colors.white,
+                            ))
+                          : CustomButton(
+                              onPressed: () async {
+                                try {
+                                  setState(() => _isLoading = true);
+                                  bool _isPanVerified = await _repository
+                                      .getPanVerificationStatus(
+                                          userId: widget.userId);
+                                  Navigator.of(context).push(
+                                    PageTransition(
+                                      child: PanVerificationScreen(
+                                        userId: widget.userId,
+                                      ),
+                                      type: PageTransitionType.rightToLeft,
+                                    ),
+                                  );
+                                } catch (error) {
+                                  Navigator.of(context).pop();
+                                } finally {
+                                  setState(() => _isLoading = false);
+                                }
+                              },
+                              text: "CONTINUE",
+                            ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    } catch (error) {
+      rethrow;
     }
   }
 
@@ -130,7 +271,9 @@ class _WalletScreenState extends State<WalletScreen> {
                                     MediaQuery.of(context).size.height * 0.03,
                               ),
                               CustomButton(
-                                onPressed: () {},
+                                onPressed: () async {
+                                  await showRedeemDialog();
+                                },
                                 text: "REDEEM",
                               ),
                             ],

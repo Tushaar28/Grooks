@@ -1189,8 +1189,10 @@ class FirebaseMethods {
 
   Future<void> updateTransactionDetails({
     required bool transactionStatus,
-    required bool transactionId,
+    required String transactionId,
     required String userId,
+    required double amount,
+    required int coins,
   }) async {
     try {
       DateTime currentDate = DateTime.now();
@@ -1199,15 +1201,47 @@ class FirebaseMethods {
               .docs
               .first
               .id;
-      String id = walletsCollection.doc(walletId).id;
-      // model.Transaction transaction = model.Transaction(
-      //   id: id,
-      //   createdAt: currentDate,
-      //   updatedAt: currentDate,
-      //   status:
-      // );
+      String id =
+          walletsCollection.doc(walletId).collection("transactions").doc().id;
+      model.Transaction transaction = model.Transaction(
+        id: id,
+        createdAt: currentDate,
+        updatedAt: currentDate,
+        status: transactionStatus
+            ? TransactionStatus.PROCESSED
+            : TransactionStatus.FAILED,
+        amount: amount,
+        transactionId: transactionId,
+        coins: coins,
+      );
+
+      if (transactionStatus) {
+        int currentBonusCoins =
+            (await walletsCollection.doc(walletId).get()).get("bonusCoins");
+        await walletsCollection.doc(walletId).update({
+          'bonusCoins': coins + currentBonusCoins,
+          'updatedAt': currentDate,
+        });
+      }
+      await walletsCollection
+          .doc(walletId)
+          .collection("transactions")
+          .doc(id)
+          .set(transaction.toMap(transaction) as Map<String, dynamic>);
     } catch (error) {
       throw error.toString();
+    }
+  }
+
+  Future<bool> getPanVerificationStatus({
+    required String userId,
+  }) async {
+    try {
+      bool status =
+          (await usersCollection.doc(userId).get()).get("isPanVerified");
+      return status;
+    } catch (error) {
+      rethrow;
     }
   }
 }

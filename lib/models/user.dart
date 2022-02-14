@@ -12,7 +12,6 @@ class Users {
   late DateTime createdAt;
   late DateTime updatedAt;
   late bool isDeleted;
-  late List<String>? trades;
   late String? referredBy;
   late bool isPanVerified;
   late String? accountNumber;
@@ -34,7 +33,6 @@ class Users {
     this.image,
     this.isActive = true,
     this.isDeleted = false,
-    this.trades,
     this.referredBy,
     this.accountNumber,
     this.ifscCode,
@@ -56,7 +54,6 @@ class Users {
     data['createdAt'] = user.createdAt;
     data['updatedAt'] = user.updatedAt;
     data['isDeleted'] = user.isDeleted;
-    data['trades'] = user.trades;
     data['referredBy'] = user.referredBy;
     data['accountNumber'] = user.accountNumber;
     data['ifscCode'] = user.ifscCode;
@@ -87,7 +84,6 @@ class Users {
     createdAt = mapData['createdAt'].toDate();
     updatedAt = mapData['updatedAt'].toDate();
     isDeleted = mapData['isDeleted'];
-    trades = mapData['trades'];
     referredBy = mapData['referredBy'];
     accountNumber = mapData['accountNumber'];
     ifscCode = mapData['ifscCode'];

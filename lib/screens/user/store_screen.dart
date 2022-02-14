@@ -24,6 +24,7 @@ class _StoreScreenState extends State<StoreScreen> {
   late bool _isLoading, _hasDataLoaded;
   late double _paymentGatewayCommission, _price, _paymentCharges, _totalAmount;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
+  late final List<String> _packs;
 
   @override
   void initState() {
@@ -32,6 +33,12 @@ class _StoreScreenState extends State<StoreScreen> {
     _repository = FirebaseRepository();
     getPaymentGatewayCommission();
     _isLoading = false;
+    _packs = [
+      "assets/images/pack1.png",
+      "assets/images/pack2.png",
+      "assets/images/pack3.png",
+      "assets/images/pack4.png",
+    ];
     _price = 0;
     _paymentCharges = 0;
     _totalAmount = 0;
@@ -78,12 +85,12 @@ class _StoreScreenState extends State<StoreScreen> {
       String stage = "TEST";
       String orderAmount = _totalAmount.toStringAsFixed(2);
       String tokenData = result.data["cftoken"];
-      String customerName = "Tushaar";
+      String customerName = widget.user.name;
       String orderNote = "Order_Note";
       String orderCurrency = "INR";
       String appId = "123205e8065ff7070dd4b1379c502321";
-      String customerPhone = "8968980024";
-      String customerEmail = "sample@gmail.com";
+      String customerPhone = widget.user.mobile!.substring(2);
+      String customerEmail = "payment@grooks.in";
       String notifyUrl = "https://test.gocashfree.com/notify";
 
       Map<String, dynamic> inputParams = {
@@ -111,17 +118,36 @@ class _StoreScreenState extends State<StoreScreen> {
           if (result.data != true) {
             throw "An error occured while verifying your payment";
           }
-          if (transactionStatus != "SUCCESS") {
-            throw "An error occured";
-          }
+
           await updateTransactionDetails(
             transactionId: mapData["referenceId"],
             transactionStatus: transactionStatus,
             userId: widget.user.id,
+            amount: _totalAmount,
+            coins: int.parse(_coinsController.text),
           );
+          if (transactionStatus != "SUCCESS") {
+            throw "An error occured";
+          }
         } catch (error) {
+          ScaffoldMessenger.maybeOf(context)!.hideCurrentSnackBar();
+          ScaffoldMessenger.maybeOf(context)!.showSnackBar(
+            const SnackBar(
+              content: Text("Payment failed. Please try again"),
+              backgroundColor: Colors.red,
+              duration: Duration(seconds: 2),
+            ),
+          );
           rethrow;
         }
+        ScaffoldMessenger.maybeOf(context)!.hideCurrentSnackBar();
+        ScaffoldMessenger.maybeOf(context)!.showSnackBar(
+          const SnackBar(
+            content: Text("Payment successful"),
+            backgroundColor: Colors.green,
+            duration: Duration(seconds: 2),
+          ),
+        );
       });
     } catch (error) {
       rethrow;
@@ -132,14 +158,18 @@ class _StoreScreenState extends State<StoreScreen> {
 
   Future<void> updateTransactionDetails({
     required String transactionStatus,
-    required bool transactionId,
+    required String transactionId,
     required String userId,
+    required double amount,
+    required int coins,
   }) async {
     bool isSuccess = transactionStatus == "SUCCESS" ? true : false;
     await _repository.updateTransactionDetails(
       transactionStatus: isSuccess,
       transactionId: transactionId,
       userId: userId,
+      amount: amount,
+      coins: coins,
     );
   }
 
@@ -197,15 +227,18 @@ class _StoreScreenState extends State<StoreScreen> {
                         0,
                       ),
                       child: GridView.builder(
-                        itemCount: 4,
+                        itemCount: _packs.length,
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
                           crossAxisSpacing: 0,
                           mainAxisSpacing: 0.0,
                         ),
-                        itemBuilder: (context, index) => Card(
-                          child: Image.asset("assets/images/pack1.png"),
+                        itemBuilder: (context, index) => InkWell(
+                          child: Card(
+                            child: Image.asset(_packs[index]),
+                          ),
+                          onTap: () {},
                         ),
                       ),
                     ),
