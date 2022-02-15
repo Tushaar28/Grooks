@@ -277,4 +277,19 @@ class FirebaseRepository {
       firebaseMethods.getPanVerificationStatus(
         userId: userId,
       );
+
+  Future<void> sendWithdrawlRequest({
+    required String userId,
+    required double amount,
+    String? upi,
+    String? accountNumber,
+    String? ifscCode,
+  }) =>
+      firebaseMethods.sendWithdrawlRequest(
+        userId: userId,
+        amount: amount,
+        upi: upi,
+        accountNumber: accountNumber,
+        ifscCode: ifscCode,
+      );
 }

@@ -1,8 +1,10 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
+import 'package:grooks_dev/models/wallet.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/user/activity_screen.dart';
 import 'package:grooks_dev/screens/user/pan_verification_screen.dart';
+import 'package:grooks_dev/screens/user/withdrawl_screen.dart';
 import 'package:grooks_dev/widgets/custom_button.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -157,14 +159,27 @@ class _WalletScreenState extends State<WalletScreen> {
                                   bool _isPanVerified = await _repository
                                       .getPanVerificationStatus(
                                           userId: widget.userId);
-                                  Navigator.of(context).push(
-                                    PageTransition(
-                                      child: PanVerificationScreen(
-                                        userId: widget.userId,
+                                  if (_isPanVerified == false) {
+                                    Navigator.of(context).push(
+                                      PageTransition(
+                                        child: WithdrawlScreen(
+                                          userId: widget.userId,
+                                          amount: _coinsUsed / 10,
+                                        ),
+                                        type: PageTransitionType.rightToLeft,
                                       ),
-                                      type: PageTransitionType.rightToLeft,
-                                    ),
-                                  );
+                                    );
+                                  } else {
+                                    Navigator.of(context).push(
+                                      PageTransition(
+                                        child: WithdrawlScreen(
+                                          userId: widget.userId,
+                                          amount: _coinsUsed / 10,
+                                        ),
+                                        type: PageTransitionType.rightToLeft,
+                                      ),
+                                    );
+                                  }
                                 } catch (error) {
                                   Navigator.of(context).pop();
                                 } finally {

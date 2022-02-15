@@ -1,14 +1,15 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/widgets/custom_button.dart';
 
 class PanVerificationScreen extends StatefulWidget {
-  String userId;
-  PanVerificationScreen({
+  final String userId;
+  final double amount;
+  const PanVerificationScreen({
     Key? key,
     required this.userId,
+    required this.amount,
   }) : super(key: key);
 
   @override

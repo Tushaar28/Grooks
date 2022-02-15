@@ -20,7 +20,6 @@ class Category {
     required this.createdAt,
     required this.updatedAt,
     required this.priority,
-
     this.image,
     this.isActive = true,
     this.isDeleted = false,

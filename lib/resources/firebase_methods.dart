@@ -16,6 +16,8 @@ import 'package:grooks_dev/models/transaction.dart';
 import 'package:grooks_dev/models/transfer.dart';
 import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/models/wallet.dart';
+import 'package:grooks_dev/models/withdrawl.dart';
+import 'package:grooks_dev/screens/user/withdrawl_screen.dart';
 import '../models/transaction.dart' as model;
 
 class FirebaseMethods {
@@ -42,6 +44,8 @@ class FirebaseMethods {
       firestore.collection(SETTINGS_COLLECTION);
   static final CollectionReference walletsCollection =
       firestore.collection(WALLETS_COLLECTION);
+  static final CollectionReference withdrawlsCollection =
+      firestore.collection(WITHDRAWLS_COLLECTION);
 
   Future<String> get getRequiredVersion async {
     try {
@@ -1242,6 +1246,45 @@ class FirebaseMethods {
       bool status =
           (await usersCollection.doc(userId).get()).get("isPanVerified");
       return status;
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<void> sendWithdrawlRequest({
+    required String userId,
+    required double amount,
+    String? upi,
+    String? accountNumber,
+    String? ifscCode,
+  }) async {
+    try {
+      String docId = withdrawlsCollection.doc().id;
+      DateTime currentDate = DateTime.now();
+      late final Withdrawl withdrawl;
+      if (upi != null && upi.isNotEmpty) {
+        withdrawl = Withdrawl(
+          id: docId,
+          userId: userId,
+          amount: amount,
+          createdAt: currentDate,
+          updatedAt: currentDate,
+          status: WithdrawlStatus.PROCESSING,
+          upi: upi,
+        );
+      } else {
+        withdrawl = Withdrawl(
+          id: docId,
+          userId: userId,
+          amount: amount,
+          createdAt: currentDate,
+          updatedAt: currentDate,
+          status: WithdrawlStatus.PROCESSING,
+          accountNumber: accountNumber,
+          ifscCode: ifscCode,
+        );
+      }
+      await withdrawlsCollection.doc(docId).set(withdrawl.toMap(withdrawl));
     } catch (error) {
       rethrow;
     }
