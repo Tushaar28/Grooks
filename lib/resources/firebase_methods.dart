@@ -1269,7 +1269,7 @@ class FirebaseMethods {
           amount: amount,
           createdAt: currentDate,
           updatedAt: currentDate,
-          status: WithdrawlStatus.PROCESSING,
+          status: WithdrawlStatus.INITIATED,
           upi: upi,
         );
       } else {
@@ -1279,7 +1279,7 @@ class FirebaseMethods {
           amount: amount,
           createdAt: currentDate,
           updatedAt: currentDate,
-          status: WithdrawlStatus.PROCESSING,
+          status: WithdrawlStatus.INITIATED,
           accountNumber: accountNumber,
           ifscCode: ifscCode,
         );

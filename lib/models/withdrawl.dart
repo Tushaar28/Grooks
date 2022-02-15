@@ -1,4 +1,5 @@
 enum WithdrawlStatus {
+  INITIATED,
   // ignore: constant_identifier_names
   PROCESSING,
   // ignore: constant_identifier_names
