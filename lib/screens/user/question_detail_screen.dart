@@ -98,6 +98,11 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
     required bool isYes,
   }) async {
     try {
+      bool isQuestionActive = await _repository.getQuestionActiveStatus(
+          questionId: widget.questionId);
+      if (isQuestionActive == false) {
+        throw 'An error occured';
+      }
       int bonusCoins =
           await _repository.getUserBonusCoins(userId: widget.user.id);
       int redeemableCoins =
@@ -373,10 +378,8 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                                   fontWeight: FontWeight.w400,
                                 ),
                               ),
-                              Image.asset(
-                                "assets/images/coins.png",
-                                scale: 1.2
-                                ),
+                              Image.asset("assets/images/coins.png",
+                                  scale: 1.2),
                               const Text(
                                 " = ₹1 ",
                                 style: TextStyle(
@@ -385,7 +388,6 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                                   fontWeight: FontWeight.w400,
                                 ),
                               ),
-
                             ],
                           ),
                           const Text(

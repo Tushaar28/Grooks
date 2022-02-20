@@ -170,6 +170,11 @@ class _TopTradesScreenState extends State<TopTradesScreen>
     required Trade trade,
   }) async {
     try {
+      bool isQuestionActive = await _repository.getQuestionActiveStatus(
+          questionId: trade.questionId);
+      if (isQuestionActive == false) {
+        throw 'An error occured';
+      }
       await _repository.pairTrade(
         firstTrade: trade,
         userId: widget.user.id,

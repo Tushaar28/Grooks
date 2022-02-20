@@ -292,4 +292,9 @@ class FirebaseRepository {
         accountNumber: accountNumber,
         ifscCode: ifscCode,
       );
+
+  Future<bool> getQuestionActiveStatus({
+    required String questionId,
+  }) =>
+      firebaseMethods.getQuestionActiveStatus(questionId: questionId);
 }

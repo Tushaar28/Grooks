@@ -6,6 +6,7 @@ import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/authentication/login_screen.dart';
 import 'package:grooks_dev/screens/user/navbar_screen.dart';
+import 'package:grooks_dev/screens/user/question_detail_screen.dart';
 import 'package:grooks_dev/widgets/swipe_button.dart';
 
 class MyTradesScreen extends StatefulWidget {
@@ -89,20 +90,51 @@ class _MyTradesScreenState extends State<MyTradesScreen>
                         onSwipeCallback: () async {
                           try {
                             setState(() => _isLoading = true);
+                            bool isQuestionActive =
+                                await _repository.getQuestionActiveStatus(
+                                    questionId: trade.questionId);
+                            if (isQuestionActive == false) {
+                              throw 'An error occured';
+                            }
                             await _repository.cancelTrade(
                               trade: trade,
                               userId: widget.user.id,
                             );
-                          } catch (error) {
-                            rethrow;
-                          } finally {
                             setState(() => _isLoading = false);
-                            Navigator.of(context).pushReplacement(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    NavbarScreen(user: widget.user),
+                            Navigator.of(context).pop();
+                            await Future.delayed(
+                              const Duration(seconds: 2),
+                              () => Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                  builder: (context) => QuestionDetailScreen(
+                                    user: widget.user,
+                                    questionId: widget.question.id,
+                                    questionName: widget.question.name,
+                                  ),
+                                ),
                               ),
                             );
+                          } catch (error) {
+                            setState(() => _isLoading = false);
+                            Navigator.of(context).pop();
+                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("An error occured"),
+                                backgroundColor: Colors.red,
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
+                            await Future.delayed(
+                              const Duration(seconds: 2),
+                              () => Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      NavbarScreen(user: widget.user),
+                                ),
+                              ),
+                            );
+                            rethrow;
                           }
                         },
                       ),

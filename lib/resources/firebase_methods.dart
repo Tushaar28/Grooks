@@ -520,6 +520,18 @@ class FirebaseMethods {
     }
   }
 
+  Future<bool> getQuestionActiveStatus({
+    required String questionId,
+  }) async {
+    try {
+      bool isQuestionActive =
+          (await questionsCollection.doc(questionId).get()).get('isActive');
+      return isQuestionActive;
+    } catch (error) {
+      rethrow;
+    }
+  }
+
   Future<void> placeTrade({
     required String userId,
     required bool response,
@@ -700,20 +712,6 @@ class FirebaseMethods {
         int bonusCoinsUsed = trade.bonusCoinsUsed;
         int redeemableCoinsUsed = trade.redeemableCoinsUsed;
         DateTime currentDate = DateTime.now();
-
-        // String transactionId =
-        //     walletsCollection.doc(walletId).collection('transactions').doc().id;
-        // model.Transaction transaction = model.Transaction(
-        //   id: transactionId,
-        //   createdAt: currentDate,
-        //   status: model.TransactionStatus.PROCESSED,
-        //   type: model.TransactionType.COINS_ADDED,
-        //   amount: trade.coins.toDouble(),
-        //   bonusCoins: trade.bonusCoinsUsed,
-        //   redeemableCoins: trade.redeemableCoinsUsed,
-        //   questionId: trade.questionId,
-        //   updatedAt: currentDate,
-        // );
 
         if (trade.response) {
           await questionsCollection.doc(trade.questionId).update({
