@@ -9,6 +9,8 @@ import 'package:grooks_dev/screens/user/navbar_screen.dart';
 import 'package:grooks_dev/screens/user/question_detail_screen.dart';
 import 'package:grooks_dev/widgets/swipe_button.dart';
 
+import 'trade_success_screen.dart';
+
 class MyTradesScreen extends StatefulWidget {
   final Users user;
   final Question question;
@@ -66,7 +68,7 @@ class _MyTradesScreenState extends State<MyTradesScreen>
     required BuildContext context,
   }) async {
     try {
-      showDialog(
+      await showDialog(
         context: context,
         builder: (BuildContext context) => StatefulBuilder(
           builder: (context, setState) => AlertDialog(
@@ -101,39 +103,8 @@ class _MyTradesScreenState extends State<MyTradesScreen>
                               userId: widget.user.id,
                             );
                             setState(() => _isLoading = false);
-                            Navigator.of(context).pop();
-                            await Future.delayed(
-                              const Duration(seconds: 2),
-                              () => Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                  builder: (context) => QuestionDetailScreen(
-                                    user: widget.user,
-                                    questionId: widget.question.id,
-                                    questionName: widget.question.name,
-                                  ),
-                                ),
-                              ),
-                            );
+                            Navigator.maybeOf(context)!.pop();
                           } catch (error) {
-                            setState(() => _isLoading = false);
-                            Navigator.of(context).pop();
-                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text("An error occured"),
-                                backgroundColor: Colors.red,
-                                duration: Duration(seconds: 2),
-                              ),
-                            );
-                            await Future.delayed(
-                              const Duration(seconds: 2),
-                              () => Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      NavbarScreen(user: widget.user),
-                                ),
-                              ),
-                            );
                             rethrow;
                           }
                         },
@@ -272,8 +243,40 @@ class _MyTradesScreenState extends State<MyTradesScreen>
                                           await cancelTrade(
                                               trade: _trades[index],
                                               context: context);
-                                          setState(() {});
-                                        } catch (error) {}
+                                          Navigator.maybeOf(context)!
+                                              .pushReplacement(
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  TradeSuccessScreen(
+                                                user: widget.user,
+                                              ),
+                                            ),
+                                          );
+                                        } catch (error) {
+                                          setState(() => _isLoading = false);
+                                          Navigator.of(context).pop();
+                                          ScaffoldMessenger.of(context)
+                                              .hideCurrentSnackBar();
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            const SnackBar(
+                                              content: Text("An error occured"),
+                                              backgroundColor: Colors.red,
+                                              duration: Duration(seconds: 2),
+                                            ),
+                                          );
+                                          await Future.delayed(
+                                            const Duration(seconds: 2),
+                                            () => Navigator.of(context)
+                                                .pushReplacement(
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    NavbarScreen(
+                                                        user: widget.user),
+                                              ),
+                                            ),
+                                          );
+                                        }
                                       },
                                       child: const Text('Cancel'),
                                       style: TextButton.styleFrom(

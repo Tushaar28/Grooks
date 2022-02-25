@@ -32,7 +32,7 @@ class _HowToTradeScreenState extends State<HowToTradeScreen> {
         backgroundColor: Colors.transparent,
         automaticallyImplyLeading: true,
         title: const AutoSizeText(
-          'How To Trade',
+          'How to trade',
           style: TextStyle(
             fontFamily: 'Poppins',
             color: Colors.black,
@@ -41,19 +41,9 @@ class _HowToTradeScreenState extends State<HowToTradeScreen> {
         ),
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
-            bottom: Radius.circular(20),
+            bottom: Radius.circular(10),
           ),
         ),
-        // actions: [
-        //   SizedBox(
-        //     child: IconButton(
-        //       onPressed: () {},
-        //       icon: const Icon(Icons.play_circle_outline_outlined),
-        //       iconSize: 40,
-        //       color: Colors.grey,
-        //     ),
-        //   ),
-        // ],
         centerTitle: false,
         elevation: 0,
       ),

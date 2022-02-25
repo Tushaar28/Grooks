@@ -73,7 +73,7 @@ class _CustomAppbarState extends State<CustomAppbar> {
           onTap: () => Navigator.push(
             context,
             PageTransition(
-              child: WalletScreen(userId: widget.userId),
+              child: ActivityScreen(userId: widget.userId),
               type: PageTransitionType.bottomToTop,
               duration: const Duration(
                 milliseconds: 300,
