@@ -242,139 +242,150 @@ class _StoreScreenState extends State<StoreScreen> {
                         ),
                       ),
                     ),
-                    Padding(
-                      padding: EdgeInsets.only(
-                        top: MediaQuery.of(context).size.height * 0.03,
-                      ),
-                      child: TextField(
-                        controller: _coinsController,
-                        keyboardType: TextInputType.phone,
-                        inputFormatters: [
-                          FilteringTextInputFormatter.digitsOnly,
-                        ],
-                        obscureText: false,
-                        decoration: const InputDecoration(
-                          labelText: 'Coins',
-                          hintText: 'Enter coins (Minimum 100 coins)',
-                          contentPadding: EdgeInsets.symmetric(
-                              vertical: 10, horizontal: 20),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(10),
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                              color: Colors.lightBlueAccent,
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(10),
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Colors.lightBlueAccent, width: 2.0),
-                            borderRadius: BorderRadius.all(Radius.circular(10)),
-                          ),
-                        ),
+
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.1,
+                    ),
+                    const Text(
+                      "COMING SOON",
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
-                    if (isCoinsValid()) ...[
-                      Container(
-                        height: MediaQuery.of(context).size.height * 0.2,
-                        padding: EdgeInsets.fromLTRB(
-                          0,
-                          MediaQuery.of(context).size.height * 0.01,
-                          0,
-                          0,
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.3,
-                                  child: const Text("Price"),
-                                ),
-                                SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.2,
-                                  child: Center(
-                                    child: Text("Rs $_price"),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.3,
-                                  child: const Text("Payment charges"),
-                                ),
-                                SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.2,
-                                  child: Center(
-                                    child: Text(
-                                        "Rs ${_paymentCharges.toStringAsFixed(2)}"),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.3,
-                                  child: const Text("Total Amount"),
-                                ),
-                                SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.2,
-                                  child: Center(
-                                    child: Text(
-                                        "Rs ${_totalAmount.toStringAsFixed(2)}"),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.8,
-                        child: _isLoading
-                            ? const Center(
-                                child: CircularProgressIndicator.adaptive(
-                                  backgroundColor: Colors.white,
-                                ),
-                              )
-                            : CustomButton(
-                                onPressed: () async {
-                                  try {
-                                    setState(() => _isLoading = true);
-                                    await makePayment();
-                                  } catch (error) {
-                                    print("ERROR = $error");
-                                  } finally {
-                                    setState(() => _isLoading = false);
-                                  }
-                                },
-                                text: "BUY",
-                              ),
-                      ),
-                    ],
+                    // Padding(
+                    //   padding: EdgeInsets.only(
+                    //     top: MediaQuery.of(context).size.height * 0.03,
+                    //   ),
+                    //   child: TextField(
+                    //     controller: _coinsController,
+                    //     keyboardType: TextInputType.phone,
+                    //     inputFormatters: [
+                    //       FilteringTextInputFormatter.digitsOnly,
+                    //     ],
+                    //     obscureText: false,
+                    //     decoration: const InputDecoration(
+                    //       labelText: 'Coins',
+                    //       hintText: 'Enter coins (Minimum 100 coins)',
+                    //       contentPadding: EdgeInsets.symmetric(
+                    //           vertical: 10, horizontal: 20),
+                    //       border: OutlineInputBorder(
+                    //         borderRadius: BorderRadius.all(
+                    //           Radius.circular(10),
+                    //         ),
+                    //       ),
+                    //       enabledBorder: OutlineInputBorder(
+                    //         borderSide: BorderSide(
+                    //           color: Colors.lightBlueAccent,
+                    //           width: 1,
+                    //         ),
+                    //         borderRadius: BorderRadius.all(
+                    //           Radius.circular(10),
+                    //         ),
+                    //       ),
+                    //       focusedBorder: OutlineInputBorder(
+                    //         borderSide: BorderSide(
+                    //             color: Colors.lightBlueAccent, width: 2.0),
+                    //         borderRadius: BorderRadius.all(Radius.circular(10)),
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
+                    // if (isCoinsValid()) ...[
+                    //   Container(
+                    //     height: MediaQuery.of(context).size.height * 0.2,
+                    //     padding: EdgeInsets.fromLTRB(
+                    //       0,
+                    //       MediaQuery.of(context).size.height * 0.01,
+                    //       0,
+                    //       0,
+                    //     ),
+                    //     child: Column(
+                    //       mainAxisSize: MainAxisSize.max,
+                    //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    //       children: [
+                    //         Row(
+                    //           mainAxisSize: MainAxisSize.max,
+                    //           mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    //           children: [
+                    //             SizedBox(
+                    //               width:
+                    //                   MediaQuery.of(context).size.width * 0.3,
+                    //               child: const Text("Price"),
+                    //             ),
+                    //             SizedBox(
+                    //               width:
+                    //                   MediaQuery.of(context).size.width * 0.2,
+                    //               child: Center(
+                    //                 child: Text("Rs $_price"),
+                    //               ),
+                    //             ),
+                    //           ],
+                    //         ),
+                    //         Row(
+                    //           mainAxisSize: MainAxisSize.max,
+                    //           mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    //           children: [
+                    //             SizedBox(
+                    //               width:
+                    //                   MediaQuery.of(context).size.width * 0.3,
+                    //               child: const Text("Payment charges"),
+                    //             ),
+                    //             SizedBox(
+                    //               width:
+                    //                   MediaQuery.of(context).size.width * 0.2,
+                    //               child: Center(
+                    //                 child: Text(
+                    //                     "Rs ${_paymentCharges.toStringAsFixed(2)}"),
+                    //               ),
+                    //             ),
+                    //           ],
+                    //         ),
+                    //         Row(
+                    //           mainAxisSize: MainAxisSize.max,
+                    //           mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    //           children: [
+                    //             SizedBox(
+                    //               width:
+                    //                   MediaQuery.of(context).size.width * 0.3,
+                    //               child: const Text("Total Amount"),
+                    //             ),
+                    //             SizedBox(
+                    //               width:
+                    //                   MediaQuery.of(context).size.width * 0.2,
+                    //               child: Center(
+                    //                 child: Text(
+                    //                     "Rs ${_totalAmount.toStringAsFixed(2)}"),
+                    //               ),
+                    //             ),
+                    //           ],
+                    //         ),
+                    //       ],
+                    //     ),
+                    //   ),
+                    //   SizedBox(
+                    //     width: MediaQuery.of(context).size.width * 0.8,
+                    //     child: _isLoading
+                    //         ? const Center(
+                    //             child: CircularProgressIndicator.adaptive(
+                    //               backgroundColor: Colors.white,
+                    //             ),
+                    //           )
+                    //         : CustomButton(
+                    //             onPressed: () async {
+                    //               try {
+                    //                 setState(() => _isLoading = true);
+                    //                 await makePayment();
+                    //               } catch (error) {
+                    //                 print("ERROR = $error");
+                    //               } finally {
+                    //                 setState(() => _isLoading = false);
+                    //               }
+                    //             },
+                    //             text: "BUY",
+                    //           ),
+                    //   ),
+                    // ],
                   ],
                 ),
               ),

@@ -32,7 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
   void initState() {
     super.initState();
     _url =
-        "https://drive.google.com/file/d/1N5BwrFxnzPMrp9gyu--GO0wgToUKp1-B/view?usp=sharing";
+        "https://drive.google.com/file/d/1z1ZWPaI2UtGD5to23lLGfTC9tmLRgYND/view?usp=sharing";
     _mobileController = TextEditingController();
     _repository = FirebaseRepository();
     _scaffoldKey = GlobalKey<ScaffoldState>();
