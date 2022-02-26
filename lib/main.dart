@@ -1,10 +1,10 @@
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:grooks_dev/screens/user/splash_screen.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:device_preview/device_preview.dart';
+import 'package:double_back_to_close_app/double_back_to_close_app.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -52,8 +52,16 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const Center(
-        child: SplashScreen(),
+      home: const Scaffold(
+        body: DoubleBackToCloseApp(
+          snackBar: SnackBar(
+            content: Text('Tap back again to exit'),
+            duration: Duration(seconds: 1),
+          ),
+          child: Center(
+            child: SplashScreen(),
+          ),
+        ),
       ),
     );
   }

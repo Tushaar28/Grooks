@@ -1,9 +1,11 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:grooks_dev/models/question.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/authentication/otp_input_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class LoginScreen extends StatefulWidget {
   final String? referralCode;
@@ -24,10 +26,13 @@ class _LoginScreenState extends State<LoginScreen> {
   late TextEditingController _mobileController;
   late final GlobalKey<ScaffoldState> _scaffoldKey;
   late final FirebaseRepository _repository;
+  late final String _url;
 
   @override
   void initState() {
     super.initState();
+    _url =
+        "https://drive.google.com/file/d/1N5BwrFxnzPMrp9gyu--GO0wgToUKp1-B/view?usp=sharing";
     _mobileController = TextEditingController();
     _repository = FirebaseRepository();
     _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -144,6 +149,24 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.03,
+                  ),
+                  RichText(
+                    text: TextSpan(
+                      children: [
+                        const TextSpan(
+                          text: "By logging in, you agree to our ",
+                        ),
+                        TextSpan(
+                          text: "Terms and Conditions",
+                          style: const TextStyle(
+                            decoration: TextDecoration.underline,
+                            color: Colors.blue,
+                          ),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () async => await launch(_url),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),

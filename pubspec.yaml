@@ -71,6 +71,7 @@ dependencies:
   cloud_functions: ^3.2.5
   device_preview: ^1.0.0
   share_plus: ^3.0.3
+  double_back_to_close_app: ^2.1.0
 
 dev_dependencies:
   flutter_test:

@@ -699,6 +699,9 @@ class FirebaseMethods {
           (await questionsCollection.doc(trade.questionId).get())
               .get('isActive');
       if (isQuestionActive == false) throw "An error occured";
+      if (trade.status != Status.ACTIVE_UNPAIRED) {
+        throw "An error occured";
+      }
       await firestore.runTransaction((transaction) async {
         QuerySnapshot walletSnapshot =
             await walletsCollection.where('userId', isEqualTo: userId).get();
@@ -759,6 +762,9 @@ class FirebaseMethods {
           (await questionsCollection.doc(firstTrade.questionId).get())
               .get('isActive');
       if (isQuestionActive == false) throw "An error occured";
+      if (firstTrade.status == Status.ACTIVE_PAIRED) {
+        throw 'Trade is already paired';
+      }
       await firestore.runTransaction((transaction) async {
         DocumentSnapshot questionSnapshot =
             await questionsCollection.doc(firstTrade.questionId).get();
