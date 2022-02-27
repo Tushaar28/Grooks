@@ -70,9 +70,9 @@ class _OTPInputScreenState extends State<OTPInputScreen> {
     _firebaseAuth = FirebaseAuth.instance;
     _messaging = FirebaseMessaging.instance;
     _repository = FirebaseRepository();
-    _isCodeSent = _isLoading = _wait = false;
+    _isCodeSent = _isLoading = false;
     _start = 30;
-
+    _wait = true;
     _otpResendCount = 0;
     _scaffoldKey = GlobalKey<ScaffoldState>();
     verifyPhone();

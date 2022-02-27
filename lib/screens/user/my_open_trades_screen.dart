@@ -144,7 +144,7 @@ class _MyOpenTradesScreenState extends State<MyOpenTradesScreen>
                   } else {
                     Question question = snapshot.data!;
                     return SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.23,
+                      height: MediaQuery.of(context).size.height * 0.2,
                       child: InkWell(
                         onTap: () async {
                           Navigator.of(context).push(
@@ -169,7 +169,7 @@ class _MyOpenTradesScreenState extends State<MyOpenTradesScreen>
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Padding(
-                            padding: const EdgeInsets.fromLTRB(10, 20, 10, 0),
+                            padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
@@ -198,97 +198,60 @@ class _MyOpenTradesScreenState extends State<MyOpenTradesScreen>
                                     );
                                   },
                                 ),
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(10, 0, 10, 5),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    mainAxisAlignment: MainAxisAlignment.start,
+                                SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.02,
+                                ),
+                                SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.65,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.05,
+                                  child: Align(
+                                    alignment: const Alignment(0, 0),
+                                    child: AutoSizeText(
+                                      question.name,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        fontFamily: 'Poppins',
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.02,
+                                ),
+                                RichText(
+                                  text: TextSpan(
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.black,
+                                    ),
                                     children: [
-                                      Padding(
-                                        padding: const EdgeInsets.fromLTRB(
-                                            0, 0, 5, 0),
-                                        child: Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.15,
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.13,
-                                          clipBehavior: Clip.antiAlias,
-                                          decoration: const BoxDecoration(
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: CircleAvatar(
-                                            child: question.image != null
-                                                ? FadeInImage.assetNetwork(
-                                                    placeholder:
-                                                        "assets/images/user.png",
-                                                    image: question.image!)
-                                                : Image.asset(
-                                                    "assets/images/user.png"),
-                                          ),
+                                      const TextSpan(text: 'Your trade    '),
+                                      TextSpan(
+                                        text: _openTrades[index].response
+                                            ? 'YES'
+                                            : 'NO',
+                                        style: TextStyle(
+                                          color: _openTrades[index].response
+                                              ? Theme.of(context).primaryColor
+                                              : Colors.red,
+                                          fontSize: 18,
                                         ),
                                       ),
-                                      Padding(
-                                        padding: const EdgeInsets.fromLTRB(
-                                            5, 0, 5, 0),
-                                        child: SizedBox(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.65,
-                                          child: Align(
-                                            alignment: const Alignment(0, 0),
-                                            child: AutoSizeText(
-                                              question.name,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: const TextStyle(
-                                                fontFamily: 'Poppins',
-                                                fontSize: 14,
-                                              ),
-                                            ),
-                                          ),
+                                      TextSpan(
+                                        text: ' @${_openTrades[index].coins}',
+                                        style: TextStyle(
+                                          color: _openTrades[index].response
+                                              ? Theme.of(context).primaryColor
+                                              : Colors.red,
+                                          fontSize: 18,
                                         ),
                                       ),
                                     ],
-                                  ),
-                                ),
-                                Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(10, 5, 10, 5),
-                                  child: RichText(
-                                    text: TextSpan(
-                                      style: const TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.black,
-                                      ),
-                                      children: [
-                                        const TextSpan(text: 'Your trade    '),
-                                        TextSpan(
-                                          text: _openTrades[index].response
-                                              ? 'YES'
-                                              : 'NO',
-                                          style: TextStyle(
-                                            color: _openTrades[index].response
-                                                ? Theme.of(context).primaryColor
-                                                : Colors.red,
-                                            fontSize: 18,
-                                          ),
-                                        ),
-                                        TextSpan(
-                                          text: ' @${_openTrades[index].coins}',
-                                          style: TextStyle(
-                                            color: _openTrades[index].response
-                                                ? Theme.of(context).primaryColor
-                                                : Colors.red,
-                                            fontSize: 18,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
                                   ),
                                 ),
                               ],

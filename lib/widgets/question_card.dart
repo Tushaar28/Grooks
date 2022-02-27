@@ -137,7 +137,7 @@ class _QuestionCardState extends State<QuestionCard> {
                               child: Center(
                                 child: AutoSizeText(
                                   snapshot.data == 100
-                                      ? ""
+                                      ? "0%"
                                       : "${100 - snapshot.data!.toInt()}%",
                                   style: const TextStyle(
                                     color: Colors.deepOrange,

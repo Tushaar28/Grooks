@@ -277,7 +277,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                                 ),
                               ),
                               Text(
-                                "Your Potntial Win",
+                                "Your Potential Win",
                                 style: TextStyle(
                                   color: Color(0xFF007AFF),
                                   fontSize: 16,
@@ -347,7 +347,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                           Text(
                             "You make profit of : ${100 - _currentTrade} coins",
                             style: const TextStyle(
-                              color: Colors.grey,
+                              color: Colors.green,
                               fontSize: 14,
                               fontWeight: FontWeight.w400,
                             ),
@@ -355,7 +355,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                           Text(
                             "Else you will lose : $_currentTrade coins",
                             style: const TextStyle(
-                              color: Colors.grey,
+                              color: Colors.red,
                               fontSize: 14,
                               fontWeight: FontWeight.w400,
                             ),

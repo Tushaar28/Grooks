@@ -164,133 +164,100 @@ class _MyClosedTradesScreenState extends State<MyClosedTradesScreen>
                             ),
                           );
                         },
-                        child: Padding(
-                          padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-                          child: Card(
-                            clipBehavior: Clip.antiAliasWithSaveLayer,
-                            color: Colors.white,
-                            elevation: 5,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.fromLTRB(10, 20, 10, 10),
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  FutureBuilder<String>(
-                                    future: getSubcategoryNameForQuestion(
-                                        questionId: question.id),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.connectionState !=
-                                          ConnectionState.done) {
-                                        return const SizedBox(
-                                          height: 0,
-                                          width: 0,
-                                        );
-                                      }
-                                      return Padding(
-                                        padding: const EdgeInsets.fromLTRB(
-                                            10, 5, 10, 10),
-                                        child: Text(
-                                          snapshot.data!,
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
+                        child: Card(
+                          clipBehavior: Clip.antiAliasWithSaveLayer,
+                          color: Colors.white,
+                          elevation: 5,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                FutureBuilder<String>(
+                                  future: getSubcategoryNameForQuestion(
+                                      questionId: question.id),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState !=
+                                        ConnectionState.done) {
+                                      return const SizedBox(
+                                        height: 0,
+                                        width: 0,
                                       );
-                                    },
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.fromLTRB(
-                                        10, 0, 10, 10),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.max,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.fromLTRB(
-                                              0, 0, 10, 0),
-                                          child: Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.15,
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.13,
-                                            clipBehavior: Clip.antiAlias,
-                                            decoration: const BoxDecoration(
-                                              shape: BoxShape.circle,
-                                            ),
-                                            child: CircleAvatar(
-                                              child: question.image != null
-                                                  ? FadeInImage.assetNetwork(
-                                                      placeholder:
-                                                          "assets/images/user.png",
-                                                      image: question.image!)
-                                                  : Image.asset(
-                                                      "assets/images/user.png"),
-                                            ),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsets.fromLTRB(
-                                              10, 0, 10, 0),
-                                          child: Align(
-                                            alignment: const Alignment(0, 0),
-                                            child: Text(
-                                              question.name,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: const TextStyle(
-                                                fontFamily: 'Poppins',
-                                                fontSize: 12,
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  const Divider(
-                                    color: Colors.grey,
-                                    thickness: 1,
-                                  ),
-                                  Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(10, 5, 10, 5),
-                                    child: RichText(
-                                      text: TextSpan(
+                                    }
+                                    return Padding(
+                                      padding: const EdgeInsets.fromLTRB(
+                                          10, 5, 10, 10),
+                                      child: Text(
+                                        snapshot.data!,
                                         style: const TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.black,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
                                         ),
-                                        children: [
-                                          const TextSpan(
-                                              text: 'Event closed at    '),
-                                          TextSpan(
-                                            text:
-                                                question.answer! ? 'YES' : 'NO',
-                                            style: TextStyle(
-                                              color:
-                                                  _closedTrades[index].response
-                                                      ? Theme.of(context)
-                                                          .primaryColor
-                                                      : Colors.red,
-                                              fontSize: 18,
-                                            ),
-                                          ),
-                                        ],
+                                      ),
+                                    );
+                                  },
+                                ),
+                                SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.02,
+                                ),
+                                SizedBox(
+                                  width:
+                                      MediaQuery.of(context).size.width * 0.65,
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.05,
+                                  child: Align(
+                                    alignment: const Alignment(0, 0),
+                                    child: AutoSizeText(
+                                      question.name,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        fontFamily: 'Poppins',
+                                        fontSize: 14,
                                       ),
                                     ),
                                   ),
-                                ],
-                              ),
+                                ),
+                                SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.02,
+                                ),
+                                RichText(
+                                  text: TextSpan(
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.black,
+                                    ),
+                                    children: [
+                                      const TextSpan(text: 'Your trade    '),
+                                      TextSpan(
+                                        text: _closedTrades[index].response
+                                            ? 'YES'
+                                            : 'NO',
+                                        style: TextStyle(
+                                          color: _closedTrades[index].response
+                                              ? Theme.of(context).primaryColor
+                                              : Colors.red,
+                                          fontSize: 18,
+                                        ),
+                                      ),
+                                      TextSpan(
+                                        text: ' @${_closedTrades[index].coins}',
+                                        style: TextStyle(
+                                          color: _closedTrades[index].response
+                                              ? Theme.of(context).primaryColor
+                                              : Colors.red,
+                                          fontSize: 18,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
