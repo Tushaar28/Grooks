@@ -37,6 +37,7 @@ class _ReferralWidgetState extends State<ReferralWidget> {
   @override
   void initState() {
     super.initState();
+    print("CODE = " + widget.user.referralCode);
     showSpinner = false;
     repository = FirebaseRepository();
   }
