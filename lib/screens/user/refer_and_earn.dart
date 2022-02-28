@@ -7,6 +7,8 @@ import 'package:grooks_dev/services/dynamic_link.dart';
 import 'package:grooks_dev/widgets/custom_button.dart';
 import 'package:share_plus/share_plus.dart';
 
+import 'error_screen.dart';
+
 class ReferralWidget extends StatefulWidget {
   final Users user;
   const ReferralWidget({
@@ -32,18 +34,43 @@ class _ReferralWidgetState extends State<ReferralWidget> {
     backgroundColor: Colors.red,
     duration: Duration(seconds: 2),
   );
-  bool showSpinner = false;
+  bool _isLoading = false, _dataLoaded = false;
+  String code = "";
 
   @override
   void initState() {
     super.initState();
-    print("CODE = " + widget.user.referralCode);
-    showSpinner = false;
+    _isLoading = false;
     repository = FirebaseRepository();
+    getUserReferralCode();
+  }
+
+  Future<void> getUserReferralCode() async {
+    try {
+      code = await repository.getUserReferralCode(
+        userId: widget.user.id,
+      );
+      setState(() => _dataLoaded = true);
+    } catch (error) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => ErrorScreen(
+            user: widget.user,
+          ),
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    if (_dataLoaded == false) {
+      return const Center(
+        child: CircularProgressIndicator.adaptive(
+          backgroundColor: Colors.white,
+        ),
+      );
+    }
     return Scaffold(
       key: scaffoldKey,
       extendBodyBehindAppBar: true,
@@ -140,7 +167,7 @@ class _ReferralWidgetState extends State<ReferralWidget> {
                           child: Align(
                             alignment: const Alignment(0, 0),
                             child: AutoSizeText(
-                              widget.user.referralCode,
+                              code,
                               style: const TextStyle(
                                 fontFamily: 'Poppins',
                                 fontSize: 18,
@@ -164,13 +191,11 @@ class _ReferralWidgetState extends State<ReferralWidget> {
                               onPressed: () async {
                                 try {
                                   // await ClipboardManager.copyToClipBoard(
-                                  //     widget.user.referralCode);
-                                  await FlutterClipboard.copy(
-                                      widget.user.referralCode);
+                                  //     code);
+                                  await FlutterClipboard.copy(code);
                                   ScaffoldMessenger.of(context)
                                       .showSnackBar(copySuccessSnakbar);
                                 } catch (error) {
-                                  print("ERROR = ${error.toString()}");
                                   ScaffoldMessenger.of(context)
                                       .showSnackBar(failureSnackbar);
                                 }
@@ -189,7 +214,7 @@ class _ReferralWidgetState extends State<ReferralWidget> {
                   ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(20, 40, 20, 0),
-                    child: showSpinner
+                    child: _isLoading
                         ? const CircularProgressIndicator.adaptive(
                             backgroundColor: Colors.white)
                         : SizedBox(
@@ -203,14 +228,13 @@ class _ReferralWidgetState extends State<ReferralWidget> {
                                 color: Colors.white,
                               ),
                               onPressed: () async {
-                                setState(() => showSpinner = true);
+                                setState(() => _isLoading = true);
                                 var referalLink =
-                                    await dynamicLink.createReferralLink(
-                                        widget.user.referralCode);
+                                    await dynamicLink.createReferralLink(code);
                                 Share.share(referalLink);
                                 Future.delayed(
                                   const Duration(milliseconds: 500),
-                                  () => setState(() => showSpinner = false),
+                                  () => setState(() => _isLoading = false),
                                 );
                               },
                             ),

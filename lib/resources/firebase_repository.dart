@@ -297,4 +297,9 @@ class FirebaseRepository {
     required String questionId,
   }) =>
       firebaseMethods.getQuestionActiveStatus(questionId: questionId);
+
+  Future<String> getUserReferralCode({
+    required String userId,
+  }) =>
+      firebaseMethods.getUserReferralCode(userId: userId);
 }

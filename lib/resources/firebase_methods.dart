@@ -1293,4 +1293,16 @@ class FirebaseMethods {
       rethrow;
     }
   }
+
+  Future<String> getUserReferralCode({
+    required String userId,
+  }) async {
+    try {
+      String code =
+          (await usersCollection.doc(userId).get()).get("referralCode");
+      return code;
+    } catch (error) {
+      rethrow;
+    }
+  }
 }

@@ -166,7 +166,16 @@ class _OTPInputScreenState extends State<OTPInputScreen> {
 
     // ignore: prefer_function_declarations_over_variables
     final PhoneVerificationFailed verificationFailed =
-        (FirebaseAuthException exception) async {};
+        (FirebaseAuthException exception) async {
+      ScaffoldMessenger.of(context).hideCurrentSnackBar();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Unable to send OTP. Please try again later."),
+          backgroundColor: Colors.red,
+          duration: Duration(seconds: 1),
+        ),
+      );
+    };
 
     // ignore: prefer_function_declarations_over_variables
     final PhoneCodeSent smsSent = (String verId, [int? forceResend]) {
