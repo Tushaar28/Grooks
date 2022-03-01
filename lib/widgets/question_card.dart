@@ -76,7 +76,8 @@ class _QuestionCardState extends State<QuestionCard> {
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.08,
                       width: MediaQuery.of(context).size.width * 0.3,
-                      child: widget.question.image != null
+                      child: widget.question.image != null &&
+                              widget.question.image!.isNotEmpty
                           ? FadeInImage.assetNetwork(
                               placeholder: "assets/images/fallback.png",
                               image: widget.question.image!,

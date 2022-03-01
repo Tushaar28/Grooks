@@ -127,9 +127,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                 radius:
                                     MediaQuery.of(context).size.width * 0.07,
                                 backgroundColor: Colors.transparent,
-                                child: FadeInImage.assetNetwork(
-                                    placeholder: "assets/images/fallback.png",
-                                    image: _categories[index].image ?? ""),
+                                child: _categories[_index].image == null ||
+                                        _categories[_index].image!.isEmpty
+                                    ? Image.asset("assets/images/fallback.png")
+                                    : FadeInImage.assetNetwork(
+                                        placeholder:
+                                            "assets/images/fallback.png",
+                                        image: _categories[_index].image ??
+                                            "assets/images/fallback.png"),
                               ),
                             );
                           },

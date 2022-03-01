@@ -82,9 +82,13 @@ class _CustomSubcategoryCardState extends State<CustomSubcategoryCard> {
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(20),
-                          child: FadeInImage.assetNetwork(
-                              placeholder: "assets/images/fallback.png",
-                              image: widget.subcategory.image ?? ""),
+                          child: widget.subcategory.image == null ||
+                                  widget.subcategory.image!.isEmpty
+                              ? Image.asset("assets/images/fallback.png")
+                              : FadeInImage.assetNetwork(
+                                  placeholder: "assets/images/fallback.png",
+                                  image: widget.subcategory.image ??
+                                      "assets/images/fallback.png"),
                         ),
                       ),
                       Padding(
