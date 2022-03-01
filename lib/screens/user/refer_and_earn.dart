@@ -231,7 +231,8 @@ class _ReferralWidgetState extends State<ReferralWidget> {
                                 setState(() => _isLoading = true);
                                 var referalLink =
                                     await dynamicLink.createReferralLink(code);
-                                Share.share(referalLink);
+                                Share.share(
+                                    'Inviting you to join Grooks app with me. On Grooks we can make predictions using real money on various topics like Sports, Weather, Politics, BigBoss, Kabaddi, Finance, News and win if our predictions are right. Join me on Grooks and trade on your opinions. Use the link to claim your free trades worth ₹250. Download Grooks here: $referalLink');
                                 Future.delayed(
                                   const Duration(milliseconds: 500),
                                   () => setState(() => _isLoading = false),

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/user/activity_screen.dart';
-import 'package:grooks_dev/screens/user/wallet_screen.dart';
 import 'package:page_transition/page_transition.dart';
 
 class CustomAppbar extends StatefulWidget implements PreferredSizeWidget {

@@ -9,6 +9,7 @@ import 'package:grooks_dev/screens/user/feedback_screen.dart';
 import 'package:grooks_dev/screens/user/how_to_trade_screen.dart';
 import 'package:grooks_dev/screens/user/refer_and_earn.dart';
 import 'package:grooks_dev/screens/user/store_screen.dart';
+import 'package:grooks_dev/screens/user/withdrawl_screen.dart';
 import 'package:grooks_dev/widgets/swipe_button.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -173,7 +174,7 @@ class CustomDrawer extends StatelessWidget {
             ),
           ),
           Container(
-            height: MediaQuery.of(context).size.height * 0.35,
+            height: MediaQuery.of(context).size.height * 0.4,
             color: Colors.transparent,
             child: Column(
               children: [
@@ -294,7 +295,10 @@ class CustomDrawer extends StatelessWidget {
                   },
                 ),
                 ListTile(
-                  leading: Image.asset("assets/images/how_to_trade.png"),
+                  leading: Image.asset(
+                    "assets/images/StoreIcon.png",
+                    height: 40,
+                  ),
                   title: const AutoSizeText(
                     'Store',
                     style: TextStyle(
@@ -312,6 +316,35 @@ class CustomDrawer extends StatelessWidget {
                     Navigator.of(context).push(
                       PageTransition(
                         child: StoreScreen(user: user),
+                        type: PageTransitionType.bottomToTop,
+                        duration: const Duration(milliseconds: 300),
+                        reverseDuration: const Duration(milliseconds: 300),
+                      ),
+                    );
+                  },
+                ),
+                ListTile(
+                  leading: Image.asset(
+                    "assets/images/WithdrawIcon.png",
+                    height: 40,
+                  ),
+                  title: const AutoSizeText(
+                    'Withdraw',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                  trailing: const Icon(
+                    Icons.arrow_forward_ios,
+                    color: Colors.black87,
+                  ),
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).push(
+                      PageTransition(
+                        child: const WithdrawlScreen(),
                         type: PageTransitionType.bottomToTop,
                         duration: const Duration(milliseconds: 300),
                         reverseDuration: const Duration(milliseconds: 300),

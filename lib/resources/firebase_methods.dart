@@ -17,7 +17,6 @@ import 'package:grooks_dev/models/transfer.dart';
 import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/models/wallet.dart';
 import 'package:grooks_dev/models/withdrawl.dart';
-import 'package:grooks_dev/screens/user/withdrawl_screen.dart';
 import '../models/transaction.dart' as model;
 
 class FirebaseMethods {
