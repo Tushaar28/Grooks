@@ -172,7 +172,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
                                           .instance
                                           .httpsCallable("generateCustomToken")
                                           .call({
-                                        "mobile": widget.mobile,
+                                        "mobile": '+91' + widget.mobile,
                                         "password":
                                             _passwordController.text.trim(),
                                       });
