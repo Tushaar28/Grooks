@@ -18,6 +18,7 @@ import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/models/wallet.dart';
 import 'package:grooks_dev/models/withdrawl.dart';
 import '../models/transaction.dart' as model;
+import 'package:dbcrypt/dbcrypt.dart';
 
 class FirebaseMethods {
   final FirebaseStorage storage = FirebaseStorage.instance;
@@ -255,6 +256,7 @@ class FirebaseMethods {
     String? referralCode,
     String? profileUrl,
     String? email,
+    String? password,
   }) async {
     try {
       String? url = profileUrl;
@@ -272,11 +274,15 @@ class FirebaseMethods {
       String refCode = generateReferralCode(userId: uid);
       FirebaseMessaging _messaging = FirebaseMessaging.instance;
       String? token = await _messaging.getToken();
+      DBCrypt dBCrypt = DBCrypt();
+      String salt = dBCrypt.gensaltWithRounds(12);
+      String hashedPwd = dBCrypt.hashpw(password!, salt);
       Users user = Users(
         name: name,
         mobile: mobile,
         email: email,
         id: uid,
+        password: hashedPwd,
         createdAt: currentDate,
         image: url,
         lastLoginAt: currentDate,

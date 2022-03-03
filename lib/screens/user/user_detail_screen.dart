@@ -10,6 +10,9 @@ import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/services/my_encryption.dart';
 import 'package:grooks_dev/widgets/custom_button.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:otp_text_field/otp_field.dart';
+import 'package:otp_text_field/otp_field_style.dart';
+import 'package:otp_text_field/style.dart';
 
 import 'onboarding_screen.dart';
 
@@ -33,6 +36,8 @@ class UserDetailScreen extends StatefulWidget {
 class _UserDetailScreenState extends State<UserDetailScreen> {
   late TextEditingController _firstNameController;
   late TextEditingController _lastNameController;
+  late TextEditingController _passwordController;
+  late TextEditingController _confirmPasswordController;
   late final ImagePicker _picker;
   late File? _profilePicture;
   late final GlobalKey<ScaffoldState> _scaffoldKey;
@@ -45,6 +50,8 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
     super.initState();
     _firstNameController = TextEditingController();
     _lastNameController = TextEditingController();
+    _passwordController = TextEditingController();
+    _confirmPasswordController = TextEditingController();
     _picker = ImagePicker();
     _scaffoldKey = GlobalKey<ScaffoldState>();
     _formKey = GlobalKey<FormState>();
@@ -57,6 +64,8 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
   void dispose() {
     _firstNameController.dispose();
     _lastNameController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -83,6 +92,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
         uid: widget.user.uid,
         profilePicture: _profilePicture,
         referralCode: widget.referralCode,
+        password: _passwordController.text.trim(),
       );
     } catch (error) {
       throw error.toString();
@@ -274,6 +284,96 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                         ),
                       ),
                     ),
+                    const Padding(
+                      padding: EdgeInsets.only(
+                        top: 20,
+                      ),
+                      child: Center(
+                        child: Text(
+                          "Set your 4 digit password",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                        child: OTPTextField(
+                          keyboardType: TextInputType.phone,
+                          obscureText: true,
+                          length: 4,
+                          width: MediaQuery.of(context).size.width,
+                          fieldWidth: MediaQuery.of(context).size.width * 0.13,
+                          otpFieldStyle: OtpFieldStyle(
+                            backgroundColor: Colors.white,
+                            borderColor: Colors.black,
+                            enabledBorderColor: Colors.black,
+                            focusBorderColor: Colors.black,
+                          ),
+                          style: const TextStyle(
+                            fontSize: 18,
+                            color: Colors.black,
+                          ),
+                          textFieldAlignment: MainAxisAlignment.spaceAround,
+                          fieldStyle: FieldStyle.underline,
+                          onChanged: (String value) {
+                            _passwordController.text = value;
+                          },
+                          onCompleted: (String pin) {
+                            _passwordController.text = pin.trim();
+                          },
+                        ),
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(
+                        top: 20,
+                      ),
+                      child: Center(
+                        child: Text(
+                          "Confirm your 4 digit password",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                        child: OTPTextField(
+                          keyboardType: TextInputType.phone,
+                          obscureText: true,
+                          length: 4,
+                          width: MediaQuery.of(context).size.width,
+                          fieldWidth: MediaQuery.of(context).size.width * 0.13,
+                          otpFieldStyle: OtpFieldStyle(
+                            backgroundColor: Colors.white,
+                            borderColor: Colors.black,
+                            enabledBorderColor: Colors.black,
+                            focusBorderColor: Colors.black,
+                          ),
+                          style: const TextStyle(
+                            fontSize: 18,
+                            color: Colors.black,
+                          ),
+                          textFieldAlignment: MainAxisAlignment.spaceAround,
+                          fieldStyle: FieldStyle.underline,
+                          onChanged: (String value) {
+                            _confirmPasswordController.text = value;
+                          },
+                          onCompleted: (String pin) {
+                            _confirmPasswordController.text = pin.trim();
+                          },
+                        ),
+                      ),
+                    ),
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.03,
                     ),
@@ -289,6 +389,46 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                           : CustomButton(
                               onPressed: () async {
                                 try {
+                                  if (_passwordController.text.trim().length !=
+                                      4) {
+                                    ScaffoldMessenger.of(context)
+                                        .hideCurrentSnackBar();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text("Password is required"),
+                                        backgroundColor: Colors.red,
+                                        duration: Duration(seconds: 1),
+                                      ),
+                                    );
+                                    return;
+                                  }
+                                  if (!RegExp(r"^[0-9]{4}$").hasMatch(
+                                      _passwordController.text.trim())) {
+                                    ScaffoldMessenger.of(context)
+                                        .hideCurrentSnackBar();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text(
+                                            "Password should contain 4 digits"),
+                                        backgroundColor: Colors.red,
+                                        duration: Duration(seconds: 1),
+                                      ),
+                                    );
+                                    return;
+                                  }
+                                  if (_passwordController.text.trim() !=
+                                      _confirmPasswordController.text.trim()) {
+                                    ScaffoldMessenger.of(context)
+                                        .hideCurrentSnackBar();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text("Password do not match"),
+                                        backgroundColor: Colors.red,
+                                        duration: Duration(seconds: 1),
+                                      ),
+                                    );
+                                    return;
+                                  }
                                   if (_formKey.currentState!.validate()) {
                                     setState(() => _isLoading = true);
                                     await addUser();

@@ -59,6 +59,7 @@ class FirebaseRepository {
     String? referralCode,
     String? profileUrl,
     String? email,
+    String? password,
   }) =>
       firebaseMethods.addUser(
         name: name,
@@ -68,6 +69,7 @@ class FirebaseRepository {
         referralCode: referralCode,
         profileUrl: profileUrl,
         email: email,
+        password: password,
       );
 
   Future<void> saveDeviceToken(fcmToke) =>

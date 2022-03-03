@@ -8,6 +8,9 @@ import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/authentication/login_screen.dart';
 import 'package:grooks_dev/screens/user/navbar_screen.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:otp_text_field/otp_field.dart';
+import 'package:otp_text_field/otp_field_style.dart';
+import 'package:otp_text_field/style.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final Users user;
@@ -23,6 +26,8 @@ class EditProfileScreen extends StatefulWidget {
 class _EditProfileScreenState extends State<EditProfileScreen> {
   late final GlobalKey<ScaffoldState> _scaffoldKey;
   late TextEditingController _nameController;
+  late TextEditingController _passwordController;
+  late TextEditingController _confirmPasswordController;
   late Users? _user;
   late final FirebaseRepository _repository;
   late File? _newProfilePicture;
@@ -31,7 +36,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   dynamic _pickImageError;
   late bool _isLoading, _done;
   late bool? _isActive;
-  late bool _dataLoaded;
+  late bool _dataLoaded, _setPassword, _changePassword;
 
   final updateSuccessSnackbar = const SnackBar(
     content: AutoSizeText('Details updated'),
@@ -49,10 +54,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     super.initState();
     _scaffoldKey = GlobalKey<ScaffoldState>();
     _dataLoaded = false;
+    _setPassword = false;
+    _changePassword = false;
     _isActive = null;
     _repository = FirebaseRepository();
     getUserActiveStatus();
     _nameController = TextEditingController();
+    _passwordController = TextEditingController();
+    _confirmPasswordController = TextEditingController();
     getUserDetails();
     _isLoading = _done = false;
     _picker = ImagePicker();
@@ -63,6 +72,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void dispose() {
     _nameController.dispose();
+    _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -202,18 +213,43 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 : TextButton(
                     onPressed: () async {
                       try {
-                        if (_newProfilePicture == null &&
-                            widget.user.name.trim() ==
-                                _nameController.text.trim()) {
-                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text("No changes to save"),
-                              backgroundColor: Colors.red,
-                              duration: Duration(seconds: 2),
-                            ),
-                          );
-                          return;
+                        if (_setPassword == true || _changePassword == true) {
+                          if (_passwordController.text.trim().length != 4) {
+                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Password is required"),
+                                backgroundColor: Colors.red,
+                                duration: Duration(seconds: 1),
+                              ),
+                            );
+                            return;
+                          }
+                          if (!RegExp(r"^[0-9]{4}$")
+                              .hasMatch(_passwordController.text.trim())) {
+                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content:
+                                    Text("Password should contain 4 digits"),
+                                backgroundColor: Colors.red,
+                                duration: Duration(seconds: 1),
+                              ),
+                            );
+                            return;
+                          }
+                          if (_passwordController.text.trim() !=
+                              _confirmPasswordController.text.trim()) {
+                            ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Password do not match"),
+                                backgroundColor: Colors.red,
+                                duration: Duration(seconds: 1),
+                              ),
+                            );
+                            return;
+                          }
                         }
                         setState(() => _isLoading = true);
                         await updateUser();
@@ -223,6 +259,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         });
                         ScaffoldMessenger.of(context)
                             .showSnackBar(updateSuccessSnackbar);
+                        Future.delayed(
+                          const Duration(seconds: 1),
+                          () => Navigator.of(context).pushAndRemoveUntil(
+                              MaterialPageRoute(
+                                builder: (context) => NavbarScreen(),
+                              ),
+                              (route) => false),
+                        );
                       } catch (error) {
                         setState(() {
                           _isLoading = false;
@@ -230,14 +274,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         });
                         ScaffoldMessenger.of(context)
                             .showSnackBar(updateFailureSnackbar);
-                      } finally {
-                        Future.delayed(
-                            const Duration(seconds: 2),
-                            () => Navigator.of(context).pushAndRemoveUntil(
-                                MaterialPageRoute(
-                                  builder: (context) => NavbarScreen(),
-                                ),
-                                (route) => false));
                       }
                     },
                     child: AutoSizeText(
@@ -260,97 +296,410 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         elevation: 0,
       ),
       body: SafeArea(
-        child: Align(
-          alignment: const Alignment(0, 0),
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-            child: Stack(
-              children: [
-                Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 0.15,
-                        height: MediaQuery.of(context).size.width * 0.15,
-                        clipBehavior: Clip.antiAlias,
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                        ),
-                        child: getProfilePicture(),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+          child: Stack(
+            children: [
+              Column(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * 0.15,
+                      height: MediaQuery.of(context).size.width * 0.15,
+                      clipBehavior: Clip.antiAlias,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
                       ),
+                      child: getProfilePicture(),
                     ),
-                    TextButton(
-                      onPressed: () async {
-                        _onImageButtonPressed(ImageSource.gallery,
-                            context: context, isMultiImage: false);
-                      },
-                      child: const AutoSizeText('Change Profile Photo'),
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width,
-                      child: SingleChildScrollView(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(5, 55, 5, 5),
-                              child: TextFormField(
-                                controller: _nameController,
-                                obscureText: false,
-                                textAlign: TextAlign.center,
-                                decoration: const InputDecoration(
-                                  labelText: 'Name',
-                                  labelStyle: TextStyle(
-                                    color: Colors.black,
-                                  ),
-                                  contentPadding: EdgeInsets.symmetric(
-                                      vertical: 10, horizontal: 20),
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(10),
-                                    ),
-                                  ),
-                                  enabledBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(10),
-                                    ),
-                                  ),
-                                  focusedBorder: OutlineInputBorder(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(10.0),
-                                    ),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      _onImageButtonPressed(ImageSource.gallery,
+                          context: context, isMultiImage: false);
+                    },
+                    child: const AutoSizeText('Change Profile Photo'),
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width,
+                    child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(20, 55, 20, 5),
+                            child: TextFormField(
+                              controller: _nameController,
+                              obscureText: false,
+                              textAlign: TextAlign.center,
+                              decoration: const InputDecoration(
+                                labelText: 'Name',
+                                labelStyle: TextStyle(
+                                  color: Colors.black,
+                                ),
+                                contentPadding: EdgeInsets.symmetric(
+                                    vertical: 10, horizontal: 20),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(10),
                                   ),
                                 ),
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                  fontFamily: 'Poppins',
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(10),
+                                  ),
                                 ),
-                                maxLines: 1,
-                                validator: (String? value) {
-                                  return value!.isEmpty
-                                      ? 'Name is required'
-                                      : null;
-                                },
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(10.0),
+                                  ),
+                                ),
+                              ),
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontFamily: 'Poppins',
+                              ),
+                              maxLines: 1,
+                              validator: (String? value) {
+                                return value!.isEmpty
+                                    ? 'Name is required'
+                                    : null;
+                              },
+                            ),
+                          ),
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.07,
+                          ),
+                          if (_user!.password != null) ...[
+                            Center(
+                              child: Column(
+                                children: [
+                                  if (_changePassword == false) ...[
+                                    TextButton(
+                                      child: const Text(
+                                        "Change Password",
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      onPressed: () => setState(() =>
+                                          _changePassword = !_changePassword),
+                                    ),
+                                  ],
+                                  if (_changePassword == true) ...[
+                                    const Padding(
+                                      padding: EdgeInsets.only(
+                                        top: 20,
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          "Your old password",
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.8,
+                                      child: Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            0, 10, 0, 10),
+                                        child: OTPTextField(
+                                          keyboardType: TextInputType.phone,
+                                          obscureText: true,
+                                          length: 4,
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          fieldWidth: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.13,
+                                          otpFieldStyle: OtpFieldStyle(
+                                            backgroundColor: Colors.white,
+                                            borderColor: Colors.black,
+                                            enabledBorderColor: Colors.black,
+                                            focusBorderColor: Colors.black,
+                                          ),
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                            color: Colors.black,
+                                          ),
+                                          textFieldAlignment:
+                                              MainAxisAlignment.spaceAround,
+                                          fieldStyle: FieldStyle.underline,
+                                          onChanged: (String value) {
+                                            _passwordController.text = value;
+                                          },
+                                          onCompleted: (String pin) {
+                                            _passwordController.text =
+                                                pin.trim();
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                    const Padding(
+                                      padding: EdgeInsets.only(
+                                        top: 20,
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          "Set your 4 digit password",
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.8,
+                                      child: Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            0, 10, 0, 10),
+                                        child: OTPTextField(
+                                          keyboardType: TextInputType.phone,
+                                          obscureText: true,
+                                          length: 4,
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          fieldWidth: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.13,
+                                          otpFieldStyle: OtpFieldStyle(
+                                            backgroundColor: Colors.white,
+                                            borderColor: Colors.black,
+                                            enabledBorderColor: Colors.black,
+                                            focusBorderColor: Colors.black,
+                                          ),
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                            color: Colors.black,
+                                          ),
+                                          textFieldAlignment:
+                                              MainAxisAlignment.spaceAround,
+                                          fieldStyle: FieldStyle.underline,
+                                          onChanged: (String value) {
+                                            _passwordController.text = value;
+                                          },
+                                          onCompleted: (String pin) {
+                                            _passwordController.text =
+                                                pin.trim();
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                    const Padding(
+                                      padding: EdgeInsets.only(
+                                        top: 20,
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          "Confirm your 4 digit password",
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.8,
+                                      child: Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            0, 10, 0, 10),
+                                        child: OTPTextField(
+                                          keyboardType: TextInputType.phone,
+                                          obscureText: true,
+                                          length: 4,
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          fieldWidth: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.13,
+                                          otpFieldStyle: OtpFieldStyle(
+                                            backgroundColor: Colors.white,
+                                            borderColor: Colors.black,
+                                            enabledBorderColor: Colors.black,
+                                            focusBorderColor: Colors.black,
+                                          ),
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                            color: Colors.black,
+                                          ),
+                                          textFieldAlignment:
+                                              MainAxisAlignment.spaceAround,
+                                          fieldStyle: FieldStyle.underline,
+                                          onChanged: (String value) {
+                                            _confirmPasswordController.text =
+                                                value;
+                                          },
+                                          onCompleted: (String pin) {
+                                            _confirmPasswordController.text =
+                                                pin.trim();
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ],
                               ),
                             ),
                           ],
-                        ),
+                          if (_user!.password == null) ...[
+                            Center(
+                              child: Column(
+                                children: [
+                                  if (_setPassword == false) ...[
+                                    TextButton(
+                                      child: const Text(
+                                        "Set Password",
+                                        style: TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                      onPressed: () => setState(
+                                          () => _setPassword = !_setPassword),
+                                    ),
+                                  ],
+                                  if (_setPassword == true) ...[
+                                    const Padding(
+                                      padding: EdgeInsets.only(
+                                        top: 20,
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          "Set your 4 digit password",
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.8,
+                                      child: Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            0, 10, 0, 10),
+                                        child: OTPTextField(
+                                          keyboardType: TextInputType.phone,
+                                          obscureText: true,
+                                          length: 4,
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          fieldWidth: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.13,
+                                          otpFieldStyle: OtpFieldStyle(
+                                            backgroundColor: Colors.white,
+                                            borderColor: Colors.black,
+                                            enabledBorderColor: Colors.black,
+                                            focusBorderColor: Colors.black,
+                                          ),
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                            color: Colors.black,
+                                          ),
+                                          textFieldAlignment:
+                                              MainAxisAlignment.spaceAround,
+                                          fieldStyle: FieldStyle.underline,
+                                          onChanged: (String value) {
+                                            _passwordController.text = value;
+                                          },
+                                          onCompleted: (String pin) {
+                                            _passwordController.text =
+                                                pin.trim();
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                    const Padding(
+                                      padding: EdgeInsets.only(
+                                        top: 20,
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          "Confirm your 4 digit password",
+                                          style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.8,
+                                      child: Padding(
+                                        padding: const EdgeInsets.fromLTRB(
+                                            0, 10, 0, 10),
+                                        child: OTPTextField(
+                                          keyboardType: TextInputType.phone,
+                                          obscureText: true,
+                                          length: 4,
+                                          width:
+                                              MediaQuery.of(context).size.width,
+                                          fieldWidth: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.13,
+                                          otpFieldStyle: OtpFieldStyle(
+                                            backgroundColor: Colors.white,
+                                            borderColor: Colors.black,
+                                            enabledBorderColor: Colors.black,
+                                            focusBorderColor: Colors.black,
+                                          ),
+                                          style: const TextStyle(
+                                            fontSize: 18,
+                                            color: Colors.black,
+                                          ),
+                                          textFieldAlignment:
+                                              MainAxisAlignment.spaceAround,
+                                          fieldStyle: FieldStyle.underline,
+                                          onChanged: (String value) {
+                                            _confirmPasswordController.text =
+                                                value;
+                                          },
+                                          onCompleted: (String pin) {
+                                            _confirmPasswordController.text =
+                                                pin.trim();
+                                          },
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ),
+                          ],
+                        ],
                       ),
                     ),
-                  ],
-                ),
-                if (_isLoading)
-                  const Center(
-                    child: CircularProgressIndicator.adaptive(
-                      backgroundColor: Colors.white,
-                    ),
                   ),
-              ],
-            ),
+                ],
+              ),
+              if (_isLoading)
+                const Center(
+                  child: CircularProgressIndicator.adaptive(
+                    backgroundColor: Colors.white,
+                  ),
+                ),
+            ],
           ),
         ),
       ),
