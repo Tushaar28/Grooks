@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:grooks_dev/models/question.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/authentication/otp_input_screen.dart';
+import 'package:grooks_dev/screens/authentication/password_input_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -137,12 +138,20 @@ class _LoginScreenState extends State<LoginScreen> {
                         } else {
                           Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (context) => OTPInputScreen(
+                              builder: (context) => PasswordScreen(
                                 mobile: _mobileController.text.trim(),
                                 referralCode: widget.referralCode,
                               ),
                             ),
                           );
+                          // Navigator.of(context).push(
+                          //   MaterialPageRoute(
+                          //     builder: (context) => OTPInputScreen(
+                          //       mobile: _mobileController.text.trim(),
+                          //       referralCode: widget.referralCode,
+                          //     ),
+                          //   ),
+                          // );
                         }
                       },
                     ),

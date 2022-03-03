@@ -34,9 +34,8 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    compileSdkVersion 31
-    aaptOptions.cruncherEnabled = false
-    aaptOptions.useNewCruncher = false
+    compileSdkVersion 30
+
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
@@ -46,7 +45,7 @@ android {
     }
 
     defaultConfig {
-        applicationId 'com.bagoyo.polls'
+        applicationId 'com.bagoyo.grooks_dev'
         minSdkVersion 23
         targetSdkVersion 29
         versionCode flutterVersionCode.toInteger()
