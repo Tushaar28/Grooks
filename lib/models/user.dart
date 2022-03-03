@@ -17,6 +17,7 @@ class Users {
   late String? accountNumber;
   late String? ifscCode;
   late String? panNumber;
+  late String? password;
 
   Users({
     required this.id,
@@ -37,6 +38,7 @@ class Users {
     this.accountNumber,
     this.ifscCode,
     this.panNumber,
+    this.password,
   });
 
   Map toMap(Users user) {
@@ -59,6 +61,7 @@ class Users {
     data['ifscCode'] = user.ifscCode;
     data['panNumber'] = user.panNumber;
     data['isPanVerified'] = user.isPanVerified;
+    data['password'] = user.password;
     return data;
   }
 
@@ -89,5 +92,6 @@ class Users {
     ifscCode = mapData['ifscCode'];
     panNumber = mapData['panNumber'];
     isPanVerified = mapData['isPanVerified'];
+    password = mapData['password'];
   }
 }

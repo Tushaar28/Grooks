@@ -81,7 +81,9 @@ class _OTPInputScreenState extends State<OTPInputScreen> {
 
   @override
   void dispose() {
-    if (_timer != null) _timer!.cancel();
+    if (_timer != null) {
+      _timer!.cancel();
+    }
     _otpController.dispose();
     super.dispose();
   }
