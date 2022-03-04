@@ -181,6 +181,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
                                   ),
                                   onPressed: () async {
                                     try {
+                                      setState(() => _isLoading = true);
                                       var result = await FirebaseFunctions
                                           .instance
                                           .httpsCallable("generateCustomToken")
@@ -190,7 +191,6 @@ class _PasswordScreenState extends State<PasswordScreen> {
                                             _passwordController.text.trim(),
                                       });
                                       String token = result.data;
-                                      setState(() => _isLoading = true);
                                       UserCredential credential =
                                           await _firebaseAuth
                                               .signInWithCustomToken(token);
@@ -207,7 +207,6 @@ class _PasswordScreenState extends State<PasswordScreen> {
                                           return;
                                         }
                                       }
-
                                       if (credential
                                               .additionalUserInfo!.isNewUser ||
                                           userDetails == null) {
@@ -263,19 +262,30 @@ class _PasswordScreenState extends State<PasswordScreen> {
                                           );
                                         }
                                       }
+                                    } on FirebaseFunctionsException catch (error) {
+                                      setState(() => _isLoading = false);
+                                      ScaffoldMessenger.of(context)
+                                          .hideCurrentSnackBar();
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content:
+                                              AutoSizeText("${error.message}"),
+                                          backgroundColor: Colors.red,
+                                        ),
+                                      );
                                     } catch (error) {
-                                      print("ERROR = $error");
-                                      // setState(() => _isLoading = false);
-                                      // ScaffoldMessenger.of(context)
-                                      //     .hideCurrentSnackBar();
-                                      // ScaffoldMessenger.of(context)
-                                      //     .showSnackBar(
-                                      //   const SnackBar(
-                                      //     content:
-                                      //         AutoSizeText("An error occured"),
-                                      //     backgroundColor: Colors.red,
-                                      //   ),
-                                      // );
+                                      setState(() => _isLoading = false);
+                                      ScaffoldMessenger.of(context)
+                                          .hideCurrentSnackBar();
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content:
+                                              AutoSizeText("An error occured"),
+                                          backgroundColor: Colors.red,
+                                        ),
+                                      );
                                     }
                                   },
                                 ),
