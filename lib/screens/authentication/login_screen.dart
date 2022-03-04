@@ -117,7 +117,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         primary: Colors.black,
                       ),
                       child: const Text(
-                        "Send OTP",
+                        "Continue",
                         style: TextStyle(
                           color: Colors.white,
                         ),
