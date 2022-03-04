@@ -304,4 +304,15 @@ class FirebaseRepository {
     required String userId,
   }) =>
       firebaseMethods.getUserReferralCode(userId: userId);
+
+  Future<bool> isPasswordSet({
+    required String mobile,
+  }) =>
+      firebaseMethods.isPasswordSet(mobile: mobile);
+
+  Future<void> setPassword({
+    required String userId,
+    required String password,
+  }) =>
+      firebaseMethods.setPassword(userId: userId, password: password);
 }

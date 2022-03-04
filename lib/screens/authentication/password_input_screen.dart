@@ -81,8 +81,8 @@ class _PasswordScreenState extends State<PasswordScreen> {
                       'Enter your password',
                       style: TextStyle(
                         fontFamily: 'Poppins',
-                        fontSize: 18,
-                        fontWeight: FontWeight.w400,
+                        fontSize: 22,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
@@ -90,6 +90,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
                     padding: const EdgeInsets.fromLTRB(10, 50, 10, 0),
                     child: OTPTextField(
                       keyboardType: TextInputType.phone,
+                      obscureText: true,
                       length: 4,
                       width: MediaQuery.of(context).size.width,
                       fieldWidth: MediaQuery.of(context).size.width * 0.13,
@@ -151,35 +152,6 @@ class _PasswordScreenState extends State<PasswordScreen> {
                             style: TextStyle(color: Colors.black),
                           ),
                         ),
-                        // if (_otpResendCount < 3)
-                        //   TextButton(
-                        //     onPressed: _wait
-                        //         ? null
-                        //         : () {
-                        //             verifyPhone();
-                        //             setState(() {
-                        //               _otpResendCount++;
-                        //               _start = 30;
-                        //               _wait = true;
-                        //             });
-                        //             startTimer();
-                        //             ScaffoldMessenger.of(context)
-                        //                 .hideCurrentSnackBar();
-                        //             ScaffoldMessenger.of(context).showSnackBar(
-                        //               const SnackBar(
-                        //                 content: AutoSizeText('OTP sent'),
-                        //                 backgroundColor: Colors.green,
-                        //               ),
-                        //             );
-                        //           },
-                        //     child: AutoSizeText(
-                        //       _wait
-                        //           ? 'Resend OTP in $_start seconds'
-                        //           : 'Resend OTP',
-                        //       style: TextStyle(
-                        //           color: _wait ? Colors.grey : Colors.black),
-                        //     ),
-                        //   ),
                       ],
                     ),
                   ),
