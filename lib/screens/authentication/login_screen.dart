@@ -29,6 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
   late final GlobalKey<ScaffoldState> _scaffoldKey;
   late final FirebaseRepository _repository;
   late final String _url;
+  late bool _isLoading;
 
   @override
   void initState() {
@@ -38,6 +39,7 @@ class _LoginScreenState extends State<LoginScreen> {
     _mobileController = TextEditingController();
     _repository = FirebaseRepository();
     _scaffoldKey = GlobalKey<ScaffoldState>();
+    _isLoading = false;
   }
 
   Future<bool> isNewUser() async {
@@ -113,55 +115,85 @@ class _LoginScreenState extends State<LoginScreen> {
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.053,
                     width: double.infinity,
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        primary: Colors.black,
-                      ),
-                      child: const Text(
-                        "Continue",
-                        style: TextStyle(
-                          color: Colors.white,
-                        ),
-                      ),
-                      onPressed: () async {
-                        Pattern pattern = r'^[6789]\d{9}$';
-                        RegExp regex = RegExp(pattern.toString());
-                        if (!regex.hasMatch(_mobileController.text.trim())) {
-                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content:
-                                  AutoSizeText('Enter valid mobile number'),
-                              backgroundColor: Colors.red,
+                    child: _isLoading
+                        ? const Center(
+                            child: CircularProgressIndicator.adaptive(
+                              backgroundColor: Colors.white,
                             ),
-                          );
-                          return;
-                        } else {
-                          bool isNewUser = await _repository.isNewUser(
-                            mobile: '+91${_mobileController.text.trim()}',
-                          );
-                          if (isNewUser == false) {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => PasswordScreen(
-                                  mobile: _mobileController.text.trim(),
-                                  referralCode: widget.referralCode,
-                                ),
+                          )
+                        : ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              primary: Colors.black,
+                            ),
+                            child: const Text(
+                              "Continue",
+                              style: TextStyle(
+                                color: Colors.white,
                               ),
-                            );
-                          } else {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => OTPInputScreen(
-                                  mobile: _mobileController.text.trim(),
-                                  referralCode: widget.referralCode,
-                                ),
-                              ),
-                            );
-                          }
-                        }
-                      },
-                    ),
+                            ),
+                            onPressed: () async {
+                              try {
+                                Pattern pattern = r'^[6789]\d{9}$';
+                                setState(() => _isLoading = true);
+                                RegExp regex = RegExp(pattern.toString());
+                                if (!regex
+                                    .hasMatch(_mobileController.text.trim())) {
+                                  ScaffoldMessenger.of(context)
+                                      .hideCurrentSnackBar();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: AutoSizeText(
+                                          'Enter valid mobile number'),
+                                      backgroundColor: Colors.red,
+                                    ),
+                                  );
+                                  return;
+                                } else {
+                                  bool isNewUser = await _repository.isNewUser(
+                                    mobile:
+                                        '+91${_mobileController.text.trim()}',
+                                  );
+                                  bool isPasswordSet =
+                                      await _repository.isPasswordSet(
+                                    mobile:
+                                        '+91${_mobileController.text.trim()}',
+                                  );
+                                  if (isNewUser == false &&
+                                      isPasswordSet == true) {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) => PasswordScreen(
+                                          mobile: _mobileController.text.trim(),
+                                          referralCode: widget.referralCode,
+                                        ),
+                                      ),
+                                    );
+                                  } else {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) => OTPInputScreen(
+                                          mobile: _mobileController.text.trim(),
+                                          referralCode: widget.referralCode,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                  setState(() => _isLoading = false);
+                                }
+                              } catch (error) {
+                                setState(() => _isLoading = false);
+                                ScaffoldMessenger.of(context)
+                                    .hideCurrentSnackBar();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text("An error occured"),
+                                    backgroundColor: Colors.red,
+                                    duration: Duration(seconds: 1),
+                                  ),
+                                );
+                              }
+                            },
+                          ),
                   ),
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.03,

@@ -10,6 +10,7 @@ import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/authentication/password_input_screen.dart';
 import 'package:grooks_dev/screens/user/navbar_screen.dart';
+import 'package:grooks_dev/screens/user/set_password_screen.dart';
 import 'package:grooks_dev/screens/user/user_detail_screen.dart';
 import 'package:grooks_dev/services/my_encryption.dart';
 import 'package:otp_text_field/otp_field.dart';
@@ -458,17 +459,33 @@ class _OTPInputScreenState extends State<OTPInputScreen> {
                                           //     ),
                                           //     (route) => false);
                                         } else {
-                                          Navigator.pushAndRemoveUntil(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  NavbarScreen(
-                                                user: userDetails,
-                                                initialPage: 'Home',
+                                          bool isPasswordSet =
+                                              await _repository.isPasswordSet(
+                                                  mobile:
+                                                      "+91${widget.mobile}");
+                                          if (isPasswordSet) {
+                                            Navigator.pushAndRemoveUntil(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    NavbarScreen(
+                                                  user: userDetails,
+                                                  initialPage: 'Home',
+                                                ),
                                               ),
-                                            ),
-                                            (Route<dynamic> route) => false,
-                                          );
+                                              (Route<dynamic> route) => false,
+                                            );
+                                          } else {
+                                            Navigator.pushAndRemoveUntil(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    SetPasswordScreen(
+                                                        userId: userDetails.id),
+                                              ),
+                                              (Route<dynamic> route) => false,
+                                            );
+                                          }
                                         }
                                       }
                                     } catch (error) {
