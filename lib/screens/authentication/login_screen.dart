@@ -4,9 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:grooks_dev/models/question.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
-import 'package:grooks_dev/screens/authentication/otp_input_screen.dart';
 import 'package:grooks_dev/screens/authentication/password_input_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import 'otp_input_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   final String? referralCode;
@@ -136,22 +137,28 @@ class _LoginScreenState extends State<LoginScreen> {
                           );
                           return;
                         } else {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => PasswordScreen(
-                                mobile: _mobileController.text.trim(),
-                                referralCode: widget.referralCode,
-                              ),
-                            ),
+                          bool isNewUser = await _repository.isNewUser(
+                            mobile: '+91${_mobileController.text.trim()}',
                           );
-                          // Navigator.of(context).push(
-                          //   MaterialPageRoute(
-                          //     builder: (context) => OTPInputScreen(
-                          //       mobile: _mobileController.text.trim(),
-                          //       referralCode: widget.referralCode,
-                          //     ),
-                          //   ),
-                          // );
+                          if (isNewUser == false) {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => PasswordScreen(
+                                  mobile: _mobileController.text.trim(),
+                                  referralCode: widget.referralCode,
+                                ),
+                              ),
+                            );
+                          } else {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => OTPInputScreen(
+                                  mobile: _mobileController.text.trim(),
+                                  referralCode: widget.referralCode,
+                                ),
+                              ),
+                            );
+                          }
                         }
                       },
                     ),
