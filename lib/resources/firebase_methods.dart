@@ -1310,4 +1310,42 @@ class FirebaseMethods {
       rethrow;
     }
   }
+
+  Future<bool> isPasswordSet({
+    required String mobile,
+  }) async {
+    try {
+      QuerySnapshot userSnapshot =
+          await usersCollection.where("mobile", isEqualTo: mobile).get();
+      if (userSnapshot.size == 0) {
+        return false;
+      }
+      Map<String, dynamic> user =
+          userSnapshot.docs[0].data() as Map<String, dynamic>;
+      if (!user.containsKey("password")) {
+        return false;
+      }
+      String password = user["password"];
+      if (password.isEmpty) return false;
+      return true;
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<void> setPassword({
+    required String userId,
+    required String password,
+  }) async {
+    try {
+      DBCrypt dBCrypt = DBCrypt();
+      String salt = dBCrypt.gensaltWithRounds(12);
+      String hashedPwd = dBCrypt.hashpw(password, salt);
+      await usersCollection.doc(userId).update({
+        "password": hashedPwd,
+      });
+    } catch (error) {
+      rethrow;
+    }
+  }
 }
