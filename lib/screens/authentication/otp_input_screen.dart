@@ -8,12 +8,14 @@ import 'package:grooks_dev/models/question.dart';
 
 import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
+import 'package:grooks_dev/screens/authentication/password_input_screen.dart';
 import 'package:grooks_dev/screens/user/navbar_screen.dart';
 import 'package:grooks_dev/screens/user/user_detail_screen.dart';
 import 'package:grooks_dev/services/my_encryption.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/otp_field_style.dart';
 import 'package:otp_text_field/style.dart';
+import 'package:page_transition/page_transition.dart';
 
 class OTPInputScreen extends StatefulWidget {
   final String mobile;
@@ -306,36 +308,69 @@ class _OTPInputScreenState extends State<OTPInputScreen> {
                             style: TextStyle(color: Colors.black),
                           ),
                         ),
-                        if (_otpResendCount < 3)
-                          TextButton(
-                            onPressed: _wait
-                                ? null
-                                : () {
-                                    verifyPhone();
-                                    setState(() {
-                                      _otpResendCount++;
-                                      _start = 30;
-                                      _wait = true;
-                                    });
-                                    startTimer();
-                                    ScaffoldMessenger.of(context)
-                                        .hideCurrentSnackBar();
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: AutoSizeText('OTP sent'),
-                                        backgroundColor: Colors.green,
-                                      ),
-                                    );
-                                  },
-                            child: AutoSizeText(
-                              _wait
-                                  ? 'Resend OTP in $_start seconds'
-                                  : 'Resend OTP',
-                              style: TextStyle(
-                                  color: _wait ? Colors.grey : Colors.black),
-                            ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pushReplacement(
+                              PageTransition(
+                                child: PasswordScreen(
+                                  mobile: widget.mobile,
+                                  question: widget.question,
+                                  referralCode: widget.referralCode,
+                                  sharedViewMap: widget.sharedViewMap,
+                                ),
+                                type: PageTransitionType.rightToLeft,
+                                duration: const Duration(
+                                  milliseconds: 300,
+                                ),
+                                reverseDuration: const Duration(
+                                  milliseconds: 300,
+                                ),
+                              ),
+                            );
+                          },
+                          child: const AutoSizeText(
+                            'Login with password',
+                            style: TextStyle(color: Colors.black),
                           ),
+                        ),
                       ],
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(
+                        top: MediaQuery.of(context).size.height * 0.03),
+                    child: Center(
+                      child: _otpResendCount < 3
+                          ? TextButton(
+                              onPressed: _wait
+                                  ? null
+                                  : () {
+                                      verifyPhone();
+                                      setState(() {
+                                        _otpResendCount++;
+                                        _start = 30;
+                                        _wait = true;
+                                      });
+                                      startTimer();
+                                      ScaffoldMessenger.of(context)
+                                          .hideCurrentSnackBar();
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: AutoSizeText('OTP sent'),
+                                          backgroundColor: Colors.green,
+                                        ),
+                                      );
+                                    },
+                              child: AutoSizeText(
+                                _wait
+                                    ? 'Resend OTP in $_start seconds'
+                                    : 'Resend OTP',
+                                style: TextStyle(
+                                    color: _wait ? Colors.grey : Colors.black),
+                              ),
+                            )
+                          : null,
                     ),
                   ),
                   _isLoading
