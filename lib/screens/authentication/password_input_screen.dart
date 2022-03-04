@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:grooks_dev/models/question.dart';
 import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
+import 'package:grooks_dev/screens/authentication/otp_input_screen.dart';
 import 'package:grooks_dev/screens/user/navbar_screen.dart';
 import 'package:grooks_dev/screens/user/user_detail_screen.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/otp_field_style.dart';
 import 'package:otp_text_field/style.dart';
+import 'package:page_transition/page_transition.dart';
 
 class PasswordScreen extends StatefulWidget {
   final String mobile;
@@ -121,6 +123,31 @@ class _PasswordScreenState extends State<PasswordScreen> {
                           },
                           child: const AutoSizeText(
                             'Change number',
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pushReplacement(
+                              PageTransition(
+                                child: OTPInputScreen(
+                                  mobile: widget.mobile,
+                                  question: widget.question,
+                                  referralCode: widget.referralCode,
+                                  sharedViewMap: widget.sharedViewMap,
+                                ),
+                                type: PageTransitionType.rightToLeft,
+                                duration: const Duration(
+                                  milliseconds: 300,
+                                ),
+                                reverseDuration: const Duration(
+                                  milliseconds: 300,
+                                ),
+                              ),
+                            );
+                          },
+                          child: const AutoSizeText(
+                            'Login with OTP',
                             style: TextStyle(color: Colors.black),
                           ),
                         ),
