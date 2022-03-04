@@ -270,6 +270,7 @@ class FirebaseMethods {
         );
       }
       String refCode = generateReferralCode(userId: uid);
+      FirebaseMessaging _messaging = FirebaseMessaging.instance;
       String? token = await _messaging.getToken();
       Users user = Users(
         name: name,
