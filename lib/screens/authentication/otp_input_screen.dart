@@ -156,14 +156,29 @@ class _OTPInputScreenState extends State<OTPInputScreen> {
             //     ),
             //     (route) => false);
           } else {
-            Navigator.pushAndRemoveUntil(
+            bool isPasswordSet =
+                await _repository.isPasswordSet(mobile: "+91${widget.mobile}");
+            if (isPasswordSet) {
+              Navigator.pushAndRemoveUntil(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => NavbarScreen(
-                          user: userDetails,
-                          initialPage: 'Home',
-                        )),
-                (Route<dynamic> route) => false);
+                  builder: (context) => NavbarScreen(
+                    user: userDetails,
+                    initialPage: 'Home',
+                  ),
+                ),
+                (Route<dynamic> route) => false,
+              );
+            } else {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      SetPasswordScreen(userId: userDetails.id),
+                ),
+                (Route<dynamic> route) => false,
+              );
+            }
           }
         }
       }
