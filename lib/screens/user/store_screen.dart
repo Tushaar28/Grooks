@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/user/payment_screen.dart';
 import 'package:grooks_dev/widgets/custom_button.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:http/http.dart' as http;
 
 class StoreScreen extends StatefulWidget {
   final Users user;
@@ -26,6 +28,7 @@ class _StoreScreenState extends State<StoreScreen> {
   late double _paymentGatewayCommission, _price, _paymentCharges, _totalAmount;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   late final List<String> _packs;
+  late final _dio;
 
   @override
   void initState() {
@@ -34,6 +37,7 @@ class _StoreScreenState extends State<StoreScreen> {
     _repository = FirebaseRepository();
     getPaymentGatewayCommission();
     _isLoading = false;
+    _dio = Dio();
     _packs = [
       "assets/images/pack1.png",
       "assets/images/pack2.png",
@@ -58,6 +62,26 @@ class _StoreScreenState extends State<StoreScreen> {
           builder: (context) => const PaymentScreen(),
         ),
       );
+      // var result = await FirebaseFunctions.instance
+      //     .httpsCallable("generateTokenForPayment")
+      //     .call({});
+      // //print("RESULT = ${result.data}");
+      // Map<String, dynamic> map = {
+      //   "key": "gtKFFx",
+      //   "txnid": result.data["txnId"],
+      //   "productinfo": "phone",
+      //   "amount": 100,
+      //   "email": "test@gmail.com",
+      //   "firstname": "fewfw",
+      //   "lastname": "Tiwari",
+      //   "surl": "https://apiplayground-response.herokuapp.com/",
+      //   "furl": "https://apiplayground-response.herokuapp.com/",
+      //   "phone": "9988776655",
+      //   "hash": result.data["hash"],
+      // };
+      // FormData formdata = FormData.fromMap(map);
+      // var response =
+      //     await _dio.post("https://test.payu.in/_payment", data: formdata);
     } catch (error) {
       rethrow;
     }
