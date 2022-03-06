@@ -1,11 +1,12 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
-import 'package:cashfree_pg/cashfree_pg.dart';
 import 'package:flutter/services.dart';
 import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
+import 'package:grooks_dev/screens/user/payment_screen.dart';
 import 'package:grooks_dev/widgets/custom_button.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class StoreScreen extends StatefulWidget {
   final Users user;
@@ -50,6 +51,18 @@ class _StoreScreenState extends State<StoreScreen> {
     setState(() => _hasDataLoaded = true);
   }
 
+  Future<dynamic> makePayment() async {
+    try {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const PaymentScreen(),
+        ),
+      );
+    } catch (error) {
+      rethrow;
+    }
+  }
+
   bool isCoinsValid() {
     bool isValid = int.tryParse(_coinsController.text) != null &&
         int.tryParse(_coinsController.text)! >= 100;
@@ -64,96 +77,6 @@ class _StoreScreenState extends State<StoreScreen> {
               (int.parse(_coinsController.text) / 10));
     }
     return isValid;
-  }
-
-  Future<void> makePayment() async {
-    try {
-      setState(() => _isLoading = true);
-      String orderId = DateTime.now()
-          .toString()
-          .replaceAll("-", "")
-          .replaceAll(" ", "")
-          .replaceAll(":", "")
-          .replaceAll(".", "");
-      var result = await FirebaseFunctions.instance
-          .httpsCallable("generateTokenForPayment")
-          .call({
-        "orderId": orderId,
-        "orderAmount": _totalAmount.toStringAsFixed(2),
-        "orderCurrency": "INR",
-      });
-      String stage = "TEST";
-      String orderAmount = _totalAmount.toStringAsFixed(2);
-      String tokenData = result.data["cftoken"];
-      String customerName = widget.user.name;
-      String orderNote = "Order_Note";
-      String orderCurrency = "INR";
-      String appId = "123205e8065ff7070dd4b1379c502321";
-      String customerPhone = widget.user.mobile!.substring(2);
-      String customerEmail = "payment@grooks.in";
-      String notifyUrl = "https://test.gocashfree.com/notify";
-
-      Map<String, dynamic> inputParams = {
-        "orderId": orderId,
-        "orderAmount": orderAmount,
-        "customerName": customerName,
-        "orderNote": orderNote,
-        "orderCurrency": orderCurrency,
-        "appId": appId,
-        "customerPhone": customerPhone,
-        "customerEmail": customerEmail,
-        "stage": stage,
-        "tokenData": tokenData,
-        "notifyUrl": notifyUrl
-      };
-      CashfreePGSDK.doPayment(inputParams).then((mapData) async {
-        try {
-          String transactionStatus = mapData!["txStatus"];
-          mapData.forEach((key, value) {
-            print("KEY = $key  VALUE = $value");
-          });
-          var result = await FirebaseFunctions.instance
-              .httpsCallable("verifySignature")
-              .call(mapData);
-          if (result.data != true) {
-            throw "An error occured while verifying your payment";
-          }
-
-          await updateTransactionDetails(
-            transactionId: mapData["referenceId"],
-            transactionStatus: transactionStatus,
-            userId: widget.user.id,
-            amount: _totalAmount,
-            coins: int.parse(_coinsController.text),
-          );
-          if (transactionStatus != "SUCCESS") {
-            throw "An error occured";
-          }
-        } catch (error) {
-          ScaffoldMessenger.maybeOf(context)!.hideCurrentSnackBar();
-          ScaffoldMessenger.maybeOf(context)!.showSnackBar(
-            const SnackBar(
-              content: Text("Payment failed. Please try again"),
-              backgroundColor: Colors.red,
-              duration: Duration(seconds: 2),
-            ),
-          );
-          rethrow;
-        }
-        ScaffoldMessenger.maybeOf(context)!.hideCurrentSnackBar();
-        ScaffoldMessenger.maybeOf(context)!.showSnackBar(
-          const SnackBar(
-            content: Text("Payment successful"),
-            backgroundColor: Colors.green,
-            duration: Duration(seconds: 2),
-          ),
-        );
-      });
-    } catch (error) {
-      rethrow;
-    } finally {
-      setState(() => _isLoading = false);
-    }
   }
 
   Future<void> updateTransactionDetails({
@@ -252,6 +175,10 @@ class _StoreScreenState extends State<StoreScreen> {
                         fontSize: 22,
                         fontWeight: FontWeight.w500,
                       ),
+                    ),
+                    CustomButton(
+                      onPressed: () => makePayment(),
+                      text: "PAY",
                     ),
                     // Padding(
                     //   padding: EdgeInsets.only(
