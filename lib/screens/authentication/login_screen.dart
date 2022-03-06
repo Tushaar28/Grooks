@@ -147,6 +147,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       backgroundColor: Colors.red,
                                     ),
                                   );
+                                  setState(() => _isLoading = false);
                                   return;
                                 } else {
                                   bool isNewUser = await _repository.isNewUser(
