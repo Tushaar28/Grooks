@@ -15,7 +15,7 @@ class TradeSuccessScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     timer = Timer(
-      const Duration(milliseconds: 3000),
+      const Duration(milliseconds: 700),
       () => Navigator.of(context).pushAndRemoveUntil(
           MaterialPageRoute(
             builder: (context) => NavbarScreen(user: user),

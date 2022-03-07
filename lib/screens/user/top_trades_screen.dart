@@ -124,12 +124,12 @@ class _TopTradesScreenState extends State<TopTradesScreen>
                         try {
                           setState(() => _isLoading = true);
                           await pairTrade(trade: trade);
-                          Navigator.of(context).pop();
-                          Navigator.of(context).push(
+                          Navigator.of(context).pushAndRemoveUntil(
                             MaterialPageRoute(
                               builder: (context) =>
                                   TradeSuccessScreen(user: widget.user),
                             ),
+                            (r) => false,
                           );
                         } catch (error) {
                           Navigator.of(context).pop();
