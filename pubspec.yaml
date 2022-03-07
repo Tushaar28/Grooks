@@ -75,6 +75,7 @@ dependencies:
   dbcrypt: ^2.0.0
   webview_flutter: ^3.0.1
   dio: ^4.0.4
+  upi_pay: ^1.0.1
 
 dev_dependencies:
   flutter_test:
