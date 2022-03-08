@@ -31,6 +31,8 @@ class _TopTradesScreenState extends State<TopTradesScreen>
   late final FirebaseRepository _repository;
   late bool _tradePlaced, _tradeError, _isLoading;
   late bool? _isActive;
+  late bool _dataLoaded;
+  late bool? _isQuestionActive;
 
   final viewSuccessSnackbar = const SnackBar(
     content: AutoSizeText("Your view has been placed"),
@@ -50,11 +52,15 @@ class _TopTradesScreenState extends State<TopTradesScreen>
   void initState() {
     super.initState();
     _isActive = true;
+    _dataLoaded = false;
+    _isQuestionActive = true;
     _repository = FirebaseRepository();
-    _tradeError = _tradePlaced = _isLoading = false;
     getUserActiveStatus();
+    getQuestionActiveStatus();
     _trades = <String, dynamic>{};
     _tradesKeys = [];
+    getTopTrades();
+    _tradeError = _tradePlaced = _isLoading = false;
   }
 
   Future<void> getUserActiveStatus() async {
@@ -63,6 +69,16 @@ class _TopTradesScreenState extends State<TopTradesScreen>
 
   Future<void> refresh() async {
     setState(() {});
+  }
+
+  Future<void> getQuestionActiveStatus() async {
+    try {
+      bool status = await _repository.getQuestionActiveStatus(
+          questionId: widget.question.id);
+      setState(() => _isQuestionActive = status);
+    } catch (error) {
+      rethrow;
+    }
   }
 
   Future<QuerySnapshot> getTopTrades() async {
@@ -94,6 +110,7 @@ class _TopTradesScreenState extends State<TopTradesScreen>
       }
     }
     _tradesKeys = _trades.keys.toList();
+    setState(() => _dataLoaded = true);
     return data;
   }
 
@@ -196,7 +213,12 @@ class _TopTradesScreenState extends State<TopTradesScreen>
 
   @override
   Widget build(BuildContext context) {
-    if (_isActive == null) {
+    if (widget.question.answer != null) {
+      return const Center(
+        child: Text("No trades"),
+      );
+    }
+    if (_isActive == null || _isQuestionActive == null) {
       return const Center(
         child: CircularProgressIndicator.adaptive(
           backgroundColor: Colors.white,
@@ -213,184 +235,159 @@ class _TopTradesScreenState extends State<TopTradesScreen>
             (route) => false);
       });
     }
-    if (widget.question.answer != null) {
+    if (_isQuestionActive == false) {
       return const Center(
-        child: Text("No trades"),
-      );
-    }
-    return RefreshIndicator(
-      onRefresh: refresh,
-      child: FutureBuilder(
-        initialData: const Center(
-          child: CircularProgressIndicator.adaptive(
-            backgroundColor: Colors.white,
+        child: Text(
+          "Question is closed",
+          style: TextStyle(
+            fontSize: 18,
           ),
         ),
-        future: getTopTrades(),
-        builder: (BuildContext context, AsyncSnapshot snapshot) {
-          if (_trades.isEmpty) {
-            SchedulerBinding.instance!.addPostFrameCallback((timeStamp) {
-              setState(() {});
-            });
-            return const Center(
-              child: AutoSizeText('No trades'),
-            );
-          }
-          if (widget.question.answer != null) {
-            return const Center(
-              child: AutoSizeText('Event is closed'),
-            );
-          }
-          return Stack(
-            children: [
-              ListView.separated(
-                itemCount: _tradesKeys.length,
-                separatorBuilder: (context, index) => const Divider(
-                  color: Colors.grey,
-                  thickness: 1,
-                ),
-                itemBuilder: (BuildContext context, int index) {
-                  return FutureBuilder<String>(
-                    future: getUserNameFromUserId(
-                        userId: _trades[_tradesKeys[index]].first.userId),
-                    builder:
-                        (BuildContext context, AsyncSnapshot<String> snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(
-                          child: CircularProgressIndicator.adaptive(
-                            backgroundColor: Colors.white,
-                          ),
-                        );
-                      }
-                      return Card(
-                        elevation: 0,
-                        clipBehavior: Clip.antiAliasWithSaveLayer,
-                        color: Colors.transparent,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
-                        ),
-                        child: Row(
+      );
+    }
+    if (_dataLoaded == false) {
+      return const Center(
+        child: CircularProgressIndicator.adaptive(
+          backgroundColor: Colors.white,
+        ),
+      );
+    }
+    return Stack(
+      children: [
+        ListView.separated(
+          itemCount: _tradesKeys.length,
+          separatorBuilder: (context, index) => const Divider(
+            color: Colors.grey,
+            thickness: 1,
+          ),
+          itemBuilder: (BuildContext context, int index) {
+            return FutureBuilder<String>(
+              future: getUserNameFromUserId(
+                  userId: _trades[_tradesKeys[index]].first.userId),
+              builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(
+                    child: CircularProgressIndicator.adaptive(
+                      backgroundColor: Colors.white,
+                    ),
+                  );
+                }
+                return Card(
+                  elevation: 0,
+                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                  color: Colors.transparent,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(5, 0, 0, 5),
+                        child: Column(
                           mainAxisSize: MainAxisSize.max,
                           children: [
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(5, 0, 0, 5),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  SizedBox(
-                                    height: MediaQuery.of(context).size.height *
-                                        0.05,
-                                    width: MediaQuery.of(context).size.width *
-                                        0.45,
-                                    child: Padding(
-                                      padding: const EdgeInsets.fromLTRB(
-                                          10, 5, 5, 0),
-                                      child:
-                                          _trades[_tradesKeys[index]].length > 1
-                                              ? AutoSizeText(
-                                                  '${(snapshot.data!.split(' ').first)} + ${_trades[_tradesKeys[index]].length - 1} others says',
-                                                  style: const TextStyle(
-                                                    fontFamily: 'Poppins',
-                                                    fontSize: 12,
-                                                  ),
-                                                )
-                                              : AutoSizeText(
-                                                  '${snapshot.data} says',
-                                                  style: const TextStyle(
-                                                    fontFamily: 'Poppins',
-                                                    fontSize: 12,
-                                                  ),
-                                                ),
-                                    ),
-                                  ),
-                                  Container(
-                                    width: MediaQuery.of(context).size.width *
-                                        0.45,
-                                    height: MediaQuery.of(context).size.height *
-                                        0.03,
-                                    padding:
-                                        const EdgeInsets.fromLTRB(15, 0, 15, 0),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.fromLTRB(
-                                              5, 0, 0, 0),
-                                          child: _trades[_tradesKeys[index]]
-                                                  .first
-                                                  .response
-                                              ? const AutoSizeText(
-                                                  'YES',
-                                                  style: TextStyle(
-                                                    fontFamily: 'Poppins',
-                                                    fontSize: 18,
-                                                  ),
-                                                )
-                                              : const AutoSizeText(
-                                                  'NO',
-                                                  style: TextStyle(
-                                                    fontFamily: 'Poppins',
-                                                    fontSize: 18,
-                                                  ),
-                                                ),
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.05,
+                              width: MediaQuery.of(context).size.width * 0.45,
+                              child: Padding(
+                                padding: const EdgeInsets.fromLTRB(10, 5, 5, 0),
+                                child: _trades[_tradesKeys[index]].length > 1
+                                    ? AutoSizeText(
+                                        '${(snapshot.data!.split(' ').first)} + ${_trades[_tradesKeys[index]].length - 1} others says',
+                                        style: const TextStyle(
+                                          fontFamily: 'Poppins',
+                                          fontSize: 12,
                                         ),
-                                        Padding(
-                                          padding: const EdgeInsets.fromLTRB(
-                                              5, 0, 0, 0),
-                                          child: AutoSizeText(
-                                            '@ ${_trades[_tradesKeys[index]].first.coins}',
-                                            style: const TextStyle(
-                                              fontFamily: 'Poppins',
-                                              fontSize: 18,
-                                            ),
-                                          ),
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ],
+                                      )
+                                    : AutoSizeText(
+                                        '${snapshot.data} says',
+                                        style: const TextStyle(
+                                          fontFamily: 'Poppins',
+                                          fontSize: 12,
+                                        ),
+                                      ),
                               ),
                             ),
                             Container(
                               width: MediaQuery.of(context).size.width * 0.45,
-                              height: MediaQuery.of(context).size.height * 0.06,
-                              padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                              child: CustomButton(
-                                onPressed: () async {
-                                  try {
-                                    await pairTradeConfirmation(
-                                        context: context,
-                                        trade:
-                                            _trades[_tradesKeys[index]].first);
-                                  } catch (error) {}
-                                },
-                                text: _trades[_tradesKeys[index]].first.response
-                                    ? 'SAY NO @ ${100 - _trades[_tradesKeys[index]].first.coins}'
-                                    : 'SAY YES @ ${100 - _trades[_tradesKeys[index]].first.coins}',
-                                color:
-                                    _trades[_tradesKeys[index]].first.response
-                                        ? const Color(0xFFC31D1D)
-                                        : Theme.of(context).primaryColor,
-                                textStyle: const TextStyle(
-                                  fontFamily: 'Poppins',
-                                  fontSize: 16,
-                                  color: Color(0xFFFAFAFA),
-                                ),
+                              height: MediaQuery.of(context).size.height * 0.03,
+                              padding: const EdgeInsets.fromLTRB(15, 0, 15, 0),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(5, 0, 0, 0),
+                                    child: _trades[_tradesKeys[index]]
+                                            .first
+                                            .response
+                                        ? const AutoSizeText(
+                                            'YES',
+                                            style: TextStyle(
+                                              fontFamily: 'Poppins',
+                                              fontSize: 18,
+                                            ),
+                                          )
+                                        : const AutoSizeText(
+                                            'NO',
+                                            style: TextStyle(
+                                              fontFamily: 'Poppins',
+                                              fontSize: 18,
+                                            ),
+                                          ),
+                                  ),
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(5, 0, 0, 0),
+                                    child: AutoSizeText(
+                                      '@ ${_trades[_tradesKeys[index]].first.coins}',
+                                      style: const TextStyle(
+                                        fontFamily: 'Poppins',
+                                        fontSize: 18,
+                                      ),
+                                    ),
+                                  )
+                                ],
                               ),
-                            )
+                            ),
                           ],
                         ),
-                      );
-                    },
-                  );
-                },
-              ),
-            ],
-          );
-        },
-      ),
+                      ),
+                      Container(
+                        width: MediaQuery.of(context).size.width * 0.45,
+                        height: MediaQuery.of(context).size.height * 0.06,
+                        padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                        child: CustomButton(
+                          onPressed: () async {
+                            try {
+                              await pairTradeConfirmation(
+                                  context: context,
+                                  trade: _trades[_tradesKeys[index]].first);
+                            } catch (error) {}
+                          },
+                          text: _trades[_tradesKeys[index]].first.response
+                              ? 'SAY NO @ ${100 - _trades[_tradesKeys[index]].first.coins}'
+                              : 'SAY YES @ ${100 - _trades[_tradesKeys[index]].first.coins}',
+                          color: _trades[_tradesKeys[index]].first.response
+                              ? const Color(0xFFC31D1D)
+                              : Theme.of(context).primaryColor,
+                          textStyle: const TextStyle(
+                            fontFamily: 'Poppins',
+                            fontSize: 16,
+                            color: Color(0xFFFAFAFA),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                );
+              },
+            );
+          },
+        ),
+      ],
     );
   }
 }

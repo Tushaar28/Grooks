@@ -668,6 +668,7 @@ class FirebaseMethods {
           .where('userId', isNotEqualTo: userId)
           .orderBy('userId')
           .orderBy('createdAt', descending: true)
+          .limit(100)
           .get();
       return data;
     } catch (error) {
