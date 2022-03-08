@@ -225,7 +225,7 @@ class _QuestionCardState extends State<QuestionCard> {
                         width: MediaQuery.of(context).size.width * 0.02,
                       ),
                       Text(
-                        "${widget.question.openTradesCount! + widget.question.pairedTradesCount! * 2}+  people trading",
+                        "${((widget.question.openTradesCount! + widget.question.pairedTradesCount! * 2) * 1.5).toInt()}+  people trading",
                         style: const TextStyle(
                           color: Colors.grey,
                           fontSize: 12,
