@@ -371,322 +371,322 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               },
                             ),
                           ),
-                          SizedBox(
-                            height: MediaQuery.of(context).size.height * 0.07,
-                          ),
-                          if (_user!.password != null) ...[
-                            Center(
-                              child: Column(
-                                children: [
-                                  if (_changePassword == false) ...[
-                                    TextButton(
-                                      child: const Text(
-                                        "Change Password",
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                      onPressed: () => setState(() =>
-                                          _changePassword = !_changePassword),
-                                    ),
-                                  ],
-                                  if (_changePassword == true) ...[
-                                    const Padding(
-                                      padding: EdgeInsets.only(
-                                        top: 20,
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          "Your old password",
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.8,
-                                      child: Padding(
-                                        padding: const EdgeInsets.fromLTRB(
-                                            0, 10, 0, 10),
-                                        child: OTPTextField(
-                                          keyboardType: TextInputType.phone,
-                                          obscureText: true,
-                                          length: 4,
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          fieldWidth: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.13,
-                                          otpFieldStyle: OtpFieldStyle(
-                                            backgroundColor: Colors.white,
-                                            borderColor: Colors.black,
-                                            enabledBorderColor: Colors.black,
-                                            focusBorderColor: Colors.black,
-                                          ),
-                                          style: const TextStyle(
-                                            fontSize: 18,
-                                            color: Colors.black,
-                                          ),
-                                          textFieldAlignment:
-                                              MainAxisAlignment.spaceAround,
-                                          fieldStyle: FieldStyle.underline,
-                                          onChanged: (String value) {
-                                            _passwordController.text = value;
-                                          },
-                                          onCompleted: (String pin) {
-                                            _passwordController.text =
-                                                pin.trim();
-                                          },
-                                        ),
-                                      ),
-                                    ),
-                                    const Padding(
-                                      padding: EdgeInsets.only(
-                                        top: 20,
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          "Set your 4 digit password",
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.8,
-                                      child: Padding(
-                                        padding: const EdgeInsets.fromLTRB(
-                                            0, 10, 0, 10),
-                                        child: OTPTextField(
-                                          keyboardType: TextInputType.phone,
-                                          obscureText: true,
-                                          length: 4,
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          fieldWidth: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.13,
-                                          otpFieldStyle: OtpFieldStyle(
-                                            backgroundColor: Colors.white,
-                                            borderColor: Colors.black,
-                                            enabledBorderColor: Colors.black,
-                                            focusBorderColor: Colors.black,
-                                          ),
-                                          style: const TextStyle(
-                                            fontSize: 18,
-                                            color: Colors.black,
-                                          ),
-                                          textFieldAlignment:
-                                              MainAxisAlignment.spaceAround,
-                                          fieldStyle: FieldStyle.underline,
-                                          onChanged: (String value) {
-                                            _passwordController.text = value;
-                                          },
-                                          onCompleted: (String pin) {
-                                            _passwordController.text =
-                                                pin.trim();
-                                          },
-                                        ),
-                                      ),
-                                    ),
-                                    const Padding(
-                                      padding: EdgeInsets.only(
-                                        top: 20,
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          "Confirm your 4 digit password",
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.8,
-                                      child: Padding(
-                                        padding: const EdgeInsets.fromLTRB(
-                                            0, 10, 0, 10),
-                                        child: OTPTextField(
-                                          keyboardType: TextInputType.phone,
-                                          obscureText: true,
-                                          length: 4,
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          fieldWidth: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.13,
-                                          otpFieldStyle: OtpFieldStyle(
-                                            backgroundColor: Colors.white,
-                                            borderColor: Colors.black,
-                                            enabledBorderColor: Colors.black,
-                                            focusBorderColor: Colors.black,
-                                          ),
-                                          style: const TextStyle(
-                                            fontSize: 18,
-                                            color: Colors.black,
-                                          ),
-                                          textFieldAlignment:
-                                              MainAxisAlignment.spaceAround,
-                                          fieldStyle: FieldStyle.underline,
-                                          onChanged: (String value) {
-                                            _confirmPasswordController.text =
-                                                value;
-                                          },
-                                          onCompleted: (String pin) {
-                                            _confirmPasswordController.text =
-                                                pin.trim();
-                                          },
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ],
-                              ),
-                            ),
-                          ],
-                          if (_user!.password == null) ...[
-                            Center(
-                              child: Column(
-                                children: [
-                                  if (_setPassword == false) ...[
-                                    TextButton(
-                                      child: const Text(
-                                        "Set Password",
-                                        style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
-                                      onPressed: () => setState(
-                                          () => _setPassword = !_setPassword),
-                                    ),
-                                  ],
-                                  if (_setPassword == true) ...[
-                                    const Padding(
-                                      padding: EdgeInsets.only(
-                                        top: 20,
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          "Set your 4 digit password",
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.8,
-                                      child: Padding(
-                                        padding: const EdgeInsets.fromLTRB(
-                                            0, 10, 0, 10),
-                                        child: OTPTextField(
-                                          keyboardType: TextInputType.phone,
-                                          obscureText: true,
-                                          length: 4,
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          fieldWidth: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.13,
-                                          otpFieldStyle: OtpFieldStyle(
-                                            backgroundColor: Colors.white,
-                                            borderColor: Colors.black,
-                                            enabledBorderColor: Colors.black,
-                                            focusBorderColor: Colors.black,
-                                          ),
-                                          style: const TextStyle(
-                                            fontSize: 18,
-                                            color: Colors.black,
-                                          ),
-                                          textFieldAlignment:
-                                              MainAxisAlignment.spaceAround,
-                                          fieldStyle: FieldStyle.underline,
-                                          onChanged: (String value) {
-                                            _passwordController.text = value;
-                                          },
-                                          onCompleted: (String pin) {
-                                            _passwordController.text =
-                                                pin.trim();
-                                          },
-                                        ),
-                                      ),
-                                    ),
-                                    const Padding(
-                                      padding: EdgeInsets.only(
-                                        top: 20,
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          "Confirm your 4 digit password",
-                                          style: TextStyle(
-                                            fontSize: 20,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.8,
-                                      child: Padding(
-                                        padding: const EdgeInsets.fromLTRB(
-                                            0, 10, 0, 10),
-                                        child: OTPTextField(
-                                          keyboardType: TextInputType.phone,
-                                          obscureText: true,
-                                          length: 4,
-                                          width:
-                                              MediaQuery.of(context).size.width,
-                                          fieldWidth: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.13,
-                                          otpFieldStyle: OtpFieldStyle(
-                                            backgroundColor: Colors.white,
-                                            borderColor: Colors.black,
-                                            enabledBorderColor: Colors.black,
-                                            focusBorderColor: Colors.black,
-                                          ),
-                                          style: const TextStyle(
-                                            fontSize: 18,
-                                            color: Colors.black,
-                                          ),
-                                          textFieldAlignment:
-                                              MainAxisAlignment.spaceAround,
-                                          fieldStyle: FieldStyle.underline,
-                                          onChanged: (String value) {
-                                            _confirmPasswordController.text =
-                                                value;
-                                          },
-                                          onCompleted: (String pin) {
-                                            _confirmPasswordController.text =
-                                                pin.trim();
-                                          },
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ],
-                              ),
-                            ),
-                          ],
+                          // SizedBox(
+                          //   height: MediaQuery.of(context).size.height * 0.07,
+                          // ),
+                          // if (_user!.password != null) ...[
+                          //   Center(
+                          //     child: Column(
+                          //       children: [
+                          //         if (_changePassword == false) ...[
+                          //           TextButton(
+                          //             child: const Text(
+                          //               "Change Password",
+                          //               style: TextStyle(
+                          //                 fontSize: 18,
+                          //                 fontWeight: FontWeight.w500,
+                          //               ),
+                          //             ),
+                          //             onPressed: () => setState(() =>
+                          //                 _changePassword = !_changePassword),
+                          //           ),
+                          //         ],
+                          //         if (_changePassword == true) ...[
+                          //           const Padding(
+                          //             padding: EdgeInsets.only(
+                          //               top: 20,
+                          //             ),
+                          //             child: Center(
+                          //               child: Text(
+                          //                 "Your old password",
+                          //                 style: TextStyle(
+                          //                   fontSize: 20,
+                          //                   fontWeight: FontWeight.w500,
+                          //                 ),
+                          //               ),
+                          //             ),
+                          //           ),
+                          //           SizedBox(
+                          //             width: MediaQuery.of(context).size.width *
+                          //                 0.8,
+                          //             child: Padding(
+                          //               padding: const EdgeInsets.fromLTRB(
+                          //                   0, 10, 0, 10),
+                          //               child: OTPTextField(
+                          //                 keyboardType: TextInputType.phone,
+                          //                 obscureText: true,
+                          //                 length: 4,
+                          //                 width:
+                          //                     MediaQuery.of(context).size.width,
+                          //                 fieldWidth: MediaQuery.of(context)
+                          //                         .size
+                          //                         .width *
+                          //                     0.13,
+                          //                 otpFieldStyle: OtpFieldStyle(
+                          //                   backgroundColor: Colors.white,
+                          //                   borderColor: Colors.black,
+                          //                   enabledBorderColor: Colors.black,
+                          //                   focusBorderColor: Colors.black,
+                          //                 ),
+                          //                 style: const TextStyle(
+                          //                   fontSize: 18,
+                          //                   color: Colors.black,
+                          //                 ),
+                          //                 textFieldAlignment:
+                          //                     MainAxisAlignment.spaceAround,
+                          //                 fieldStyle: FieldStyle.underline,
+                          //                 onChanged: (String value) {
+                          //                   _passwordController.text = value;
+                          //                 },
+                          //                 onCompleted: (String pin) {
+                          //                   _passwordController.text =
+                          //                       pin.trim();
+                          //                 },
+                          //               ),
+                          //             ),
+                          //           ),
+                          //           const Padding(
+                          //             padding: EdgeInsets.only(
+                          //               top: 20,
+                          //             ),
+                          //             child: Center(
+                          //               child: Text(
+                          //                 "Set your 4 digit password",
+                          //                 style: TextStyle(
+                          //                   fontSize: 20,
+                          //                   fontWeight: FontWeight.w500,
+                          //                 ),
+                          //               ),
+                          //             ),
+                          //           ),
+                          //           SizedBox(
+                          //             width: MediaQuery.of(context).size.width *
+                          //                 0.8,
+                          //             child: Padding(
+                          //               padding: const EdgeInsets.fromLTRB(
+                          //                   0, 10, 0, 10),
+                          //               child: OTPTextField(
+                          //                 keyboardType: TextInputType.phone,
+                          //                 obscureText: true,
+                          //                 length: 4,
+                          //                 width:
+                          //                     MediaQuery.of(context).size.width,
+                          //                 fieldWidth: MediaQuery.of(context)
+                          //                         .size
+                          //                         .width *
+                          //                     0.13,
+                          //                 otpFieldStyle: OtpFieldStyle(
+                          //                   backgroundColor: Colors.white,
+                          //                   borderColor: Colors.black,
+                          //                   enabledBorderColor: Colors.black,
+                          //                   focusBorderColor: Colors.black,
+                          //                 ),
+                          //                 style: const TextStyle(
+                          //                   fontSize: 18,
+                          //                   color: Colors.black,
+                          //                 ),
+                          //                 textFieldAlignment:
+                          //                     MainAxisAlignment.spaceAround,
+                          //                 fieldStyle: FieldStyle.underline,
+                          //                 onChanged: (String value) {
+                          //                   _passwordController.text = value;
+                          //                 },
+                          //                 onCompleted: (String pin) {
+                          //                   _passwordController.text =
+                          //                       pin.trim();
+                          //                 },
+                          //               ),
+                          //             ),
+                          //           ),
+                          //           const Padding(
+                          //             padding: EdgeInsets.only(
+                          //               top: 20,
+                          //             ),
+                          //             child: Center(
+                          //               child: Text(
+                          //                 "Confirm your 4 digit password",
+                          //                 style: TextStyle(
+                          //                   fontSize: 20,
+                          //                   fontWeight: FontWeight.w500,
+                          //                 ),
+                          //               ),
+                          //             ),
+                          //           ),
+                          //           SizedBox(
+                          //             width: MediaQuery.of(context).size.width *
+                          //                 0.8,
+                          //             child: Padding(
+                          //               padding: const EdgeInsets.fromLTRB(
+                          //                   0, 10, 0, 10),
+                          //               child: OTPTextField(
+                          //                 keyboardType: TextInputType.phone,
+                          //                 obscureText: true,
+                          //                 length: 4,
+                          //                 width:
+                          //                     MediaQuery.of(context).size.width,
+                          //                 fieldWidth: MediaQuery.of(context)
+                          //                         .size
+                          //                         .width *
+                          //                     0.13,
+                          //                 otpFieldStyle: OtpFieldStyle(
+                          //                   backgroundColor: Colors.white,
+                          //                   borderColor: Colors.black,
+                          //                   enabledBorderColor: Colors.black,
+                          //                   focusBorderColor: Colors.black,
+                          //                 ),
+                          //                 style: const TextStyle(
+                          //                   fontSize: 18,
+                          //                   color: Colors.black,
+                          //                 ),
+                          //                 textFieldAlignment:
+                          //                     MainAxisAlignment.spaceAround,
+                          //                 fieldStyle: FieldStyle.underline,
+                          //                 onChanged: (String value) {
+                          //                   _confirmPasswordController.text =
+                          //                       value;
+                          //                 },
+                          //                 onCompleted: (String pin) {
+                          //                   _confirmPasswordController.text =
+                          //                       pin.trim();
+                          //                 },
+                          //               ),
+                          //             ),
+                          //           ),
+                          //         ],
+                          //       ],
+                          //     ),
+                          //   ),
+                          // ],
+                          // if (_user!.password == null) ...[
+                          //   Center(
+                          //     child: Column(
+                          //       children: [
+                          //         if (_setPassword == false) ...[
+                          //           TextButton(
+                          //             child: const Text(
+                          //               "Set Password",
+                          //               style: TextStyle(
+                          //                 fontSize: 18,
+                          //                 fontWeight: FontWeight.w500,
+                          //               ),
+                          //             ),
+                          //             onPressed: () => setState(
+                          //                 () => _setPassword = !_setPassword),
+                          //           ),
+                          //         ],
+                          //         if (_setPassword == true) ...[
+                          //           const Padding(
+                          //             padding: EdgeInsets.only(
+                          //               top: 20,
+                          //             ),
+                          //             child: Center(
+                          //               child: Text(
+                          //                 "Set your 4 digit password",
+                          //                 style: TextStyle(
+                          //                   fontSize: 20,
+                          //                   fontWeight: FontWeight.w500,
+                          //                 ),
+                          //               ),
+                          //             ),
+                          //           ),
+                          //           SizedBox(
+                          //             width: MediaQuery.of(context).size.width *
+                          //                 0.8,
+                          //             child: Padding(
+                          //               padding: const EdgeInsets.fromLTRB(
+                          //                   0, 10, 0, 10),
+                          //               child: OTPTextField(
+                          //                 keyboardType: TextInputType.phone,
+                          //                 obscureText: true,
+                          //                 length: 4,
+                          //                 width:
+                          //                     MediaQuery.of(context).size.width,
+                          //                 fieldWidth: MediaQuery.of(context)
+                          //                         .size
+                          //                         .width *
+                          //                     0.13,
+                          //                 otpFieldStyle: OtpFieldStyle(
+                          //                   backgroundColor: Colors.white,
+                          //                   borderColor: Colors.black,
+                          //                   enabledBorderColor: Colors.black,
+                          //                   focusBorderColor: Colors.black,
+                          //                 ),
+                          //                 style: const TextStyle(
+                          //                   fontSize: 18,
+                          //                   color: Colors.black,
+                          //                 ),
+                          //                 textFieldAlignment:
+                          //                     MainAxisAlignment.spaceAround,
+                          //                 fieldStyle: FieldStyle.underline,
+                          //                 onChanged: (String value) {
+                          //                   _passwordController.text = value;
+                          //                 },
+                          //                 onCompleted: (String pin) {
+                          //                   _passwordController.text =
+                          //                       pin.trim();
+                          //                 },
+                          //               ),
+                          //             ),
+                          //           ),
+                          //           const Padding(
+                          //             padding: EdgeInsets.only(
+                          //               top: 20,
+                          //             ),
+                          //             child: Center(
+                          //               child: Text(
+                          //                 "Confirm your 4 digit password",
+                          //                 style: TextStyle(
+                          //                   fontSize: 20,
+                          //                   fontWeight: FontWeight.w500,
+                          //                 ),
+                          //               ),
+                          //             ),
+                          //           ),
+                          //           SizedBox(
+                          //             width: MediaQuery.of(context).size.width *
+                          //                 0.8,
+                          //             child: Padding(
+                          //               padding: const EdgeInsets.fromLTRB(
+                          //                   0, 10, 0, 10),
+                          //               child: OTPTextField(
+                          //                 keyboardType: TextInputType.phone,
+                          //                 obscureText: true,
+                          //                 length: 4,
+                          //                 width:
+                          //                     MediaQuery.of(context).size.width,
+                          //                 fieldWidth: MediaQuery.of(context)
+                          //                         .size
+                          //                         .width *
+                          //                     0.13,
+                          //                 otpFieldStyle: OtpFieldStyle(
+                          //                   backgroundColor: Colors.white,
+                          //                   borderColor: Colors.black,
+                          //                   enabledBorderColor: Colors.black,
+                          //                   focusBorderColor: Colors.black,
+                          //                 ),
+                          //                 style: const TextStyle(
+                          //                   fontSize: 18,
+                          //                   color: Colors.black,
+                          //                 ),
+                          //                 textFieldAlignment:
+                          //                     MainAxisAlignment.spaceAround,
+                          //                 fieldStyle: FieldStyle.underline,
+                          //                 onChanged: (String value) {
+                          //                   _confirmPasswordController.text =
+                          //                       value;
+                          //                 },
+                          //                 onCompleted: (String pin) {
+                          //                   _confirmPasswordController.text =
+                          //                       pin.trim();
+                          //                 },
+                          //               ),
+                          //             ),
+                          //           ),
+                          //         ],
+                          //       ],
+                          //     ),
+                          //   ),
+                          // ],
                         ],
                       ),
                     ),

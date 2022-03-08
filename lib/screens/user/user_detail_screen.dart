@@ -182,6 +182,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(0, 40, 0, 10),
                         child: TextFormField(
+                          keyboardType: TextInputType.name,
                           controller: _firstNameController,
                           obscureText: false,
                           decoration: const InputDecoration(
@@ -221,6 +222,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                       child: Padding(
                         padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
                         child: TextFormField(
+                          keyboardType: TextInputType.name,
                           controller: _lastNameController,
                           obscureText: false,
                           decoration: const InputDecoration(
@@ -389,6 +391,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                           : CustomButton(
                               onPressed: () async {
                                 try {
+                                  setState(() => _isLoading = true);
                                   if (_passwordController.text.trim().length !=
                                       4) {
                                     ScaffoldMessenger.of(context)
@@ -400,6 +403,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                                         duration: Duration(seconds: 1),
                                       ),
                                     );
+                                    setState(() => _isLoading = false);
                                     return;
                                   }
                                   if (!RegExp(r"^[0-9]{4}$").hasMatch(
@@ -414,6 +418,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                                         duration: Duration(seconds: 1),
                                       ),
                                     );
+                                    setState(() => _isLoading = false);
                                     return;
                                   }
                                   if (_passwordController.text.trim() !=
@@ -427,10 +432,10 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                                         duration: Duration(seconds: 1),
                                       ),
                                     );
+                                    setState(() => _isLoading = false);
                                     return;
                                   }
                                   if (_formKey.currentState!.validate()) {
-                                    setState(() => _isLoading = true);
                                     await addUser();
                                     Users? user = await getUserDetails();
                                     var referalCode =

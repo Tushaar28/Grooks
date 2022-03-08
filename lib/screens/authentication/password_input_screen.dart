@@ -206,9 +206,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
                                           return;
                                         }
                                       }
-                                      if (credential
-                                              .additionalUserInfo!.isNewUser ||
-                                          userDetails == null) {
+                                      if (userDetails == null) {
                                         Navigator.pushAndRemoveUntil(
                                             context,
                                             MaterialPageRoute(

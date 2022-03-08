@@ -190,11 +190,10 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                           height: 40,
                           textStyle: const TextStyle(
                             fontFamily: 'Poppins',
-                            color: Colors.black,
                             fontSize: 16,
                           ),
                           elevation: 10,
-                          borderColor: Colors.lightBlueAccent,
+                          borderColor: Colors.black45,
                           borderWidth: 2,
                           borderRadius: 10,
                           margin: const EdgeInsets.fromLTRB(8, 4, 8, 4),
@@ -208,6 +207,9 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                           decoration: const InputDecoration(
                             labelText: 'Subject',
                             hintText: 'Enter subject',
+                            labelStyle: TextStyle(
+                              color: Colors.black,
+                            ),
                             contentPadding: EdgeInsets.symmetric(
                                 vertical: 10, horizontal: 20),
                             border: OutlineInputBorder(
@@ -217,7 +219,6 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderSide: BorderSide(
-                                color: Colors.lightBlueAccent,
                                 width: 1,
                               ),
                               borderRadius: BorderRadius.all(
@@ -225,8 +226,8 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: Colors.lightBlueAccent, width: 2.0),
+                              borderSide:
+                                  BorderSide(color: Colors.black, width: 2.0),
                               borderRadius:
                                   BorderRadius.all(Radius.circular(10)),
                             ),
@@ -251,6 +252,9 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                           decoration: const InputDecoration(
                             labelText: 'Description',
                             hintText: 'Enter description',
+                            labelStyle: TextStyle(
+                              color: Colors.black,
+                            ),
                             contentPadding: EdgeInsets.symmetric(
                                 vertical: 10, horizontal: 20),
                             border: OutlineInputBorder(
@@ -260,7 +264,6 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                             ),
                             enabledBorder: OutlineInputBorder(
                               borderSide: BorderSide(
-                                color: Colors.lightBlueAccent,
                                 width: 1,
                               ),
                               borderRadius: BorderRadius.all(
@@ -268,8 +271,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                               ),
                             ),
                             focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(
-                                  color: Colors.lightBlueAccent, width: 2.0),
+                              borderSide: BorderSide(width: 2.0),
                               borderRadius:
                                   BorderRadius.all(Radius.circular(10)),
                             ),
