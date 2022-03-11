@@ -36,6 +36,8 @@ class FirebaseRepository {
   Future<double> get getPaymentGatewayCommission =>
       firebaseMethods.getPaymentGatewayCommission;
 
+  Future<double> get getWinCommission => firebaseMethods.getWinCommission;
+
   Future<bool> isNewUser({
     required String mobile,
   }) =>

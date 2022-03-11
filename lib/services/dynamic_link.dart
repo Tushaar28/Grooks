@@ -50,7 +50,7 @@ class DynamicLinkApi {
     final PendingDynamicLinkData? data = await _dynamicLink.getInitialLink();
     _dynamicLink.onLink
         .listen((data) => handleSuccessLinking(data, context))
-        .onError((error) => print("ERROR = $error"));
+        .onError((error) {});
     handleSuccessLinking(data, context);
   }
 

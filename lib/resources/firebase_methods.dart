@@ -95,6 +95,17 @@ class FirebaseMethods {
     }
   }
 
+  Future<double> get getWinCommission async {
+    try {
+      double commission;
+      QuerySnapshot qs = await settingsCollection.get();
+      commission = qs.docs.first.get('winCommission').toDouble();
+      return commission;
+    } catch (error) {
+      rethrow;
+    }
+  }
+
   Future<QuerySnapshot> get getFeedbackCategories async {
     QuerySnapshot data = await feedbackCategoriesCollection.get();
     return data;
