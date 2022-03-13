@@ -8,6 +8,8 @@ import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/authentication/otp_input_screen.dart';
 import 'package:grooks_dev/screens/user/navbar_screen.dart';
 import 'package:grooks_dev/screens/user/user_detail_screen.dart';
+import 'package:grooks_dev/services/mixpanel.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/otp_field_style.dart';
 import 'package:otp_text_field/style.dart';
@@ -36,6 +38,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
   late final FirebaseRepository _repository;
   late bool _isLoading;
   late final GlobalKey<ScaffoldState> _scaffoldKey;
+  late Mixpanel _mixpanel;
   final suspendedAccountSnackbar = const SnackBar(
     content: AutoSizeText('Your account has been suspended.'),
     backgroundColor: Colors.red,
@@ -44,12 +47,17 @@ class _PasswordScreenState extends State<PasswordScreen> {
 
   @override
   void initState() {
+    _initMixpanel();
     super.initState();
     _passwordController = TextEditingController();
     _firebaseAuth = FirebaseAuth.instance;
     _repository = FirebaseRepository();
     _scaffoldKey = GlobalKey<ScaffoldState>();
     _isLoading = false;
+  }
+
+  Future<void> _initMixpanel() async {
+    _mixpanel = await MixpanelManager.init();
   }
 
   @override
@@ -224,10 +232,15 @@ class _PasswordScreenState extends State<PasswordScreen> {
                                       } else {
                                         Users? userDetails =
                                             await _repository.getUserDetails();
+
                                         await _repository.updateUser(
                                           userId: userDetails!.id,
                                           data: {'lastLoginAt': DateTime.now()},
                                         );
+                                        _mixpanel.identify(userDetails.id);
+                                        _mixpanel.track("login", properties: {
+                                          "userId": userDetails.id,
+                                        });
                                         if (widget.sharedViewMap != null &&
                                             widget.question != null) {
                                           // Navigator.pushAndRemoveUntil(
@@ -242,7 +255,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
                                           //             widget.question!.name,
                                           //         sharedViewMap:
                                           //             widget.sharedViewMap,
-                                      //       ),
+                                          //       ),
                                           //     ),
                                           //     (route) => false);
                                         } else {

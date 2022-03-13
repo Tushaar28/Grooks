@@ -4,6 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:grooks_dev/models/category.dart';
 import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/screens/user/questions_screen.dart';
+import 'package:grooks_dev/services/mixpanel.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:page_transition/page_transition.dart';
 
 class CustomSubcategoryCard extends StatefulWidget {
@@ -20,27 +22,49 @@ class CustomSubcategoryCard extends StatefulWidget {
 }
 
 class _CustomSubcategoryCardState extends State<CustomSubcategoryCard> {
+  late final Mixpanel _mixpanel;
+
+  @override
+  void initState() {
+    super.initState();
+    _initMixpanel();
+  }
+
+  Future<void> _initMixpanel() async {
+    _mixpanel = await MixpanelManager.init();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.16,
       child: InkWell(
-        onTap: () => Navigator.of(context).push(
-          PageTransition(
-            child: QuestionsScreen(
-              subcategoryId: widget.subcategory.id,
-              subcategoryName: widget.subcategory.name,
-              user: widget.user,
+        onTap: () {
+          _mixpanel.identify(widget.user.id);
+          _mixpanel.track(
+            "subcategory_clicked",
+            properties: {
+              "subcategoryId": widget.subcategory.id,
+              "subcategoryName": widget.subcategory.name,
+            },
+          );
+          Navigator.of(context).push(
+            PageTransition(
+              child: QuestionsScreen(
+                subcategoryId: widget.subcategory.id,
+                subcategoryName: widget.subcategory.name,
+                user: widget.user,
+              ),
+              type: PageTransitionType.rightToLeft,
+              duration: const Duration(
+                milliseconds: 300,
+              ),
+              reverseDuration: const Duration(
+                milliseconds: 300,
+              ),
             ),
-            type: PageTransitionType.rightToLeft,
-            duration: const Duration(
-              milliseconds: 300,
-            ),
-            reverseDuration: const Duration(
-              milliseconds: 300,
-            ),
-          ),
-        ),
+          );
+        },
         child: Padding(
           padding: EdgeInsets.symmetric(
             horizontal: MediaQuery.of(context).size.width * 0.02,
