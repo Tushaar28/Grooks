@@ -9,8 +9,10 @@ import 'package:grooks_dev/screens/authentication/login_screen.dart';
 import 'package:grooks_dev/screens/user/open_questions_widget.dart';
 import 'package:grooks_dev/screens/user/top_trades_screen.dart';
 import 'package:grooks_dev/screens/user/trade_success_screen.dart';
+import 'package:grooks_dev/services/mixpanel.dart';
 import 'package:grooks_dev/widgets/question_card.dart';
 import 'package:grooks_dev/widgets/swipe_button.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'error_screen.dart';
 import 'my_trades_screen.dart';
 
@@ -36,11 +38,18 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
   late final GlobalKey<ScaffoldState> _scaffoldKey;
   late final FirebaseRepository _repository;
   late int _currentTrade;
-  late int _count;
-  late bool? _tradePlaced, _tradeError, _isLoading, _done, _isOpen, _isActive;
+  late int _count, _commissionCoins;
+  late bool? _tradePlaced,
+      _tradeError,
+      _isLoading,
+      _done,
+      _isOpen,
+      _isActive,
+      _dataLoaded;
   Question? _question;
   late final AssetsAudioPlayer _player;
-
+  late double _winCommission;
+  late final Mixpanel _mixpanel;
   final _viewSuccessSnackbar = const SnackBar(
     content: AutoSizeText('Your trade has been placed.'),
     backgroundColor: Colors.green,
@@ -53,13 +62,17 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
   @override
   void initState() {
     super.initState();
+    _initMixpanel();
     _isActive = true;
     _count = 1;
+    _dataLoaded = false;
     _scaffoldKey = GlobalKey<ScaffoldState>();
     _repository = FirebaseRepository();
     _isLoading = _done = false;
+    _winCommission = 0;
     _player = AssetsAudioPlayer();
     getQuestionDetails();
+    getWinCommission();
     if (widget.sharedViewMap != null &&
         widget.sharedViewMap!.containsKey('isYes') &&
         widget.sharedViewMap!.containsKey('tradedPrice')) {
@@ -69,10 +82,19 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
     }
   }
 
+  Future<void> _initMixpanel() async {
+    _mixpanel = await MixpanelManager.init();
+  }
+
   @override
   void dispose() {
     super.dispose();
     _player.dispose();
+  }
+
+  Future<void> getWinCommission() async {
+    _winCommission = await _repository.getWinCommission;
+    setState(() => _dataLoaded = true);
   }
 
   Future<void> getUserActiveStatus() async {
@@ -260,7 +282,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                       color: Colors.grey[700],
                     ),
                     SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.2,
+                      height: MediaQuery.of(context).size.height * 0.17,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         mainAxisSize: MainAxisSize.max,
@@ -398,6 +420,14 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                               fontWeight: FontWeight.w400,
                             ),
                           ),
+                          Text(
+                            "${(_winCommission / 100 * (100 - _currentTrade)).ceil()} coins will be deducted as commission from your winning",
+                            style: const TextStyle(
+                              color: Colors.grey,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -435,6 +465,16 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                                       await placeTrade(
                                         isYes: isYes,
                                       );
+                                      _mixpanel.identify(widget.user.id);
+                                      _mixpanel.track(
+                                        "new_trade",
+                                        properties: {
+                                          "userId": widget.user.id,
+                                          "questionId": widget.questionId,
+                                          "questionName": widget.questionName,
+                                          "tradeCount": _count,
+                                        },
+                                      );
                                       setState(() => _isLoading = false);
                                       Navigator.of(context).pop();
                                       Navigator.of(context).push(
@@ -446,6 +486,16 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                                         ),
                                       );
                                     } catch (error) {
+                                      _mixpanel.identify(widget.user.id);
+                                      _mixpanel.track(
+                                        "new_trade_failed",
+                                        properties: {
+                                          "userId": widget.user.id,
+                                          "questionId": widget.questionId,
+                                          "questionName": widget.questionName,
+                                          "tradeCount": _count,
+                                        },
+                                      );
                                       Navigator.of(context).pop();
                                       ScaffoldMessenger.of(context)
                                           .hideCurrentSnackBar();
@@ -504,7 +554,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
       }
     });
 
-    if (_isActive == null) {
+    if (_isActive == null || _dataLoaded == false) {
       return const Center(
         child: CircularProgressIndicator.adaptive(
           backgroundColor: Colors.white,

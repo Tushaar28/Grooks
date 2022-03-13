@@ -36,6 +36,8 @@ class FirebaseRepository {
   Future<double> get getPaymentGatewayCommission =>
       firebaseMethods.getPaymentGatewayCommission;
 
+  Future<double> get getWinCommission => firebaseMethods.getWinCommission;
+
   Future<bool> isNewUser({
     required String mobile,
   }) =>
@@ -315,4 +317,6 @@ class FirebaseRepository {
     required String password,
   }) =>
       firebaseMethods.setPassword(userId: userId, password: password);
+
+  Future<String> get getMixpanelToken => firebaseMethods.getMixpanelToken;
 }

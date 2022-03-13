@@ -9,6 +9,8 @@ import 'package:grooks_dev/screens/authentication/login_screen.dart';
 import 'package:grooks_dev/screens/user/maintenance_screen.dart';
 import 'package:grooks_dev/screens/user/navbar_screen.dart';
 import 'package:grooks_dev/services/dynamic_link.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
+import 'mixpanel.dart';
 
 class Auth extends StatefulWidget {
   final String? referralCode;
@@ -27,12 +29,15 @@ class _AuthState extends State<Auth> {
   late final DynamicLinkApi _dynamicLink;
   late Users? _user;
   late Map<String, dynamic>? _maintenanceStatus;
-  late bool? _isActive;
+  late bool? _isActive, _isFirstLogin;
+  late final Mixpanel _mixpanel;
 
   @override
   void initState() {
     super.initState();
+    _initMixpanel();
     _isActive = null;
+    _isFirstLogin = true;
     _dynamicLink = DynamicLinkApi();
     _repository = FirebaseRepository();
     getUserActiveStatus();
@@ -45,6 +50,10 @@ class _AuthState extends State<Auth> {
         _dynamicLink.handleDynamicLink(context);
       }();
     }
+  }
+
+  Future<void> _initMixpanel() async {
+    _mixpanel = await MixpanelManager.init();
   }
 
   Future<void> getUserActiveStatus() async {
@@ -119,9 +128,21 @@ class _AuthState extends State<Auth> {
                           );
                         } else {
                           if (_user != null) {
-                            _repository.updateUser(userId: _user!.id, data: {
-                              'lastLoginAt': DateTime.now(),
-                            });
+                            if (_isFirstLogin!) {
+                              _mixpanel
+                                  .getSuperProperties()
+                                  .then((res) => res!.forEach((key, value) {
+                                        print("KEY = $key, VALUE = $value");
+                                      }));
+                              _mixpanel.identify(_user!.id);
+                              _mixpanel.track('login', properties: {
+                                'userId': _user!.id,
+                              });
+                              _repository.updateUser(userId: _user!.id, data: {
+                                'lastLoginAt': DateTime.now(),
+                              });
+                              _isFirstLogin = false;
+                            }
                             FirebaseCrashlytics.instance
                                 .setUserIdentifier(_user!.id);
                             return NavbarScreen(user: _user);

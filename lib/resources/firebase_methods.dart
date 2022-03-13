@@ -95,6 +95,17 @@ class FirebaseMethods {
     }
   }
 
+  Future<double> get getWinCommission async {
+    try {
+      double commission;
+      QuerySnapshot qs = await settingsCollection.get();
+      commission = qs.docs.first.get('winCommission').toDouble();
+      return commission;
+    } catch (error) {
+      rethrow;
+    }
+  }
+
   Future<QuerySnapshot> get getFeedbackCategories async {
     QuerySnapshot data = await feedbackCategoriesCollection.get();
     return data;
@@ -142,6 +153,16 @@ class FirebaseMethods {
       double? commission = qs.docs.first.get("paymentGatewayCommission");
       if (commission == null) throw "An error occured";
       return commission;
+    } catch (error) {
+      throw error.toString();
+    }
+  }
+
+  Future<String> get getMixpanelToken async {
+    try {
+      QuerySnapshot qs = await settingsCollection.get();
+      String token = qs.docs.first.get("mixpanelToken");
+      return token;
     } catch (error) {
       throw error.toString();
     }

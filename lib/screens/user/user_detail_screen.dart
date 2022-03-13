@@ -7,9 +7,11 @@ import 'package:grooks_dev/constants/constants.dart';
 import 'package:grooks_dev/models/question.dart';
 import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
+import 'package:grooks_dev/services/mixpanel.dart';
 import 'package:grooks_dev/services/my_encryption.dart';
 import 'package:grooks_dev/widgets/custom_button.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/otp_field_style.dart';
 import 'package:otp_text_field/style.dart';
@@ -44,10 +46,12 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
   late final GlobalKey<FormState> _formKey;
   late final FirebaseRepository _repository;
   late bool _isLoading;
+  late final Mixpanel _mixpanel;
 
   @override
   void initState() {
     super.initState();
+    _initMixpanel();
     _firstNameController = TextEditingController();
     _lastNameController = TextEditingController();
     _passwordController = TextEditingController();
@@ -58,6 +62,10 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
     _repository = FirebaseRepository();
     _isLoading = false;
     _profilePicture = null;
+  }
+
+  Future<void> _initMixpanel() async {
+    _mixpanel = await MixpanelManager.init();
   }
 
   @override
@@ -345,6 +353,96 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                         ),
                       ),
                     ),
+                    const Padding(
+                      padding: EdgeInsets.only(
+                        top: 20,
+                      ),
+                      child: Center(
+                        child: Text(
+                          "Set your 4 digit password",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                        child: OTPTextField(
+                          keyboardType: TextInputType.phone,
+                          obscureText: true,
+                          length: 4,
+                          width: MediaQuery.of(context).size.width,
+                          fieldWidth: MediaQuery.of(context).size.width * 0.13,
+                          otpFieldStyle: OtpFieldStyle(
+                            backgroundColor: Colors.white,
+                            borderColor: Colors.black,
+                            enabledBorderColor: Colors.black,
+                            focusBorderColor: Colors.black,
+                          ),
+                          style: const TextStyle(
+                            fontSize: 18,
+                            color: Colors.black,
+                          ),
+                          textFieldAlignment: MainAxisAlignment.spaceAround,
+                          fieldStyle: FieldStyle.underline,
+                          onChanged: (String value) {
+                            _passwordController.text = value;
+                          },
+                          onCompleted: (String pin) {
+                            _passwordController.text = pin.trim();
+                          },
+                        ),
+                      ),
+                    ),
+                    const Padding(
+                      padding: EdgeInsets.only(
+                        top: 20,
+                      ),
+                      child: Center(
+                        child: Text(
+                          "Confirm your 4 digit password",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                        child: OTPTextField(
+                          keyboardType: TextInputType.phone,
+                          obscureText: true,
+                          length: 4,
+                          width: MediaQuery.of(context).size.width,
+                          fieldWidth: MediaQuery.of(context).size.width * 0.13,
+                          otpFieldStyle: OtpFieldStyle(
+                            backgroundColor: Colors.white,
+                            borderColor: Colors.black,
+                            enabledBorderColor: Colors.black,
+                            focusBorderColor: Colors.black,
+                          ),
+                          style: const TextStyle(
+                            fontSize: 18,
+                            color: Colors.black,
+                          ),
+                          textFieldAlignment: MainAxisAlignment.spaceAround,
+                          fieldStyle: FieldStyle.underline,
+                          onChanged: (String value) {
+                            _confirmPasswordController.text = value;
+                          },
+                          onCompleted: (String pin) {
+                            _confirmPasswordController.text = pin.trim();
+                          },
+                        ),
+                      ),
+                    ),
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.8,
                       child: Padding(
@@ -443,6 +541,13 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                                             user!.name, user.mobile!);
 
                                     saveReferralLink(referalCode);
+                                    _mixpanel.identify(user.id);
+                                    _mixpanel.track("signup", properties: {
+                                      "userId": user.id,
+                                    });
+                                    _mixpanel.track("login", properties: {
+                                      "userId": user.id,
+                                    });
                                     if (widget.sharedViewMap != null &&
                                         widget.question != null) {
                                       setState(() => _isLoading = false);

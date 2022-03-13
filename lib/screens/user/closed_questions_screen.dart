@@ -5,7 +5,9 @@ import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/authentication/login_screen.dart';
 import 'package:grooks_dev/screens/user/question_detail_screen.dart';
+import 'package:grooks_dev/services/mixpanel.dart';
 import 'package:grooks_dev/widgets/question_card.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:page_transition/page_transition.dart';
 
 class ClosedQuestionsDetailScreen extends StatefulWidget {
@@ -28,6 +30,7 @@ class _ClosedQuestionsDetailScreenState
   late List<Question> _questions;
   late final FirebaseRepository _repository;
   late bool? _isActive;
+  late final Mixpanel _mixpanel;
 
   @override
   bool get wantKeepAlive => false;
@@ -35,10 +38,15 @@ class _ClosedQuestionsDetailScreenState
   @override
   void initState() {
     super.initState();
+    _initMixpanel();
     _isActive = true;
     _questions = [];
     _repository = FirebaseRepository();
     getUserActiveStatus();
+  }
+
+  Future<void> _initMixpanel() async {
+    _mixpanel = await MixpanelManager.init();
   }
 
   Future<void> refresh() async {
@@ -127,18 +135,28 @@ class _ClosedQuestionsDetailScreenState
                   child: ListView.builder(
                     itemCount: _questions.length,
                     itemBuilder: (context, index) => InkWell(
-                      onTap: () => Navigator.of(context).push(
-                        PageTransition(
-                          child: QuestionDetailScreen(
-                            user: widget.user,
-                            questionId: _questions[index].id,
-                            questionName: _questions[index].name,
+                      onTap: () {
+                        _mixpanel.identify(widget.user.id);
+                        _mixpanel.track(
+                          "question_clicked",
+                          properties: {
+                            "questionId": _questions[index].id,
+                            "questionName": _questions[index].name,
+                          },
+                        );
+                        Navigator.of(context).push(
+                          PageTransition(
+                            child: QuestionDetailScreen(
+                              user: widget.user,
+                              questionId: _questions[index].id,
+                              questionName: _questions[index].name,
+                            ),
+                            type: PageTransitionType.bottomToTop,
+                            duration: const Duration(milliseconds: 300),
+                            reverseDuration: const Duration(milliseconds: 300),
                           ),
-                          type: PageTransitionType.bottomToTop,
-                          duration: const Duration(milliseconds: 300),
-                          reverseDuration: const Duration(milliseconds: 300),
-                        ),
-                      ),
+                        );
+                      },
                       child: QuestionCard(
                         question: _questions[index],
                       ),

@@ -1,4 +1,4 @@
-package com.bagoyo.polls
+package com.bagoyo.polls.uat
 
 import io.flutter.embedding.android.FlutterActivity
 

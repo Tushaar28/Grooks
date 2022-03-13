@@ -175,7 +175,7 @@ class _TradesActivityScreenState extends State<TradesActivityScreen> {
                                                 Status.ACTIVE_PAIRED ||
                                             trade.status ==
                                                 Status.ACTIVE_UNPAIRED
-                                        ? '-${trade.coinsWon ?? trade.coins}'
+                                        ? '${trade.coinsWon ?? trade.coins}'
                                         : '+${trade.coinsWon ?? trade.coins}',
                                     style: TextStyle(
                                       fontFamily: 'Poppins',
@@ -234,6 +234,38 @@ class _TradesActivityScreenState extends State<TradesActivityScreen> {
                                           )),
                                     ),
                                   ),
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 16.0,
+                                        vertical: 8.0,
+                                      ),
+                                      child: AutoSizeText(
+                                          "Your trade: ${trade.response ? "YES" : "NO"} @ ${trade.bonusCoinsUsed + trade.redeemableCoinsUsed}",
+                                          style: const TextStyle(
+                                            fontFamily: 'Poppins',
+                                            fontSize: 12,
+                                          )),
+                                    ),
+                                  ),
+                                  if (trade.status == Status.WON) ...[
+                                    Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 16.0,
+                                          vertical: 8.0,
+                                        ),
+                                        child: AutoSizeText(
+                                            "Commission deducted: ${100 - trade.coinsWon!} coins",
+                                            style: const TextStyle(
+                                              fontFamily: 'Poppins',
+                                              fontSize: 12,
+                                            )),
+                                      ),
+                                    ),
+                                  ],
                                   Align(
                                     alignment: Alignment.centerLeft,
                                     child: Padding(
