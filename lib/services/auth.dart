@@ -129,6 +129,11 @@ class _AuthState extends State<Auth> {
                         } else {
                           if (_user != null) {
                             if (_isFirstLogin!) {
+                              _mixpanel
+                                  .getSuperProperties()
+                                  .then((res) => res!.forEach((key, value) {
+                                        print("KEY = $key, VALUE = $value");
+                                      }));
                               _mixpanel.identify(_user!.id);
                               _mixpanel.track('login', properties: {
                                 'userId': _user!.id,

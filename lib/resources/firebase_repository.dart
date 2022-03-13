@@ -317,4 +317,6 @@ class FirebaseRepository {
     required String password,
   }) =>
       firebaseMethods.setPassword(userId: userId, password: password);
+
+  Future<String> get getMixpanelToken => firebaseMethods.getMixpanelToken;
 }
