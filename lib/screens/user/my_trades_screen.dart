@@ -7,7 +7,9 @@ import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/authentication/login_screen.dart';
 import 'package:grooks_dev/screens/user/navbar_screen.dart';
 import 'package:grooks_dev/screens/user/question_detail_screen.dart';
+import 'package:grooks_dev/services/mixpanel.dart';
 import 'package:grooks_dev/widgets/swipe_button.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 
 import 'trade_success_screen.dart';
 
@@ -30,6 +32,7 @@ class _MyTradesScreenState extends State<MyTradesScreen>
   late final FirebaseRepository _repository;
   late bool _isLoading;
   late bool? _isActive;
+  late final Mixpanel _mixpanel;
 
   @override
   bool get wantKeepAlive => false;
@@ -37,11 +40,16 @@ class _MyTradesScreenState extends State<MyTradesScreen>
   @override
   void initState() {
     super.initState();
+    _initMixpanel();
     _isActive = true;
     _trades = [];
     _repository = FirebaseRepository();
     getUserActiveStatus();
     _isLoading = false;
+  }
+
+  Future<void> _initMixpanel() async {
+    _mixpanel = await MixpanelManager.init();
   }
 
   Future<void> getUserActiveStatus() async {
@@ -102,9 +110,27 @@ class _MyTradesScreenState extends State<MyTradesScreen>
                               trade: trade,
                               userId: widget.user.id,
                             );
+                            _mixpanel.identify(widget.user.id);
+                            _mixpanel.track(
+                              "trade_cancelled_by_user",
+                              properties: {
+                                "userId": widget.user.id,
+                                "questionId": widget.question.id,
+                                "questionName": widget.question.name,
+                              },
+                            );
                             setState(() => _isLoading = false);
                             Navigator.maybeOf(context)!.pop();
                           } catch (error) {
+                            _mixpanel.identify(widget.user.id);
+                            _mixpanel.track(
+                              "trade_cancelled_by_user_failed",
+                              properties: {
+                                "userId": widget.user.id,
+                                "questionId": widget.question.id,
+                                "questionName": widget.question.name,
+                              },
+                            );
                             rethrow;
                           }
                         },

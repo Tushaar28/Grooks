@@ -10,7 +10,9 @@ import 'package:grooks_dev/screens/user/how_to_trade_screen.dart';
 import 'package:grooks_dev/screens/user/refer_and_earn.dart';
 import 'package:grooks_dev/screens/user/store_screen.dart';
 import 'package:grooks_dev/screens/user/withdrawl_screen.dart';
+import 'package:grooks_dev/services/mixpanel.dart';
 import 'package:grooks_dev/widgets/swipe_button.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:page_transition/page_transition.dart';
 
 class CustomDrawer extends StatelessWidget {
@@ -28,6 +30,7 @@ class CustomDrawer extends StatelessWidget {
     duration: Duration(seconds: 2),
   );
   final FirebaseRepository _repository = FirebaseRepository();
+  late Mixpanel _mixpanel;
 
   void logout({
     required BuildContext context,
@@ -47,6 +50,13 @@ class CustomDrawer extends StatelessWidget {
               backgroundColorEnd: Colors.redAccent[100],
               onSwipeCallback: () async {
                 try {
+                  _mixpanel.identify(user.id);
+                  _mixpanel.track(
+                    "logout",
+                    properties: {
+                      "userId": user.id,
+                    },
+                  );
                   await _repository.signOut();
                   Navigator.of(context).pushAndRemoveUntil(
                       MaterialPageRoute(
@@ -376,7 +386,8 @@ class CustomDrawer extends StatelessWidget {
                   ),
                 ),
               ),
-              onTap: () {
+              onTap: () async {
+                _mixpanel = await MixpanelManager.init();
                 Navigator.of(context).pop();
                 logout(context: context);
               },

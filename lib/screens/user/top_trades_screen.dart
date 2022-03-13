@@ -8,8 +8,10 @@ import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/authentication/login_screen.dart';
 import 'package:grooks_dev/screens/user/trade_success_screen.dart';
+import 'package:grooks_dev/services/mixpanel.dart';
 import 'package:grooks_dev/widgets/custom_button.dart';
 import 'package:grooks_dev/widgets/swipe_button.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 
 class TopTradesScreen extends StatefulWidget {
   final Users user;
@@ -44,6 +46,7 @@ class _TopTradesScreenState extends State<TopTradesScreen>
     backgroundColor: Colors.red,
     duration: Duration(seconds: 2),
   );
+  late final Mixpanel _mixpanel;
 
   @override
   bool get wantKeepAlive => true;
@@ -51,6 +54,7 @@ class _TopTradesScreenState extends State<TopTradesScreen>
   @override
   void initState() {
     super.initState();
+    _initMixpanel();
     _isActive = true;
     _dataLoaded = false;
     _isQuestionActive = true;
@@ -61,6 +65,10 @@ class _TopTradesScreenState extends State<TopTradesScreen>
     _tradesKeys = [];
     getTopTrades();
     _tradeError = _tradePlaced = _isLoading = false;
+  }
+
+  Future<void> _initMixpanel() async {
+    _mixpanel = await MixpanelManager.init();
   }
 
   Future<void> getUserActiveStatus() async {
@@ -141,6 +149,15 @@ class _TopTradesScreenState extends State<TopTradesScreen>
                         try {
                           setState(() => _isLoading = true);
                           await pairTrade(trade: trade);
+                          _mixpanel.identify(widget.user.id);
+                          _mixpanel.track(
+                            "trade_matched",
+                            properties: {
+                              "userId": widget.user.id,
+                              "questionId": widget.question.id,
+                              "questionName": widget.question.name,
+                            },
+                          );
                           Navigator.of(context).pushAndRemoveUntil(
                             MaterialPageRoute(
                               builder: (context) =>
@@ -149,6 +166,15 @@ class _TopTradesScreenState extends State<TopTradesScreen>
                             (r) => false,
                           );
                         } catch (error) {
+                          _mixpanel.identify(widget.user.id);
+                          _mixpanel.track(
+                            "trade_matched_failed",
+                            properties: {
+                              "userId": widget.user.id,
+                              "questionId": widget.question.id,
+                              "questionName": widget.question.name,
+                            },
+                          );
                           Navigator.of(context).pop();
                           setState(() => _isLoading = false);
                           ScaffoldMessenger.of(context).hideCurrentSnackBar();
