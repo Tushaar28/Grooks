@@ -7,9 +7,11 @@ import 'package:grooks_dev/constants/constants.dart';
 import 'package:grooks_dev/models/question.dart';
 import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
+import 'package:grooks_dev/services/mixpanel.dart';
 import 'package:grooks_dev/services/my_encryption.dart';
 import 'package:grooks_dev/widgets/custom_button.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/otp_field_style.dart';
 import 'package:otp_text_field/style.dart';
@@ -44,10 +46,12 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
   late final GlobalKey<FormState> _formKey;
   late final FirebaseRepository _repository;
   late bool _isLoading;
+  late final Mixpanel _mixpanel;
 
   @override
   void initState() {
     super.initState();
+    _initMixpanel();
     _firstNameController = TextEditingController();
     _lastNameController = TextEditingController();
     _passwordController = TextEditingController();
@@ -58,6 +62,10 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
     _repository = FirebaseRepository();
     _isLoading = false;
     _profilePicture = null;
+  }
+
+  Future<void> _initMixpanel() async {
+    _mixpanel = await MixpanelManager.init();
   }
 
   @override
@@ -533,6 +541,10 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                                             user!.name, user.mobile!);
 
                                     saveReferralLink(referalCode);
+                                    _mixpanel.identify(user.id);
+                                    _mixpanel.track("signup", properties: {
+                                      "userId": user.id,
+                                    });
                                     if (widget.sharedViewMap != null &&
                                         widget.question != null) {
                                       setState(() => _isLoading = false);
