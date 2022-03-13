@@ -169,6 +169,16 @@ class FirebaseMethods {
       if (commission == null) throw "An error occured";
       return commission;
     } catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<String> get getMixpanelToken async {
+    try {
+      QuerySnapshot qs = await settingsCollection.get();
+      String token = qs.docs.first.get("mixpanelToken");
+      return token;
+    } catch (error) {
       throw error.toString();
     }
   }

@@ -1,41 +1,41 @@
 {
   "project_info": {
-    "project_number": "103105942817",
-    "project_id": "grooks-dev-1",
-    "storage_bucket": "grooks-dev-1.appspot.com"
+    "project_number": "489166498310",
+    "project_id": "grooks-uat",
+    "storage_bucket": "grooks-uat.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:103105942817:android:59b30e642989b1c80b5a60",
+        "mobilesdk_app_id": "1:489166498310:android:379b6564a54ac7c2887187",
         "android_client_info": {
-          "package_name": "com.bagoyo.grooks_dev"
+          "package_name": "com.bagoyo.polls.uat"
         }
       },
       "oauth_client": [
         {
-          "client_id": "103105942817-cghm51bnmvu09ii40ejtlrhsvv8cie29.apps.googleusercontent.com",
+          "client_id": "489166498310-sln8g1jmues6o2v1cb8s4stq5gtfcnv9.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.bagoyo.grooks_dev",
+            "package_name": "com.bagoyo.polls.uat",
             "certificate_hash": "685921fa2c7c4dc9f4b8084b27556ad6bacea117"
           }
         },
         {
-          "client_id": "103105942817-5gq4p8512qvucgin7icrha9kmfqnddru.apps.googleusercontent.com",
+          "client_id": "489166498310-ttkh64vvuk7fdesnktpbrk89bg9n2qts.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBUX6NvDn-6RPpwDOOAfOuebEVftkDco2M"
+          "current_key": "AIzaSyCOIcOzIyxUEZaHbZRyx8ALu7pa8Nqm5Dk"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "103105942817-5gq4p8512qvucgin7icrha9kmfqnddru.apps.googleusercontent.com",
+              "client_id": "489166498310-ttkh64vvuk7fdesnktpbrk89bg9n2qts.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

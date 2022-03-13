@@ -97,42 +97,65 @@ class _AuthState extends State<Auth> {
         },
       );
     }
-    return StreamBuilder(
-      initialData: const CircularProgressIndicator.adaptive(
-        backgroundColor: Colors.white,
-      ),
-      stream: FirebaseAuth.instance.authStateChanges(),
-      builder: (BuildContext context, snapshot) {
-        if (snapshot.hasData) {
-          return FutureBuilder(
-              future: getUserDetails(),
-              builder: (BuildContext context, AsyncSnapshot data) {
-                if (data.connectionState == ConnectionState.waiting) {
-                  return const Center(
-                    child: CircularProgressIndicator.adaptive(
-                      backgroundColor: Colors.white,
-                    ),
-                  );
+    return FutureBuilder(
+        future: getMaintenanceStatus(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator.adaptive(
+                backgroundColor: Colors.white,
+              ),
+            );
+          } else if (_maintenanceStatus!['status'] == true) {
+            return MaintenanceScreen(
+                maintenanceMessage: _maintenanceStatus!['message']);
+          } else {
+            return StreamBuilder(
+              initialData: const CircularProgressIndicator.adaptive(
+                backgroundColor: Colors.white,
+              ),
+              stream: FirebaseAuth.instance.authStateChanges(),
+              builder: (BuildContext context, snapshot) {
+                if (snapshot.hasData) {
+                  return FutureBuilder(
+                      future: getUserDetails(),
+                      builder: (BuildContext context, AsyncSnapshot data) {
+                        if (data.connectionState == ConnectionState.waiting) {
+                          return const Center(
+                            child: CircularProgressIndicator.adaptive(
+                              backgroundColor: Colors.white,
+                            ),
+                          );
+                        } else {
+                          if (_user != null) {
+                            if (_isFirstLogin!) {
+                              _mixpanel.identify(_user!.id);
+                              _mixpanel.track('login', properties: {
+                                'userId': _user!.id,
+                              });
+                              _repository.updateUser(userId: _user!.id, data: {
+                                'lastLoginAt': DateTime.now(),
+                              });
+                              _isFirstLogin = false;
+                            }
+                            FirebaseCrashlytics.instance
+                                .setUserIdentifier(_user!.id);
+                            return NavbarScreen(user: _user);
+                          } else {
+                            return LoginScreen(
+                              referralCode: widget.referralCode,
+                            );
+                          }
+                        }
+                      });
                 } else {
-                  if (_user != null) {
-                    _repository.updateUser(userId: _user!.id, data: {
-                      'lastLoginAt': DateTime.now(),
-                    });
-                    FirebaseCrashlytics.instance.setUserIdentifier(_user!.id);
-                    return NavbarScreen(user: _user);
-                  } else {
-                    return LoginScreen(
-                      referralCode: widget.referralCode,
-                    );
-                  }
+                  return LoginScreen(
+                    referralCode: widget.referralCode,
+                  );
                 }
-              });
-        } else {
-          return LoginScreen(
-            referralCode: widget.referralCode,
-          );
-        }
-      },
-    );
+              },
+            );
+          }
+        });
   }
 }
