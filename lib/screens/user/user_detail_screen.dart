@@ -545,6 +545,9 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                                     _mixpanel.track("signup", properties: {
                                       "userId": user.id,
                                     });
+                                    _mixpanel.track("login", properties: {
+                                      "userId": user.id,
+                                    });
                                     if (widget.sharedViewMap != null &&
                                         widget.question != null) {
                                       setState(() => _isLoading = false);
