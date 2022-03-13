@@ -23,4 +23,4 @@ const String TRADES_COLLECTION = "trades";
 // ignore: constant_identifier_names
 const String WALLETS_COLLECTION = "wallets";
 // ignore: constant_identifier_names
-const String MY_HOURS_COLLECTION = "myHours";
+const String WITHDRAWLS_COLLECTION = "withdrawls";
