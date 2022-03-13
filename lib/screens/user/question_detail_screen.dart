@@ -472,6 +472,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                                           "userId": widget.user.id,
                                           "questionId": widget.questionId,
                                           "questionName": widget.questionName,
+                                          "tradeCount": _count,
                                         },
                                       );
                                       setState(() => _isLoading = false);
@@ -492,6 +493,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                                           "userId": widget.user.id,
                                           "questionId": widget.questionId,
                                           "questionName": widget.questionName,
+                                          "tradeCount": _count,
                                         },
                                       );
                                       Navigator.of(context).pop();
