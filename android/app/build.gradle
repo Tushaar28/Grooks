@@ -46,7 +46,7 @@ android {
     }
 
     defaultConfig {
-        applicationId 'com.bagoyo.polls'
+        applicationId 'com.bagoyo.polls.uat'
         minSdkVersion 23
         targetSdkVersion 29
         versionCode flutterVersionCode.toInteger()
