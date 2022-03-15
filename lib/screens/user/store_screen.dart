@@ -113,37 +113,37 @@ class _StoreScreenState extends State<StoreScreen> {
           builder: (context) => const PaymentScreen(),
         ),
       );
-      var result = await FirebaseFunctions.instance
-          .httpsCallable("generateTokenForPayment")
-          .call({});
-      //print("RESULT = ${result.data}");
-      Map<String, dynamic> map = {
-        "key": "gtKFFx",
-        "txnid": result.data["txnId"],
-        "productinfo": "phone",
-        "amount": 100,
-        "email": "test@gmail.com",
-        "firstname": "fewfw",
-        "lastname": "Tiwari",
-        "surl": "https://apiplayground-response.herokuapp.com/",
-        "furl": "https://apiplayground-response.herokuapp.com/",
-        "phone": "9988776655",
-        "hash": result.data["hash"],
-      };
-      FormData formdata = FormData.fromMap(map);
+      // var result = await FirebaseFunctions.instance
+      //     .httpsCallable("generateTokenForPayment")
+      //     .call({});
+      // //print("RESULT = ${result.data}");
+      // Map<String, dynamic> map = {
+      //   "key": "gtKFFx",
+      //   "txnid": result.data["txnId"],
+      //   "productinfo": "phone",
+      //   "amount": 100,
+      //   "email": "test@gmail.com",
+      //   "firstname": "fewfw",
+      //   "lastname": "Tiwari",
+      //   "surl": "https://apiplayground-response.herokuapp.com/",
+      //   "furl": "https://apiplayground-response.herokuapp.com/",
+      //   "phone": "9988776655",
+      //   "hash": result.data["hash"],
+      // };
+      // FormData formdata = FormData.fromMap(map);
 
-      _dio.post(
-        "https://test.payu.in/_payment",
-        data: formdata,
-        options: Options(
-            followRedirects: true,
-            headers: {
-              "Accept": "application/json",
-            },
-            validateStatus: (status) {
-              return status! < 500;
-            }),
-      );
+      // _dio.post(
+      //   "https://test.payu.in/_payment",
+      //   data: formdata,
+      //   options: Options(
+      //       followRedirects: true,
+      //       headers: {
+      //         "Accept": "application/json",
+      //       },
+      //       validateStatus: (status) {
+      //         return status! < 500;
+      //       }),
+      // );
     } catch (error) {
       rethrow;
     }
