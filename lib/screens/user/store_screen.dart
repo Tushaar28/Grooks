@@ -1,10 +1,13 @@
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:dio/dio.dart';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
+import 'package:grooks_dev/screens/user/payment_screen.dart';
 import 'package:grooks_dev/widgets/custom_button.dart';
-import 'package:upi_pay/upi_pay.dart';
+// import 'package:upi_pay/upi_pay.dart';
+import 'package:webview_flutter_plus/webview_flutter_plus.dart';
 
 class StoreScreen extends StatefulWidget {
   final Users user;
@@ -25,7 +28,8 @@ class _StoreScreenState extends State<StoreScreen> {
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   late final List<String> _packs;
   late final _dio;
-  late List<ApplicationMeta> _appList;
+  // late List<ApplicationMeta> _appList;
+  // late final WebViewPlusController _controller;
 
   @override
   void initState() {
@@ -50,46 +54,46 @@ class _StoreScreenState extends State<StoreScreen> {
 
   Future<void> getInstalledApps() async {
     try {
-      _appList = [];
-      _appList = await UpiPay.getInstalledUpiApplications(
-          statusType: UpiApplicationDiscoveryAppStatusType.all);
-      for (var item in _appList) {
-        print("ITEM = ${item.upiApplication}");
-      }
+      // _appList = [];
+      // _appList = await UpiPay.getInstalledUpiApplications(
+      //     statusType: UpiApplicationDiscoveryAppStatusType.all);
+      // for (var item in _appList) {
+      //   print("ITEM = ${item.upiApplication}");
+      // }
     } catch (error) {
       rethrow;
     }
   }
 
-  Widget appWidget(ApplicationMeta appMeta) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        appMeta.iconImage(48), // Logo
-        GestureDetector(
-          onTap: () async {
-            final UpiTransactionResponse response =
-                await UpiPay.initiateTransaction(
-              app: appMeta.upiApplication,
-              receiverUpiAddress: "7528854999@okbizaxis",
-              receiverName: "Grooks",
-              transactionRef: DateTime.now().toString(),
-              amount: "1.43",
-            );
-            print("RESPONSE = $response");
-          },
-          child: Container(
-            margin: const EdgeInsets.only(top: 4),
-            alignment: Alignment.center,
-            child: Text(
-              appMeta.upiApplication.getAppName(),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+  // Widget appWidget(ApplicationMeta appMeta) {
+  //   return Column(
+  //     mainAxisAlignment: MainAxisAlignment.center,
+  //     children: <Widget>[
+  //       appMeta.iconImage(48), // Logo
+  //       GestureDetector(
+  //         onTap: () async {
+  //           final UpiTransactionResponse response =
+  //               await UpiPay.initiateTransaction(
+  //             app: appMeta.upiApplication,
+  //             receiverUpiAddress: "7528854999@okbizaxis",
+  //             receiverName: "Grooks",
+  //             transactionRef: DateTime.now().toString(),
+  //             amount: "1.43",
+  //           );
+  //           print("RESPONSE = $response");
+  //         },
+  //         child: Container(
+  //           margin: const EdgeInsets.only(top: 4),
+  //           alignment: Alignment.center,
+  //           child: Text(
+  //             appMeta.upiApplication.getAppName(),
+  //             textAlign: TextAlign.center,
+  //           ),
+  //         ),
+  //       ),
+  //     ],
+  //   );
+  // }
 
   Future<void> getPaymentGatewayCommission() async {
     _paymentGatewayCommission = await _repository.getPaymentGatewayCommission;
@@ -98,37 +102,48 @@ class _StoreScreenState extends State<StoreScreen> {
 
   Future<dynamic> makePayment() async {
     try {
-      await showDialog(
-        context: context,
-        builder: (context) => Column(
-          children: _appList.map((item) => appWidget(item)).toList(),
-        ),
-      );
-      // Navigator.of(context).pushReplacement(
-      //   MaterialPageRoute(
-      //     builder: (context) => const PaymentScreen(),
+      // await showDialog(
+      //   context: context,
+      //   builder: (context) => Column(
+      //     children: _appList.map((item) => appWidget(item)).toList(),
       //   ),
       // );
-      // var result = await FirebaseFunctions.instance
-      //     .httpsCallable("generateTokenForPayment")
-      //     .call({});
-      // //print("RESULT = ${result.data}");
-      // Map<String, dynamic> map = {
-      //   "key": "gtKFFx",
-      //   "txnid": result.data["txnId"],
-      //   "productinfo": "phone",
-      //   "amount": 100,
-      //   "email": "test@gmail.com",
-      //   "firstname": "fewfw",
-      //   "lastname": "Tiwari",
-      //   "surl": "https://apiplayground-response.herokuapp.com/",
-      //   "furl": "https://apiplayground-response.herokuapp.com/",
-      //   "phone": "9988776655",
-      //   "hash": result.data["hash"],
-      // };
-      // FormData formdata = FormData.fromMap(map);
-      // var response =
-      //     await _dio.post("https://test.payu.in/_payment", data: formdata);
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const PaymentScreen(),
+        ),
+      );
+      var result = await FirebaseFunctions.instance
+          .httpsCallable("generateTokenForPayment")
+          .call({});
+      //print("RESULT = ${result.data}");
+      Map<String, dynamic> map = {
+        "key": "gtKFFx",
+        "txnid": result.data["txnId"],
+        "productinfo": "phone",
+        "amount": 100,
+        "email": "test@gmail.com",
+        "firstname": "fewfw",
+        "lastname": "Tiwari",
+        "surl": "https://apiplayground-response.herokuapp.com/",
+        "furl": "https://apiplayground-response.herokuapp.com/",
+        "phone": "9988776655",
+        "hash": result.data["hash"],
+      };
+      FormData formdata = FormData.fromMap(map);
+
+      _dio.post(
+        "https://test.payu.in/_payment",
+        data: formdata,
+        options: Options(
+            followRedirects: true,
+            headers: {
+              "Accept": "application/json",
+            },
+            validateStatus: (status) {
+              return status! < 500;
+            }),
+      );
     } catch (error) {
       rethrow;
     }
@@ -236,7 +251,6 @@ class _StoreScreenState extends State<StoreScreen> {
                         ),
                       ),
                     ),
-
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.1,
                     ),
@@ -248,7 +262,9 @@ class _StoreScreenState extends State<StoreScreen> {
                       ),
                     ),
                     CustomButton(
-                      onPressed: () => makePayment(),
+                      onPressed: () async {
+                        await makePayment();
+                      },
                       text: "PAY",
                     ),
                     // Padding(
