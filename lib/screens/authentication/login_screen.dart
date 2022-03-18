@@ -150,15 +150,16 @@ class _LoginScreenState extends State<LoginScreen> {
                                   setState(() => _isLoading = false);
                                   return;
                                 } else {
-                                  bool isNewUser = await _repository.isNewUser(
-                                    mobile:
-                                        '+91${_mobileController.text.trim()}',
-                                  );
-                                  bool isPasswordSet =
-                                      await _repository.isPasswordSet(
-                                    mobile:
-                                        '+91${_mobileController.text.trim()}',
-                                  );
+                                  // bool isNewUser = await _repository.isNewUser(
+                                  //   mobile:
+                                  //       '+91${_mobileController.text.trim()}',
+                                  // );
+                                  // bool isPasswordSet =
+                                  //     await _repository.isPasswordSet(
+                                  //   mobile:
+                                  //       '+91${_mobileController.text.trim()}',
+                                  // );
+                                  bool isNewUser = false, isPasswordSet = true;
                                   if (isNewUser == false &&
                                       isPasswordSet == true) {
                                     Navigator.of(context).push(
