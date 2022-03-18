@@ -4,10 +4,7 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
-import 'package:grooks_dev/screens/user/payment_screen.dart';
 import 'package:grooks_dev/widgets/custom_button.dart';
-// import 'package:upi_pay/upi_pay.dart';
-import 'package:webview_flutter_plus/webview_flutter_plus.dart';
 
 class StoreScreen extends StatefulWidget {
   final Users user;
@@ -27,19 +24,14 @@ class _StoreScreenState extends State<StoreScreen> {
   late double _paymentGatewayCommission, _price, _paymentCharges, _totalAmount;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   late final List<String> _packs;
-  late final _dio;
-  // late List<ApplicationMeta> _appList;
-  // late final WebViewPlusController _controller;
 
   @override
   void initState() {
     super.initState();
-    getInstalledApps();
     _hasDataLoaded = false;
     _repository = FirebaseRepository();
     getPaymentGatewayCommission();
     _isLoading = false;
-    _dio = Dio();
     _packs = [
       "assets/images/pack1.png",
       "assets/images/pack2.png",
@@ -52,49 +44,6 @@ class _StoreScreenState extends State<StoreScreen> {
     _coinsController = TextEditingController();
   }
 
-  Future<void> getInstalledApps() async {
-    try {
-      // _appList = [];
-      // _appList = await UpiPay.getInstalledUpiApplications(
-      //     statusType: UpiApplicationDiscoveryAppStatusType.all);
-      // for (var item in _appList) {
-      //   print("ITEM = ${item.upiApplication}");
-      // }
-    } catch (error) {
-      rethrow;
-    }
-  }
-
-  // Widget appWidget(ApplicationMeta appMeta) {
-  //   return Column(
-  //     mainAxisAlignment: MainAxisAlignment.center,
-  //     children: <Widget>[
-  //       appMeta.iconImage(48), // Logo
-  //       GestureDetector(
-  //         onTap: () async {
-  //           final UpiTransactionResponse response =
-  //               await UpiPay.initiateTransaction(
-  //             app: appMeta.upiApplication,
-  //             receiverUpiAddress: "7528854999@okbizaxis",
-  //             receiverName: "Grooks",
-  //             transactionRef: DateTime.now().toString(),
-  //             amount: "1.43",
-  //           );
-  //           print("RESPONSE = $response");
-  //         },
-  //         child: Container(
-  //           margin: const EdgeInsets.only(top: 4),
-  //           alignment: Alignment.center,
-  //           child: Text(
-  //             appMeta.upiApplication.getAppName(),
-  //             textAlign: TextAlign.center,
-  //           ),
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
-
   Future<void> getPaymentGatewayCommission() async {
     _paymentGatewayCommission = await _repository.getPaymentGatewayCommission;
     setState(() => _hasDataLoaded = true);
@@ -102,17 +51,6 @@ class _StoreScreenState extends State<StoreScreen> {
 
   Future<dynamic> makePayment() async {
     try {
-      // await showDialog(
-      //   context: context,
-      //   builder: (context) => Column(
-      //     children: _appList.map((item) => appWidget(item)).toList(),
-      //   ),
-      // );
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => const PaymentScreen(),
-        ),
-      );
       // var result = await FirebaseFunctions.instance
       //     .httpsCallable("generateTokenForPayment")
       //     .call({});
