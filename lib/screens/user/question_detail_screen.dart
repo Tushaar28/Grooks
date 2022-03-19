@@ -658,7 +658,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                               ),
                               const SizedBox(
                                 child: AutoSizeText(
-                                  "Select your Prediction",
+                                  "Select your Opinion",
                                   style: TextStyle(
                                     color: Colors.grey,
                                     fontSize: 16,

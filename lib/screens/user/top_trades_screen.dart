@@ -356,10 +356,10 @@ class _TopTradesScreenState extends State<TopTradesScreen>
                         ),
                       ),
                       Container(
-                        width: MediaQuery.of(context).size.width * 0.45,
-                        height: MediaQuery.of(context).size.height * 0.06,
+                        width: MediaQuery.of(context).size.width * 0.4,
+                        height: MediaQuery.of(context).size.height * 0.05,
                         padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-                        child: CustomButton(
+                        child: ElevatedButton(
                           onPressed: () async {
                             try {
                               await pairTradeConfirmation(
@@ -367,16 +367,24 @@ class _TopTradesScreenState extends State<TopTradesScreen>
                                   trade: _trades[_tradesKeys[index]].first);
                             } catch (error) {}
                           },
-                          text: _trades[_tradesKeys[index]].first.response
-                              ? 'SAY NO @ ${100 - _trades[_tradesKeys[index]].first.coins}'
-                              : 'SAY YES @ ${100 - _trades[_tradesKeys[index]].first.coins}',
-                          color: _trades[_tradesKeys[index]].first.response
-                              ? const Color(0xFFC31D1D)
-                              : Theme.of(context).primaryColor,
-                          textStyle: const TextStyle(
-                            fontFamily: 'Poppins',
-                            fontSize: 16,
-                            color: Color(0xFFFAFAFA),
+                          child: Text(
+                            _trades[_tradesKeys[index]].first.response
+                                ? 'SAY NO @ ${100 - _trades[_tradesKeys[index]].first.coins}'
+                                : 'SAY YES @ ${100 - _trades[_tradesKeys[index]].first.coins}',
+                            style: TextStyle(
+                              color: _trades[_tradesKeys[index]].first.response
+                                  ? const Color(0xFFC31D1D)
+                                  : Theme.of(context).primaryColor,
+                              fontSize: 16,
+                            ),
+                          ),
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.white,
+                            side: BorderSide(
+                              color: _trades[_tradesKeys[index]].first.response
+                                  ? const Color(0xFFC31D1D)
+                                  : Theme.of(context).primaryColor,
+                            ),
                           ),
                         ),
                       )
