@@ -22,6 +22,30 @@ class DynamicLinkApi {
     _fallbackUrl = await _repository.getReferralFallbackUrl;
   }
 
+  Future<String> createTradeLink(String tradeId) async {
+    await getPackageName();
+    await getUrlPrefix();
+    await getFallbackUrl();
+    final DynamicLinkParameters dynamicLinkParameters = DynamicLinkParameters(
+      uriPrefix: _urlPrefix,
+      link: Uri.parse('$_urlPrefix/trade?code=$tradeId'),
+      androidParameters: AndroidParameters(
+        packageName: _packageName,
+        fallbackUrl: Uri.parse(_fallbackUrl),
+      ),
+      socialMetaTagParameters: const SocialMetaTagParameters(
+        title: 'Refer A Friend',
+        description: 'Refer and earn',
+      ),
+    );
+
+    final ShortDynamicLink shortLink =
+        await _dynamicLink.buildShortLink(dynamicLinkParameters);
+
+    final Uri dynamicUrl = shortLink.shortUrl;
+    return dynamicUrl.toString();
+  }
+
   Future<String> createReferralLink(String referralCode) async {
     await getPackageName();
     await getUrlPrefix();

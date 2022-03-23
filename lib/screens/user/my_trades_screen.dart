@@ -7,6 +7,7 @@ import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/authentication/login_screen.dart';
 import 'package:grooks_dev/screens/user/navbar_screen.dart';
 import 'package:grooks_dev/screens/user/question_detail_screen.dart';
+import 'package:grooks_dev/services/dynamic_link.dart';
 import 'package:grooks_dev/widgets/swipe_button.dart';
 
 import 'trade_success_screen.dart';
@@ -30,6 +31,7 @@ class _MyTradesScreenState extends State<MyTradesScreen>
   late final FirebaseRepository _repository;
   late bool _isLoading;
   late bool? _isActive;
+  late final DynamicLinkApi dynamicLink;
 
   @override
   bool get wantKeepAlive => false;
@@ -42,6 +44,7 @@ class _MyTradesScreenState extends State<MyTradesScreen>
     _repository = FirebaseRepository();
     getUserActiveStatus();
     _isLoading = false;
+    dynamicLink = DynamicLinkApi();
   }
 
   Future<void> getUserActiveStatus() async {
@@ -236,53 +239,73 @@ class _MyTradesScreenState extends State<MyTradesScreen>
                                   ),
                                 )
                               : Expanded(
-                                  child: Center(
-                                    child: TextButton(
-                                      onPressed: () async {
-                                        try {
-                                          await cancelTrade(
-                                              trade: _trades[index],
-                                              context: context);
-                                          Navigator.maybeOf(context)!
-                                              .pushReplacement(
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  TradeSuccessScreen(
-                                                user: widget.user,
-                                              ),
-                                            ),
-                                          );
-                                        } catch (error) {
-                                          setState(() => _isLoading = false);
-                                          Navigator.of(context).pop();
-                                          ScaffoldMessenger.of(context)
-                                              .hideCurrentSnackBar();
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            const SnackBar(
-                                              content: Text("An error occured"),
-                                              backgroundColor: Colors.red,
-                                              duration: Duration(seconds: 2),
-                                            ),
-                                          );
-                                          await Future.delayed(
-                                            const Duration(seconds: 2),
-                                            () => Navigator.of(context)
-                                                .pushReplacement(
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    NavbarScreen(
-                                                        user: widget.user),
-                                              ),
-                                            ),
-                                          );
-                                        }
-                                      },
-                                      child: const Text('Cancel'),
-                                      style: TextButton.styleFrom(
-                                        primary: const Color(0xFFC31D1D),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Center(
+                                        child: TextButton(
+                                          onPressed: () async {
+                                            try {
+                                              await cancelTrade(
+                                                  trade: _trades[index],
+                                                  context: context);
+                                              Navigator.maybeOf(context)!
+                                                  .pushReplacement(
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      TradeSuccessScreen(
+                                                    user: widget.user,
+                                                  ),
+                                                ),
+                                              );
+                                            } catch (error) {
+                                              setState(
+                                                  () => _isLoading = false);
+                                              Navigator.of(context).pop();
+                                              ScaffoldMessenger.of(context)
+                                                  .hideCurrentSnackBar();
+                                              ScaffoldMessenger.of(context)
+                                                  .showSnackBar(
+                                                const SnackBar(
+                                                  content:
+                                                      Text("An error occured"),
+                                                  backgroundColor: Colors.red,
+                                                  duration:
+                                                      Duration(seconds: 2),
+                                                ),
+                                              );
+                                              await Future.delayed(
+                                                const Duration(seconds: 2),
+                                                () => Navigator.of(context)
+                                                    .pushReplacement(
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        NavbarScreen(
+                                                            user: widget.user),
+                                                  ),
+                                                ),
+                                              );
+                                            }
+                                          },
+                                          child: const Text('Cancel'),
+                                          style: TextButton.styleFrom(
+                                            primary: const Color(0xFFC31D1D),
+                                          ),
+                                        ),
                                       ),
-                                    ),
+                                      TextButton(
+                                        onPressed: () async {
+                                          var tradeLink =
+                                              await dynamicLink.createTradeLink(
+                                                  _trades[index].id);
+                                        },
+                                        child: const Icon(
+                                          Icons.share_rounded,
+                                          size: 26,
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                     ],
