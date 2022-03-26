@@ -140,6 +140,7 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
     }
     return SafeArea(
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           iconTheme: const IconThemeData(color: Colors.black),
           backgroundColor: Colors.white,
@@ -167,63 +168,88 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
           width: double.infinity,
           height: MediaQuery.of(context).size.height * 0.9,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text(
-                    "Total Coins ",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.02,
-                  ),
-                  Text(
-                    "${_bonusCoins! + _redeemableCoins!}",
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                  ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.01,
-                  ),
-                  Image.asset("assets/images/coins.png"),
-                ],
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.05,
               ),
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.02,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    "$_redeemableCoins ",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                      color: Theme.of(context).primaryColor,
+                height: MediaQuery.of(context).size.height * 0.2,
+                width: double.infinity,
+                child: Card(
+                  elevation: 10,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: MediaQuery.of(context).size.width * 0.05,
+                      vertical: MediaQuery.of(context).size.height * 0.03,
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text(
+                              "Total Coins ",
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.07,
+                            ),
+                            Text(
+                              "${_bonusCoins! + _redeemableCoins!}",
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w500,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.01,
+                            ),
+                            Image.asset("assets/images/coins.png"),
+                          ],
+                        ),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.06,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              "$_redeemableCoins ",
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.w500,
+                                color: Theme.of(context).primaryColor,
+                              ),
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.02,
+                            ),
+                            const Text(
+                              "coins can be redeemed.",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.02,
-                  ),
-                  const Text(
-                    "coins can be redeemed.",
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
+                ),
               ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.01,
+              ),
+              const Text("PAN Verification is mandatory for withdrawl"),
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.08,
               ),
@@ -344,9 +370,6 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
                         ],
                       ),
                       SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.04,
-                      ),
-                      SizedBox(
                         child: _isLoading
                             ? const Center(
                                 child: CircularProgressIndicator.adaptive(
@@ -362,6 +385,23 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
                                 onSwipeCallback: () async {
                                   try {
                                     setState(() => _isLoading = true);
+                                    if ((double.parse(_amountController.text)
+                                                .ceil() *
+                                            10) >
+                                        _redeemableCoins!) {
+                                      ScaffoldMessenger.of(context)
+                                          .hideCurrentSnackBar();
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: Text("Insufficient coins"),
+                                          backgroundColor: Colors.red,
+                                          duration: Duration(seconds: 1),
+                                        ),
+                                      );
+                                      setState(() => _isLoading = false);
+                                      return;
+                                    }
                                     bool isPanVerified = await _repository
                                         .getPanVerificationStatus(
                                             userId: widget.userId);
