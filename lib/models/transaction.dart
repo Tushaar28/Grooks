@@ -12,7 +12,7 @@ class Transaction {
   late DateTime createdAt;
   late DateTime updatedAt;
   late TransactionStatus status;
-  late String transactionId;
+  late String? transactionId;
   late double amount;
   late int coins;
 
@@ -22,7 +22,7 @@ class Transaction {
     required this.status,
     required this.updatedAt,
     required this.amount,
-    required this.transactionId,
+    this.transactionId,
     required this.coins,
   });
 

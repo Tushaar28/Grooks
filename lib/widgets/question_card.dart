@@ -234,19 +234,19 @@ class _QuestionCardState extends State<QuestionCard> {
                     ],
                   ),
                 ),
-                if (widget.question.openTradesCount! +
-                        widget.question.pairedTradesCount! ==
-                    0) ...[
-                  const Expanded(
-                    child: Text(
-                      "Be the first to trade",
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 12,
-                      ),
+              ],
+              if (widget.question.openTradesCount! +
+                      widget.question.pairedTradesCount! ==
+                  0) ...[
+                const Expanded(
+                  child: Text(
+                    "Be the first to trade",
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 12,
                     ),
                   ),
-                ]
+                ),
               ],
             ],
           ),
