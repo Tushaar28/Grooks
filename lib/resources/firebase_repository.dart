@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:grooks_dev/models/category.dart';
+import 'package:grooks_dev/models/payout.dart';
 import 'package:grooks_dev/models/question.dart';
 import 'package:grooks_dev/models/trade.dart';
 import 'package:grooks_dev/models/user.dart';
@@ -233,6 +234,19 @@ class FirebaseRepository {
         pageSize: pageSize,
       );
 
+  Future<List<Payout>> getUserPayoutActivities({
+    required String userId,
+    DateTime? lastPayoutDate,
+    String? lastPayoutId,
+    int? pageSize,
+  }) =>
+      firebaseMethods.getUserPayoutActivities(
+        userId: userId,
+        lastPayoutDate: lastPayoutDate,
+        lastPayoutId: lastPayoutId,
+        pageSize: pageSize,
+      );
+
   Future<List<Map<String, dynamic>>> getUserTransferActivities({
     required String userId,
     DateTime? lastTradeDate,
@@ -338,7 +352,9 @@ class FirebaseRepository {
     String? accountNumber,
     String? ifscCode,
     String? upi,
-    required double amount,
+    required double requestedAmount,
+    required double finalAmount,
+    required double commission,
     required int coins,
     required String userId,
   }) =>
@@ -346,7 +362,9 @@ class FirebaseRepository {
         upi: upi,
         accountNumber: accountNumber,
         ifscCode: ifscCode,
-        amount: amount,
+        commission: commission,
+        finalAmount: finalAmount,
+        requestedAmount: requestedAmount,
         coins: coins,
         userId: userId,
       );

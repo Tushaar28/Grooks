@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:grooks_dev/screens/user/payouts_activity_screen.dart';
 import 'package:grooks_dev/screens/user/purchases_activity_screen.dart';
 import 'package:grooks_dev/screens/user/trades_activity_screen.dart';
 import 'package:grooks_dev/screens/user/transfers_activity_screen.dart';
@@ -89,7 +90,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
                         options: const [
                           'Trades',
                           'Purchases',
-                          // 'Payouts',
+                          'Payouts',
                           'Transfers'
                         ],
                         onChanged: (value) {
@@ -130,11 +131,9 @@ class _ActivityScreenState extends State<ActivityScreen> {
                       return TransfersActivityScreen(
                           userId: widget.userId, constraints: constraints);
                     }
-                    return const SizedBox(
-                      height: 0,
-                    );
-                    // return PayoutActivityWidget(
-                    //     userId: widget.userId, constraints: constraints);
+
+                    return PayoutsAcivityScreen(
+                        userId: widget.userId, constraints: constraints);
                   },
                 ),
               ),

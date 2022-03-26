@@ -26,6 +26,13 @@ class _QuestionCardState extends State<QuestionCard> {
     return percentage;
   }
 
+  String getFooterText() {
+    if (widget.question.answer != null) {
+      return "${((widget.question.openTradesCount! + widget.question.pairedTradesCount! * 2) * 1.5).toInt()}+ people traded";
+    }
+    return "${((widget.question.openTradesCount! + widget.question.pairedTradesCount! * 2) * 1.5).toInt()}+ people trading";
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -225,7 +232,7 @@ class _QuestionCardState extends State<QuestionCard> {
                         width: MediaQuery.of(context).size.width * 0.02,
                       ),
                       Text(
-                        "${((widget.question.openTradesCount! + widget.question.pairedTradesCount! * 2) * 1.5).toInt()}+  people trading",
+                        getFooterText(),
                         style: const TextStyle(
                           color: Colors.grey,
                           fontSize: 12,
