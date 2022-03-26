@@ -123,7 +123,12 @@ class _TransfersActivityScreenState extends State<TransfersActivityScreen> {
             builder: (context, constraints) {
               if (_transfers.isEmpty) {
                 return const Center(
-                  child: Text('No transfers yet'),
+                  child: Text(
+                    'No transfers yet',
+                    style: TextStyle(
+                      fontSize: 18,
+                    ),
+                  ),
                 );
               } else {
                 return Stack(
@@ -139,9 +144,10 @@ class _TransfersActivityScreenState extends State<TransfersActivityScreen> {
                             child: Padding(
                               padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
                               child: ExpansionTileCard(
-                                baseColor: Colors.blueGrey[50],
+                                shadowColor: Colors.black,
+                                baseColor: Colors.blueGrey[10],
                                 expandedColor: Colors.blueGrey[100],
-                                elevation: 10,
+                                elevation: 20,
                                 leading: SizedBox(
                                   width:
                                       MediaQuery.of(context).size.width * 0.2,

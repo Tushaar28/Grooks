@@ -6,12 +6,16 @@ import 'package:grooks_dev/widgets/custom_button.dart';
 
 class PanVerificationScreen extends StatefulWidget {
   final String userId;
-  final double amount;
+  final double requestedAmount;
+  final double finalAmount;
+  late double commission;
   final int coins;
-  const PanVerificationScreen({
+  PanVerificationScreen({
     Key? key,
     required this.userId,
-    required this.amount,
+    required this.requestedAmount,
+    required this.finalAmount,
+    required this.commission,
     required this.coins,
   }) : super(key: key);
 
@@ -191,7 +195,9 @@ class _PanVerificationScreenState extends State<PanVerificationScreen> {
                                 MaterialPageRoute(
                                   builder: (context) =>
                                       AccountInformationScreen(
-                                    amount: widget.amount,
+                                    commission: widget.commission,
+                                    finalAmount: widget.finalAmount,
+                                    requestedAmount: widget.requestedAmount,
                                     userId: widget.userId,
                                     coins: widget.coins,
                                   ),

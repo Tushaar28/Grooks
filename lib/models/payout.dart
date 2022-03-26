@@ -11,11 +11,13 @@ enum PayoutStatus {
 
 class Payout {
   late String? accountNumber;
-  late double amount;
   late DateTime createdAt;
   late int coins;
+  late double commission;
+  late double finalAmount;
   late String id;
   late String? ifscCode;
+  late double requestedAmount;
   late PayoutStatus status;
   late DateTime updatedAt;
   late String? upi;
@@ -23,11 +25,13 @@ class Payout {
 
   Payout({
     this.accountNumber,
-    required this.amount,
     required this.createdAt,
     required this.coins,
+    required this.commission,
+    required this.finalAmount,
     required this.id,
     this.ifscCode,
+    required this.requestedAmount,
     required this.status,
     required this.updatedAt,
     this.upi,
@@ -37,11 +41,13 @@ class Payout {
   Map toMap(Payout request) {
     var data = <String, dynamic>{};
     data["accountNumber"] = request.accountNumber;
-    data["amount"] = request.amount;
     data["createdAt"] = request.createdAt;
     data["coins"] = request.coins;
+    data["commission"] = request.commission;
+    data["finalAmount"] = request.finalAmount;
     data["id"] = request.id;
     data["ifscCode"] = request.ifscCode;
+    data["requestedAmount"] = request.requestedAmount;
     data["status"] = request.status.toString().split('.').last;
     data["updatedAt"] = request.updatedAt;
     data["upi"] = request.upi;
@@ -51,14 +57,16 @@ class Payout {
 
   Payout.fromMap(Map<String, dynamic> mapData) {
     accountNumber = mapData["accountNumber"];
-    amount = mapData["amount"];
     createdAt = mapData["createdAt"].toDate();
     coins = mapData["coins"];
+    commission = mapData["commission"].toDouble();
+    finalAmount = mapData["finalAmount"].toDouble();
     id = mapData["id"];
     ifscCode = mapData["ifscCode"];
+    requestedAmount = mapData["requestedAmount"].toDouble();
     status = PayoutStatus.values.firstWhere(
         (element) => element.toString().split('.').last == mapData['status']);
-    ;
+
     updatedAt = mapData["updatedAt"].toDate();
     upi = mapData["upi"];
     userId = mapData["userId"];

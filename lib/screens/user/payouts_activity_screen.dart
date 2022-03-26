@@ -2,56 +2,61 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:expansion_tile_card/expansion_tile_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:grooks_dev/models/transaction.dart';
+import 'package:grooks_dev/models/payout.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/authentication/login_screen.dart';
-import '../../models/transaction.dart' as model;
 import 'package:timeago/timeago.dart' as timeago;
 
-class PurchasesActivityScreen extends StatefulWidget {
+class PayoutsAcivityScreen extends StatefulWidget {
   final String userId;
   final BoxConstraints constraints;
-  const PurchasesActivityScreen({
+  const PayoutsAcivityScreen({
     Key? key,
     required this.userId,
     required this.constraints,
   }) : super(key: key);
 
   @override
-  State<PurchasesActivityScreen> createState() =>
-      _PurchasesActivityScreenState();
+  State<PayoutsAcivityScreen> createState() => _PayoutsAcivityScreenState();
 }
 
-class _PurchasesActivityScreenState extends State<PurchasesActivityScreen> {
+class _PayoutsAcivityScreenState extends State<PayoutsAcivityScreen> {
   late final FirebaseRepository _repository;
-  late List<model.Transaction> _purchases;
+  late List<Payout> _payouts;
   late DateTime? _lastDate;
   late String? _lastId;
   late final ScrollController _scrollController;
   late bool _isLoading, _allLoaded, _isExpanded, _isActive;
   late int? _prevIndex, _pageSize;
-  late Future<List<model.Transaction>> _initialData;
+  late Future<List<Payout>> _initialData;
 
   @override
   void initState() {
     super.initState();
     _repository = FirebaseRepository();
     getUserActiveStatus();
-    _purchases = [];
+    _payouts = [];
     _pageSize = 20;
     _isExpanded = _allLoaded = _isLoading = false;
     _isActive = true;
     _lastDate = null;
     _lastId = null;
-    _initialData = getUserPurchaseActivities();
+    _initialData = getUserPayoutActivities();
     _scrollController = ScrollController();
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=
               _scrollController.position.maxScrollExtent &&
           !_isLoading) {
-        getUserPurchaseActivities();
+        getUserPayoutActivities();
       }
     });
+  }
+
+  Color getPayoutColor(Payout payout) {
+    if (payout.status == PayoutStatus.FAILED) return Colors.red;
+    if (payout.status == PayoutStatus.PENDING) return Colors.grey;
+    if (payout.status == PayoutStatus.PROCESSING) return Colors.yellow.shade700;
+    return Colors.blue;
   }
 
   Future<void> getUserActiveStatus() async {
@@ -59,26 +64,25 @@ class _PurchasesActivityScreenState extends State<PurchasesActivityScreen> {
     setState(() => _isActive = data);
   }
 
-  Future<List<model.Transaction>> getUserPurchaseActivities() async {
+  Future<List<Payout>> getUserPayoutActivities() async {
     try {
-      if (_allLoaded) return _purchases;
+      if (_allLoaded) return _payouts;
       setState(() => _isLoading = true);
-      List<model.Transaction> data =
-          await _repository.getUserPurchaseActivities(
+      List<Payout> data = await _repository.getUserPayoutActivities(
         userId: widget.userId,
-        lastPurchaseDate: _lastDate,
-        lastPurchaseId: _lastId,
+        lastPayoutDate: _lastDate,
+        lastPayoutId: _lastId,
         pageSize: _pageSize,
       );
       if (data.isEmpty) {
         setState(() => _allLoaded = true);
       } else {
-        setState(() => _purchases.addAll(data));
-        _lastDate = _purchases[_purchases.length - 1].updatedAt;
-        _lastId = _purchases[_purchases.length - 1].id;
+        setState(() => _payouts.addAll(data));
+        _lastDate = _payouts[_payouts.length - 1].updatedAt;
+        _lastId = _payouts[_payouts.length - 1].id;
       }
       setState(() => _isLoading = false);
-      return _purchases;
+      return _payouts;
     } catch (error) {
       rethrow;
     }
@@ -108,10 +112,10 @@ class _PurchasesActivityScreenState extends State<PurchasesActivityScreen> {
           }
           return LayoutBuilder(
             builder: (context, constraints) {
-              if (_purchases.isEmpty) {
+              if (_payouts.isEmpty) {
                 return const Center(
                   child: Text(
-                    'No purchases yet',
+                    'No payouts yet',
                     style: TextStyle(
                       fontSize: 18,
                     ),
@@ -122,10 +126,10 @@ class _PurchasesActivityScreenState extends State<PurchasesActivityScreen> {
                   children: [
                     ListView.builder(
                       controller: _scrollController,
-                      itemCount: _purchases.length + (_allLoaded ? 1 : 0),
+                      itemCount: _payouts.length + (_allLoaded ? 1 : 0),
                       itemBuilder: (context, index) {
-                        if (index < _purchases.length) {
-                          model.Transaction purchase = _purchases[index];
+                        if (index < _payouts.length) {
+                          Payout payout = _payouts[index];
                           return Scrollbar(
                             child: Padding(
                               padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
@@ -136,17 +140,14 @@ class _PurchasesActivityScreenState extends State<PurchasesActivityScreen> {
                                 elevation: 20,
                                 leading: SizedBox(
                                   width:
-                                      MediaQuery.of(context).size.width * 0.15,
+                                      MediaQuery.of(context).size.width * 0.25,
                                   height:
                                       MediaQuery.of(context).size.width * 0.15,
                                   child: AutoSizeText(
-                                    "+${purchase.coins}",
+                                    "Rs ${payout.requestedAmount}",
                                     style: TextStyle(
                                       fontFamily: 'Poppins',
-                                      color: purchase.status ==
-                                              TransactionStatus.PROCESSED
-                                          ? Theme.of(context).primaryColor
-                                          : Colors.red,
+                                      color: getPayoutColor(payout),
                                       fontSize: 22,
                                     ),
                                   ),
@@ -164,10 +165,9 @@ class _PurchasesActivityScreenState extends State<PurchasesActivityScreen> {
                                       0,
                                     ),
                                     child: AutoSizeText(
-                                      purchase.status ==
-                                              TransactionStatus.PROCESSED
-                                          ? "${purchase.coins} coins purchased"
-                                          : "Purchase Failed",
+                                      payout.upi != null
+                                          ? "UPI Transfer"
+                                          : "Bank Transfer",
                                       style: const TextStyle(
                                         fontSize: 19,
                                         fontWeight: FontWeight.w400,
@@ -188,7 +188,7 @@ class _PurchasesActivityScreenState extends State<PurchasesActivityScreen> {
                                         vertical: 8.0,
                                       ),
                                       child: AutoSizeText(
-                                          "Status: ${purchase.status.toString().split('.').last}"),
+                                          "Status: ${payout.status.toString().split('.').last}"),
                                     ),
                                   ),
                                   Align(
@@ -199,7 +199,7 @@ class _PurchasesActivityScreenState extends State<PurchasesActivityScreen> {
                                         vertical: 8.0,
                                       ),
                                       child: AutoSizeText(
-                                          "Coins: ${purchase.coins} "),
+                                          "Commission: Rs ${payout.commission.toStringAsFixed(2)} "),
                                     ),
                                   ),
                                   Align(
@@ -210,7 +210,7 @@ class _PurchasesActivityScreenState extends State<PurchasesActivityScreen> {
                                         vertical: 8.0,
                                       ),
                                       child: AutoSizeText(
-                                          "Amount: Rs ${purchase.amount.toStringAsFixed(2)} "),
+                                          "Final Amount: Rs ${payout.finalAmount.toStringAsFixed(2)} "),
                                     ),
                                   ),
                                   Align(
@@ -221,22 +221,20 @@ class _PurchasesActivityScreenState extends State<PurchasesActivityScreen> {
                                         vertical: 8.0,
                                       ),
                                       child: AutoSizeText(
-                                          "Transaction Date: ${timeago.format(purchase.updatedAt)} "),
+                                          "Transaction ID: ${payout.id} "),
                                     ),
                                   ),
-                                  if (purchase.transactionId != null) ...[
-                                    Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 16.0,
-                                          vertical: 8.0,
-                                        ),
-                                        child: AutoSizeText(
-                                            "Transaction ID: ${purchase.transactionId} "),
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 16.0,
+                                        vertical: 8.0,
                                       ),
+                                      child: AutoSizeText(
+                                          "Transaction Date: ${timeago.format(payout.updatedAt)} "),
                                     ),
-                                  ],
+                                  ),
                                 ],
                               ),
                             ),
@@ -246,7 +244,7 @@ class _PurchasesActivityScreenState extends State<PurchasesActivityScreen> {
                             width: widget.constraints.maxWidth,
                             height: MediaQuery.of(context).size.height * 0.1,
                             child: const Center(
-                              child: Text('All purchases loaded'),
+                              child: Text('All payouts loaded'),
                             ),
                           );
                         }

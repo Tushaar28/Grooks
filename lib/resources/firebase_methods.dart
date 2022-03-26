@@ -10,7 +10,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:grooks_dev/constants/constants.dart';
 import 'package:grooks_dev/models/category.dart';
 import 'package:grooks_dev/models/feedback.dart';
-import 'package:grooks_dev/models/payout_request.dart';
+import 'package:grooks_dev/models/payout.dart';
 import 'package:grooks_dev/models/question.dart';
 import 'package:grooks_dev/models/trade.dart';
 import 'package:grooks_dev/models/transaction.dart';
@@ -1079,6 +1079,60 @@ class FirebaseMethods {
     }
   }
 
+  Future<List<Payout>> getUserPayoutActivities({
+    required String userId,
+    DateTime? lastPayoutDate,
+    String? lastPayoutId,
+    int? pageSize,
+  }) async {
+    try {
+      List<Payout> data = [];
+      QuerySnapshot payoutsSnapshot;
+      List<QueryDocumentSnapshot> snapshotList = [];
+      if (lastPayoutId != null) {
+        String walletId =
+            (await walletsCollection.where("userId", isEqualTo: userId).get())
+                .docs
+                .first
+                .id;
+        payoutsSnapshot = await walletsCollection
+            .doc(walletId)
+            .collection("payouts")
+            .orderBy('updatedAt', descending: true)
+            .orderBy('id', descending: true)
+            .startAfter([
+              lastPayoutDate,
+              lastPayoutId,
+            ])
+            .limit(pageSize!)
+            .get();
+      } else {
+        String walletId =
+            (await walletsCollection.where("userId", isEqualTo: userId).get())
+                .docs
+                .first
+                .id;
+        payoutsSnapshot = await walletsCollection
+            .doc(walletId)
+            .collection("payouts")
+            .orderBy('updatedAt', descending: true)
+            .orderBy('id', descending: true)
+            .limit(pageSize!)
+            .get();
+      }
+      for (var element in payoutsSnapshot.docs) {
+        snapshotList.add(element);
+      }
+      await Future.forEach(snapshotList, (QueryDocumentSnapshot element) async {
+        Payout payout = Payout.fromMap(element.data() as Map<String, dynamic>);
+        data.add(payout);
+      });
+      return data;
+    } catch (error) {
+      rethrow;
+    }
+  }
+
   Future<List<model.Transaction>> getUserPurchaseActivities({
     required String userId,
     DateTime? lastPurchaseDate,
@@ -1100,6 +1154,10 @@ class FirebaseMethods {
             .collection("purchases")
             .orderBy('updatedAt', descending: true)
             .orderBy('id', descending: true)
+            .startAfter([
+              lastPurchaseDate,
+              lastPurchaseId,
+            ])
             .limit(pageSize!)
             .get();
       } else {
@@ -1432,7 +1490,9 @@ class FirebaseMethods {
     String? accountNumber,
     String? ifscCode,
     String? upi,
-    required double amount,
+    required double requestedAmount,
+    required double finalAmount,
+    required double commission,
     required int coins,
     required String userId,
   }) async {
@@ -1449,7 +1509,9 @@ class FirebaseMethods {
       if (upi != null && upi.isNotEmpty) {
         request = Payout(
           id: docId,
-          amount: amount,
+          commission: commission,
+          finalAmount: finalAmount,
+          requestedAmount: requestedAmount,
           upi: upi,
           coins: coins,
           createdAt: currentDate,
@@ -1460,7 +1522,9 @@ class FirebaseMethods {
       } else {
         request = Payout(
           id: docId,
-          amount: amount,
+          commission: commission,
+          finalAmount: finalAmount,
+          requestedAmount: requestedAmount,
           accountNumber: accountNumber,
           ifscCode: ifscCode,
           coins: coins,

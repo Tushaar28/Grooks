@@ -329,7 +329,7 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.4,
                             child: const Text(
-                              "Withdrawl charges",
+                              "Final Amount",
                               style: TextStyle(
                                 fontSize: 16,
                               ),
@@ -371,7 +371,10 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
                                         MaterialPageRoute(
                                           builder: (context) =>
                                               PanVerificationScreen(
-                                            amount: getFinalAmount(),
+                                            requestedAmount: double.parse(
+                                                _amountController.text),
+                                            finalAmount: getFinalAmount(),
+                                            commission: getWithdrawlCharges(),
                                             userId: widget.userId,
                                             coins: double.parse(
                                                         _amountController.text)

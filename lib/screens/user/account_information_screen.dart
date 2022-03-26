@@ -8,12 +8,16 @@ import 'package:grooks_dev/widgets/swipe_button.dart';
 
 class AccountInformationScreen extends StatefulWidget {
   final String userId;
-  final double amount;
+  final double requestedAmount;
+  final double finalAmount;
+  late double commission;
   final int coins;
-  const AccountInformationScreen({
+  AccountInformationScreen({
     Key? key,
-    required this.amount,
     required this.userId,
+    required this.requestedAmount,
+    required this.finalAmount,
+    required this.commission,
     required this.coins,
   }) : super(key: key);
 
@@ -59,7 +63,9 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
       if (_withdrawlType!.toLowerCase().contains("upi")) {
         await _repository.submitPayoutRequest(
           upi: _upiController.text.trim(),
-          amount: widget.amount,
+          requestedAmount: widget.requestedAmount,
+          finalAmount: widget.finalAmount,
+          commission: widget.commission,
           coins: widget.coins,
           userId: widget.userId,
         );
@@ -67,7 +73,9 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
         await _repository.submitPayoutRequest(
           accountNumber: _accountController.text.trim(),
           ifscCode: _ifscController.text.trim(),
-          amount: widget.amount,
+          requestedAmount: widget.requestedAmount,
+          finalAmount: widget.finalAmount,
+          commission: widget.commission,
           coins: widget.coins,
           userId: widget.userId,
         );
@@ -356,7 +364,7 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
                       width: MediaQuery.of(context).size.width * 0.2,
                       child: Center(
                         child: Text(
-                          "Rs ${widget.amount}",
+                          "Rs ${widget.requestedAmount}",
                           style: const TextStyle(
                             fontSize: 18,
                           ),
