@@ -1,15 +1,18 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
+import 'package:grooks_dev/screens/user/account_information_screen.dart';
 import 'package:grooks_dev/widgets/custom_button.dart';
 
 class PanVerificationScreen extends StatefulWidget {
   final String userId;
   final double amount;
+  final int coins;
   const PanVerificationScreen({
     Key? key,
     required this.userId,
     required this.amount,
+    required this.coins,
   }) : super(key: key);
 
   @override
@@ -21,6 +24,7 @@ class _PanVerificationScreenState extends State<PanVerificationScreen> {
   late final FirebaseRepository _repository;
   late final GlobalKey<FormState> _formKey;
   late TextEditingController _panController, _nameController;
+  late bool _isLoading;
 
   @override
   void initState() {
@@ -29,12 +33,21 @@ class _PanVerificationScreenState extends State<PanVerificationScreen> {
     _formKey = GlobalKey<FormState>();
     _panController = TextEditingController();
     _nameController = TextEditingController();
+    _isLoading = false;
+  }
+
+  @override
+  void dispose() {
+    _panController.dispose();
+    _nameController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
+      resizeToAvoidBottomInset: false,
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.black),
@@ -66,8 +79,23 @@ class _PanVerificationScreenState extends State<PanVerificationScreen> {
             key: _formKey,
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.start,
               children: [
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.1,
+                ),
+                const Center(
+                  child: Text(
+                    "Enter your PAN details",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.1,
+                ),
                 TextFormField(
                   controller: _panController,
                   keyboardType: TextInputType.text,
@@ -141,14 +169,50 @@ class _PanVerificationScreenState extends State<PanVerificationScreen> {
                 ),
                 SizedBox(
                   width: double.infinity,
-                  child: CustomButton(
-                    onPressed: () async {
-                      try {
-                        if (_formKey.currentState!.validate()) {}
-                      } catch (error) {}
-                    },
-                    text: "VERIFY",
-                  ),
+                  child: _isLoading
+                      ? const Center(
+                          child: CircularProgressIndicator.adaptive(
+                            backgroundColor: Colors.white,
+                          ),
+                        )
+                      : CustomButton(
+                          onPressed: () async {
+                            try {
+                              if (_formKey.currentState!.validate() || true) {
+                                setState(() => _isLoading = true);
+                                // var result = await FirebaseFunctions.instance
+                                //     .httpsCallable("verifyPAN")
+                                //     .call({
+                                //   "pan": "BDHPT4898L",
+                                //   "name": "TUSHAAR TIWARI",
+                                // });
+                              }
+                              Navigator.of(context).pushReplacement(
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      AccountInformationScreen(
+                                    amount: widget.amount,
+                                    userId: widget.userId,
+                                    coins: widget.coins,
+                                  ),
+                                ),
+                              );
+                              setState(() => _isLoading = false);
+                            } catch (error) {
+                              setState(() => _isLoading = false);
+                              ScaffoldMessenger.of(context)
+                                  .hideCurrentSnackBar();
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("An error occured"),
+                                  backgroundColor: Colors.red,
+                                  duration: Duration(seconds: 1),
+                                ),
+                              );
+                            }
+                          },
+                          text: "VERIFY",
+                        ),
                 ),
               ],
             ),

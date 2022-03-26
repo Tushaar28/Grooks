@@ -344,7 +344,9 @@ class CustomDrawer extends StatelessWidget {
                     Navigator.of(context).pop();
                     Navigator.of(context).push(
                       PageTransition(
-                        child: const WithdrawlScreen(),
+                        child: WithdrawlScreen(
+                          userId: user.id,
+                        ),
                         type: PageTransitionType.bottomToTop,
                         duration: const Duration(milliseconds: 300),
                         reverseDuration: const Duration(milliseconds: 300),

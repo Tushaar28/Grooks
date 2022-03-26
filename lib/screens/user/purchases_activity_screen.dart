@@ -2,61 +2,56 @@ import 'package:auto_size_text/auto_size_text.dart';
 import 'package:expansion_tile_card/expansion_tile_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:grooks_dev/models/question.dart';
-import 'package:grooks_dev/models/trade.dart';
+import 'package:grooks_dev/models/transaction.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/authentication/login_screen.dart';
-import 'package:intl/intl.dart';
+import '../../models/transaction.dart' as model;
+import 'package:timeago/timeago.dart' as timeago;
 
-class TradesActivityScreen extends StatefulWidget {
+class PurchasesActivityScreen extends StatefulWidget {
   final String userId;
   final BoxConstraints constraints;
-  const TradesActivityScreen({
+  const PurchasesActivityScreen({
     Key? key,
     required this.userId,
     required this.constraints,
   }) : super(key: key);
 
   @override
-  _TradesActivityScreenState createState() => _TradesActivityScreenState();
+  State<PurchasesActivityScreen> createState() =>
+      _PurchasesActivityScreenState();
 }
 
-class _TradesActivityScreenState extends State<TradesActivityScreen> {
+class _PurchasesActivityScreenState extends State<PurchasesActivityScreen> {
   late final FirebaseRepository _repository;
-  late List<Map<String, dynamic>> _trades;
+  late List<model.Transaction> _purchases;
   late DateTime? _lastDate;
   late String? _lastId;
   late final ScrollController _scrollController;
   late bool _isLoading, _allLoaded, _isExpanded, _isActive;
   late int? _prevIndex, _pageSize;
-  late Future<List<Map<String, dynamic>>> _initialData;
+  late Future<List<model.Transaction>> _initialData;
 
   @override
   void initState() {
     super.initState();
     _repository = FirebaseRepository();
     getUserActiveStatus();
-    _trades = [];
+    _purchases = [];
     _pageSize = 20;
     _isExpanded = _allLoaded = _isLoading = false;
     _isActive = true;
     _lastDate = null;
     _lastId = null;
-    _initialData = getUserTradeActivities();
+    _initialData = getUserPurchaseActivities();
     _scrollController = ScrollController();
     _scrollController.addListener(() {
       if (_scrollController.position.pixels >=
               _scrollController.position.maxScrollExtent &&
           !_isLoading) {
-        getUserTradeActivities();
+        getUserPurchaseActivities();
       }
     });
-  }
-
-  @override
-  void dispose() {
-    _scrollController.dispose();
-    super.dispose();
   }
 
   Future<void> getUserActiveStatus() async {
@@ -64,57 +59,24 @@ class _TradesActivityScreenState extends State<TradesActivityScreen> {
     setState(() => _isActive = data);
   }
 
-  Future<Question> getQuestionDetails({
-    required String questionId,
-  }) async {
+  Future<List<model.Transaction>> getUserPurchaseActivities() async {
     try {
-      Question question =
-          await _repository.getQuestionDetails(questionId: questionId);
-      return question;
-    } catch (error) {
-      throw error.toString();
-    }
-  }
-
-  String getTradeStatus(Trade trade) {
-    switch (trade.status) {
-      case Status.WON:
-        return "${trade.coinsWon!.abs()} coins won";
-      case Status.LOST:
-        return "${trade.coinsWon!.abs()} coins lost";
-      case Status.ACTIVE_PAIRED:
-        return "Trade is Filled";
-      case Status.ACTIVE_UNPAIRED:
-        return "Trade is not Filled";
-      case Status.AUTO_CANCEL:
-        return "${trade.coins} coins returned";
-      case Status.CANCELLED_BY_USER:
-        return "${trade.coins} coins returned";
-      default:
-        return "";
-    }
-  }
-
-  Future<List<Map<String, dynamic>>> getUserTradeActivities() async {
-    try {
-      if (_allLoaded) return _trades;
+      if (_allLoaded) return _purchases;
       setState(() => _isLoading = true);
-      List<Map<String, dynamic>> data =
-          await _repository.getUserTradeActivities(
+      List<model.Transaction> data =
+          await _repository.getUserPurchaseActivities(
         userId: widget.userId,
-        lastTradeDate: _lastDate,
-        lastTradeId: _lastId,
+        lastPurchaseDate: _lastDate,
+        lastPurchaseId: _lastId,
         pageSize: _pageSize,
       );
       if (data.isEmpty) {
         setState(() => _allLoaded = true);
       } else {
-        setState(() => _trades.addAll(data));
-        _lastDate = _trades[_trades.length - 1]['trade'].updatedAt;
-        _lastId = _trades[_trades.length - 1]['trade'].id;
+        setState(() => _purchases.addAll(data));
       }
       setState(() => _isLoading = false);
-      return _trades;
+      return _purchases;
     } catch (error) {
       rethrow;
     }
@@ -143,11 +105,11 @@ class _TradesActivityScreenState extends State<TradesActivityScreen> {
             );
           }
           return LayoutBuilder(
-            builder: (context, constaints) {
-              if (_trades.isEmpty) {
+            builder: (context, constraints) {
+              if (_purchases.isEmpty) {
                 return const Center(
                   child: Text(
-                    'No trades yet',
+                    'No purchases yet',
                     style: TextStyle(
                       fontSize: 18,
                     ),
@@ -158,39 +120,31 @@ class _TradesActivityScreenState extends State<TradesActivityScreen> {
                   children: [
                     ListView.builder(
                       controller: _scrollController,
-                      itemCount: _trades.length + (_allLoaded ? 1 : 0),
+                      itemCount: _purchases.length + (_allLoaded ? 1 : 0),
                       itemBuilder: (context, index) {
-                        if (index < _trades.length) {
-                          Trade trade = _trades[index]['trade'];
+                        if (index < _purchases.length) {
+                          model.Transaction purchase = _purchases[index];
                           return Scrollbar(
                             child: Padding(
                               padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
                               child: ExpansionTileCard(
-                                baseColor: Colors.blueGrey[50],
+                                shadowColor: Colors.black,
+                                baseColor: Colors.blueGrey[10],
                                 expandedColor: Colors.blueGrey[100],
-                                elevation: 10,
+                                elevation: 20,
                                 leading: SizedBox(
                                   width:
                                       MediaQuery.of(context).size.width * 0.15,
                                   height:
                                       MediaQuery.of(context).size.width * 0.15,
                                   child: AutoSizeText(
-                                    trade.status == Status.LOST ||
-                                            trade.status ==
-                                                Status.ACTIVE_PAIRED ||
-                                            trade.status ==
-                                                Status.ACTIVE_UNPAIRED
-                                        ? '${trade.coinsWon ?? trade.coins}'
-                                        : '+${trade.coinsWon ?? trade.coins}',
+                                    "+${purchase.coins}",
                                     style: TextStyle(
                                       fontFamily: 'Poppins',
-                                      color: trade.status == Status.LOST ||
-                                              trade.status ==
-                                                  Status.ACTIVE_PAIRED ||
-                                              trade.status ==
-                                                  Status.ACTIVE_UNPAIRED
-                                          ? Colors.red
-                                          : Theme.of(context).primaryColor,
+                                      color: purchase.status ==
+                                              TransactionStatus.PROCESSED
+                                          ? Theme.of(context).primaryColor
+                                          : Colors.red,
                                       fontSize: 22,
                                     ),
                                   ),
@@ -207,17 +161,16 @@ class _TradesActivityScreenState extends State<TradesActivityScreen> {
                                       0,
                                       0,
                                     ),
-                                    child: trade.status == Status.AUTO_CANCEL ||
-                                            trade.status ==
-                                                Status.CANCELLED_BY_USER
-                                        ? AutoSizeText(
-                                            '[CANCELLED] ${_trades[index]['question'].name}')
-                                        : trade.status == Status.LOST ||
-                                                trade.status == Status.WON
-                                            ? AutoSizeText(
-                                                '[CLOSED] ${_trades[index]['question'].name}')
-                                            : AutoSizeText(
-                                                '${_trades[index]['question'].name}'),
+                                    child: AutoSizeText(
+                                      purchase.status ==
+                                              TransactionStatus.PROCESSED
+                                          ? "${purchase.coins} coins purchased"
+                                          : "Purchase Failed",
+                                      style: const TextStyle(
+                                        fontSize: 19,
+                                        fontWeight: FontWeight.w400,
+                                      ),
+                                    ),
                                   ),
                                 ),
                                 children: [
@@ -232,11 +185,8 @@ class _TradesActivityScreenState extends State<TradesActivityScreen> {
                                         horizontal: 16.0,
                                         vertical: 8.0,
                                       ),
-                                      child: AutoSizeText(getTradeStatus(trade),
-                                          style: const TextStyle(
-                                            fontFamily: 'Poppins',
-                                            fontSize: 12,
-                                          )),
+                                      child: AutoSizeText(
+                                          "Status: ${purchase.status.toString().split('.').last}"),
                                     ),
                                   ),
                                   Align(
@@ -247,14 +197,32 @@ class _TradesActivityScreenState extends State<TradesActivityScreen> {
                                         vertical: 8.0,
                                       ),
                                       child: AutoSizeText(
-                                          "Your trade: ${trade.response ? "YES" : "NO"} @ ${trade.bonusCoinsUsed + trade.redeemableCoinsUsed}",
-                                          style: const TextStyle(
-                                            fontFamily: 'Poppins',
-                                            fontSize: 12,
-                                          )),
+                                          "Coins: ${purchase.coins} "),
                                     ),
                                   ),
-                                  if (trade.status == Status.WON) ...[
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 16.0,
+                                        vertical: 8.0,
+                                      ),
+                                      child: AutoSizeText(
+                                          "Amount: Rs ${purchase.amount.toStringAsFixed(2)} "),
+                                    ),
+                                  ),
+                                  Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 16.0,
+                                        vertical: 8.0,
+                                      ),
+                                      child: AutoSizeText(
+                                          "Transaction Date: ${timeago.format(purchase.updatedAt)} "),
+                                    ),
+                                  ),
+                                  if (purchase.transactionId != null) ...[
                                     Align(
                                       alignment: Alignment.centerLeft,
                                       child: Padding(
@@ -263,44 +231,10 @@ class _TradesActivityScreenState extends State<TradesActivityScreen> {
                                           vertical: 8.0,
                                         ),
                                         child: AutoSizeText(
-                                            "Commission deducted: ${100 - trade.coinsWon!} coins",
-                                            style: const TextStyle(
-                                              fontFamily: 'Poppins',
-                                              fontSize: 12,
-                                            )),
+                                            "Transaction ID: ${purchase.transactionId} "),
                                       ),
                                     ),
                                   ],
-                                  Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 16.0,
-                                        vertical: 8.0,
-                                      ),
-                                      child: AutoSizeText(
-                                          'Timestamp:  ${DateFormat.yMMMd().format(trade.updatedAt).toString()}',
-                                          style: const TextStyle(
-                                            fontFamily: 'Poppins',
-                                            fontSize: 12,
-                                          )),
-                                    ),
-                                  ),
-                                  Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 16.0,
-                                        vertical: 8.0,
-                                      ),
-                                      child:
-                                          AutoSizeText('Trade ID:  ${trade.id}',
-                                              style: const TextStyle(
-                                                fontFamily: 'Poppins',
-                                                fontSize: 12,
-                                              )),
-                                    ),
-                                  ),
                                 ],
                               ),
                             ),
@@ -310,27 +244,12 @@ class _TradesActivityScreenState extends State<TradesActivityScreen> {
                             width: widget.constraints.maxWidth,
                             height: MediaQuery.of(context).size.height * 0.1,
                             child: const Center(
-                              child: Text('All trades loaded'),
+                              child: Text('All purchases loaded'),
                             ),
                           );
                         }
                       },
                     ),
-                    if (_isLoading) ...[
-                      Positioned(
-                        left: 0,
-                        bottom: 0,
-                        child: SizedBox(
-                          width: widget.constraints.maxWidth,
-                          height: MediaQuery.of(context).size.height * 0.1,
-                          child: const Center(
-                            child: CircularProgressIndicator.adaptive(
-                              backgroundColor: Colors.white,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
                   ],
                 );
               }

@@ -6,6 +6,7 @@ import 'package:grooks_dev/models/question.dart';
 import 'package:grooks_dev/models/trade.dart';
 import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_methods.dart';
+import '../models/transaction.dart' as model;
 
 class FirebaseRepository {
   final FirebaseMethods firebaseMethods = FirebaseMethods();
@@ -37,6 +38,8 @@ class FirebaseRepository {
       firebaseMethods.getPaymentGatewayCommission;
 
   Future<double> get getWinCommission => firebaseMethods.getWinCommission;
+
+  Future<double> get getPayoutCommission => firebaseMethods.getPayoutCommission;
 
   Future<bool> isNewUser({
     required String mobile,
@@ -217,6 +220,19 @@ class FirebaseRepository {
         pageSize: pageSize,
       );
 
+  Future<List<model.Transaction>> getUserPurchaseActivities({
+    required String userId,
+    DateTime? lastPurchaseDate,
+    String? lastPurchaseId,
+    int? pageSize,
+  }) =>
+      firebaseMethods.getUserPurchaseActivities(
+        userId: userId,
+        lastPurchaseDate: lastPurchaseDate,
+        lastPurchaseId: lastPurchaseId,
+        pageSize: pageSize,
+      );
+
   Future<List<Map<String, dynamic>>> getUserTransferActivities({
     required String userId,
     DateTime? lastTradeDate,
@@ -262,7 +278,7 @@ class FirebaseRepository {
 
   Future<void> updateTransactionDetails({
     required bool transactionStatus,
-    required String transactionId,
+    String? transactionId,
     required String userId,
     required double amount,
     required int coins,
@@ -317,4 +333,21 @@ class FirebaseRepository {
     required String password,
   }) =>
       firebaseMethods.setPassword(userId: userId, password: password);
+
+  Future<void> submitPayoutRequest({
+    String? accountNumber,
+    String? ifscCode,
+    String? upi,
+    required double amount,
+    required int coins,
+    required String userId,
+  }) =>
+      firebaseMethods.submitPayoutRequest(
+        upi: upi,
+        accountNumber: accountNumber,
+        ifscCode: ifscCode,
+        amount: amount,
+        coins: coins,
+        userId: userId,
+      );
 }

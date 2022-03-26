@@ -10,6 +10,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:grooks_dev/constants/constants.dart';
 import 'package:grooks_dev/models/category.dart';
 import 'package:grooks_dev/models/feedback.dart';
+import 'package:grooks_dev/models/payout_request.dart';
 import 'package:grooks_dev/models/question.dart';
 import 'package:grooks_dev/models/trade.dart';
 import 'package:grooks_dev/models/transaction.dart';
@@ -46,6 +47,10 @@ class FirebaseMethods {
       firestore.collection(WALLETS_COLLECTION);
   static final CollectionReference withdrawlsCollection =
       firestore.collection(WITHDRAWLS_COLLECTION);
+  static final CollectionReference payoutsCollection =
+      firestore.collection(PAYOUTS_COLLECTION);
+  static final CollectionReference purchasesCollection =
+      firestore.collection(PURCHASES_COLLECTION);
 
   Future<String> get getRequiredVersion async {
     try {
@@ -151,6 +156,17 @@ class FirebaseMethods {
     try {
       QuerySnapshot qs = await settingsCollection.get();
       double? commission = qs.docs.first.get("paymentGatewayCommission");
+      if (commission == null) throw "An error occured";
+      return commission;
+    } catch (error) {
+      throw error.toString();
+    }
+  }
+
+  Future<double> get getPayoutCommission async {
+    try {
+      QuerySnapshot qs = await settingsCollection.get();
+      double? commission = qs.docs.first.get("payoutCommission").toDouble();
       if (commission == null) throw "An error occured";
       return commission;
     } catch (error) {
@@ -1063,6 +1079,57 @@ class FirebaseMethods {
     }
   }
 
+  Future<List<model.Transaction>> getUserPurchaseActivities({
+    required String userId,
+    DateTime? lastPurchaseDate,
+    String? lastPurchaseId,
+    int? pageSize,
+  }) async {
+    try {
+      List<model.Transaction> data = [];
+      QuerySnapshot purchasesSnapshot;
+      List<QueryDocumentSnapshot> snapshotList = [];
+      if (lastPurchaseId != null) {
+        String walletId =
+            (await walletsCollection.where("userId", isEqualTo: userId).get())
+                .docs
+                .first
+                .id;
+        purchasesSnapshot = await walletsCollection
+            .doc(walletId)
+            .collection("purchases")
+            .orderBy('updatedAt', descending: true)
+            .orderBy('id', descending: true)
+            .limit(pageSize!)
+            .get();
+      } else {
+        String walletId =
+            (await walletsCollection.where("userId", isEqualTo: userId).get())
+                .docs
+                .first
+                .id;
+        purchasesSnapshot = await walletsCollection
+            .doc(walletId)
+            .collection("purchases")
+            .orderBy('updatedAt', descending: true)
+            .orderBy('id', descending: true)
+            .limit(pageSize!)
+            .get();
+      }
+      for (var element in purchasesSnapshot.docs) {
+        snapshotList.add(element);
+      }
+      await Future.forEach(snapshotList, (QueryDocumentSnapshot element) async {
+        model.Transaction purchase =
+            model.Transaction.fromMap(element.data() as Map<String, dynamic>);
+        data.add(purchase);
+      });
+      return data;
+    } catch (error) {
+      rethrow;
+    }
+  }
+
   Future<List<Map<String, dynamic>>> getUserTransferActivities({
     required String userId,
     DateTime? lastTradeDate,
@@ -1216,7 +1283,7 @@ class FirebaseMethods {
 
   Future<void> updateTransactionDetails({
     required bool transactionStatus,
-    required String transactionId,
+    String? transactionId,
     required String userId,
     required double amount,
     required int coins,
@@ -1229,7 +1296,7 @@ class FirebaseMethods {
               .first
               .id;
       String id =
-          walletsCollection.doc(walletId).collection("transactions").doc().id;
+          walletsCollection.doc(walletId).collection("purchases").doc().id;
       model.Transaction transaction = model.Transaction(
         id: id,
         createdAt: currentDate,
@@ -1252,7 +1319,7 @@ class FirebaseMethods {
       }
       await walletsCollection
           .doc(walletId)
-          .collection("transactions")
+          .collection("purchases")
           .doc(id)
           .set(transaction.toMap(transaction) as Map<String, dynamic>);
     } catch (error) {
@@ -1358,6 +1425,59 @@ class FirebaseMethods {
       });
     } catch (error) {
       rethrow;
+    }
+  }
+
+  Future<void> submitPayoutRequest({
+    String? accountNumber,
+    String? ifscCode,
+    String? upi,
+    required double amount,
+    required int coins,
+    required String userId,
+  }) async {
+    try {
+      DateTime currentDate = DateTime.now();
+      String walletId =
+          (await walletsCollection.where("userId", isEqualTo: userId).get())
+              .docs
+              .first
+              .id;
+      String docId =
+          walletsCollection.doc(walletId).collection("payouts").doc().id;
+      Payout? request;
+      if (upi != null && upi.isNotEmpty) {
+        request = Payout(
+          id: docId,
+          amount: amount,
+          upi: upi,
+          coins: coins,
+          createdAt: currentDate,
+          updatedAt: currentDate,
+          userId: userId,
+          status: PayoutStatus.PENDING,
+        );
+      } else {
+        request = Payout(
+          id: docId,
+          amount: amount,
+          accountNumber: accountNumber,
+          ifscCode: ifscCode,
+          coins: coins,
+          createdAt: currentDate,
+          updatedAt: currentDate,
+          userId: userId,
+          status: PayoutStatus.PENDING,
+        );
+      }
+      await payoutsCollection.doc(docId).set(request.toMap(request));
+      await walletsCollection
+          .doc(walletId)
+          .collection("payouts")
+          .doc(docId)
+          .set(request.toMap(request) as Map<String, dynamic>);
+    } catch (error) {
+      throw error.toString();
     }
   }
 }

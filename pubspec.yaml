@@ -73,10 +73,6 @@ dependencies:
   share_plus: ^3.0.3
   double_back_to_close_app: ^2.1.0
   dbcrypt: ^2.0.0
-  webview_flutter: ^3.0.1
-  dio: ^4.0.4
-  webview_flutter_plus: ^0.3.0+2
-  flutter_payu_unofficial: ^1.0.3
 
 dev_dependencies:
   flutter_test:

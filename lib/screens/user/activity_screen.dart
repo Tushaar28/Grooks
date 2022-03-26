@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:grooks_dev/screens/user/purchases_activity_screen.dart';
 import 'package:grooks_dev/screens/user/trades_activity_screen.dart';
 import 'package:grooks_dev/screens/user/transfers_activity_screen.dart';
 import 'package:grooks_dev/widgets/custom_dropdown.dart';
@@ -87,7 +88,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
                         initialOption: widget.chosenOption,
                         options: const [
                           'Trades',
-                          // 'Purchases',
+                          'Purchases',
                           // 'Payouts',
                           'Transfers'
                         ],
@@ -122,8 +123,8 @@ class _ActivityScreenState extends State<ActivityScreen> {
                           userId: widget.userId, constraints: constraints);
                     } else if (widget.chosenOption.toLowerCase() ==
                         'purchases') {
-                      // return PurchasesActivityWidget(
-                      //     userId: widget.userId, constraints: constraints);
+                      return PurchasesActivityScreen(
+                          userId: widget.userId, constraints: constraints);
                     } else if (widget.chosenOption.toLowerCase() ==
                         'transfers') {
                       return TransfersActivityScreen(
