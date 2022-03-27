@@ -128,8 +128,8 @@ class _AuthState extends State<Auth> {
                           );
                         } else {
                           if (_user != null) {
+                            _mixpanel.identify(_user!.id);
                             if (_isFirstLogin!) {
-                              _mixpanel.identify(_user!.id);
                               _mixpanel.track('login', properties: {
                                 'userId': _user!.id,
                               });
@@ -138,6 +138,56 @@ class _AuthState extends State<Auth> {
                               });
                               _isFirstLogin = false;
                             }
+                            _mixpanel.getPeople().set("name", _user!.name);
+                            _mixpanel
+                                .getPeople()
+                                .set("mobile", _user!.mobile!.substring(2));
+                            _mixpanel.getPeople().set("referrals", 0);
+                            _mixpanel.getPeople().increment("total_trades", 0);
+                            _mixpanel
+                                .getPeople()
+                                .increment("total_trades_failed", 0);
+                            _mixpanel.getPeople().increment("new_trades", 0);
+                            _mixpanel
+                                .getPeople()
+                                .increment("new_trades_failed", 0);
+                            _mixpanel.getPeople().increment("paired_trades", 0);
+                            _mixpanel
+                                .getPeople()
+                                .increment("paired_trades_failed", 0);
+                            _mixpanel
+                                .getPeople()
+                                .increment("cancelled_trades", 0);
+                            _mixpanel
+                                .getPeople()
+                                .increment("cancelled_trades_failed", 0);
+                            _mixpanel.getPeople().increment("purchases", 0);
+                            _mixpanel
+                                .getPeople()
+                                .increment("purchases_failed", 0);
+                            _mixpanel.getPeople().increment("payouts", 0);
+                            _mixpanel
+                                .getPeople()
+                                .increment("payouts_failed", 0);
+                            _mixpanel.getPeople().set("referrals", 0);
+                            _mixpanel
+                                .getPeople()
+                                .increment("store_packs_clicked", 0);
+                            _mixpanel
+                                .getPeople()
+                                .increment("49_pack_clicked", 0);
+                            _mixpanel
+                                .getPeople()
+                                .increment("99_pack_clicked", 0);
+                            _mixpanel
+                                .getPeople()
+                                .increment("199_pack_clicked", 0);
+                            _mixpanel
+                                .getPeople()
+                                .increment("499_pack_clicked", 0);
+                            _mixpanel.getPeople().setOnce(
+                                "createdAt", DateTime.now().toString());
+                            _mixpanel.flush();
                             FirebaseCrashlytics.instance
                                 .setUserIdentifier(_user!.id);
                             return NavbarScreen(user: _user);
