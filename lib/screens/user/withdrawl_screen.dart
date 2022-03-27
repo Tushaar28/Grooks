@@ -263,6 +263,10 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
               ),
               const Text("PAN Verification is mandatory for withdrawl"),
               SizedBox(
+                height: MediaQuery.of(context).size.height * 0.01,
+              ),
+              const Text("Rs 1 = 10 coins"),
+              SizedBox(
                 height: MediaQuery.of(context).size.height * 0.08,
               ),
               TextField(
