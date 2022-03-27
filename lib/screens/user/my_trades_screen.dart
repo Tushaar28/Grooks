@@ -115,6 +115,10 @@ class _MyTradesScreenState extends State<MyTradesScreen>
                               userId: widget.user.id,
                             );
                             _mixpanel.identify(widget.user.id);
+                            _mixpanel
+                                .getPeople()
+                                .increment("cancelled_trades", 1);
+                            _mixpanel.getPeople().increment("total_trades", 1);
                             _mixpanel.track(
                               "trade_cancelled_by_user_success",
                               properties: {
@@ -127,6 +131,12 @@ class _MyTradesScreenState extends State<MyTradesScreen>
                             Navigator.maybeOf(context)!.pop();
                           } catch (error) {
                             _mixpanel.identify(widget.user.id);
+                            _mixpanel
+                                .getPeople()
+                                .increment("cancelled_trades_failed", 1);
+                            _mixpanel
+                                .getPeople()
+                                .increment("total_trades_failed", 1);
                             _mixpanel.track(
                               "trade_cancelled_by_user_failed",
                               properties: {

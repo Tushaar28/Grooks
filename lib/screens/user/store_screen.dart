@@ -125,6 +125,7 @@ class _StoreScreenState extends State<StoreScreen> {
             _done = false;
           });
           _mixpanel.identify(widget.user.id);
+          _mixpanel.getPeople().increment("purchases_failed", 1);
           _mixpanel.track("purchase_failed", properties: {
             "userId": widget.user.id,
             "amount": _totalAmount,
@@ -141,6 +142,7 @@ class _StoreScreenState extends State<StoreScreen> {
           rethrow;
         }
         _mixpanel.identify(widget.user.id);
+        _mixpanel.getPeople().increment("purchases", 1);
         _mixpanel.track("purchase_success", properties: {
           "userId": widget.user.id,
           "amount": _totalAmount,
@@ -281,6 +283,12 @@ class _StoreScreenState extends State<StoreScreen> {
                           onTap: () {
                             if (index == 0) {
                               _mixpanel.identify(widget.user.id);
+                              _mixpanel
+                                  .getPeople()
+                                  .increment("store_packs_clicked", 1);
+                              _mixpanel
+                                  .getPeople()
+                                  .increment("49_pack_clicked", 1);
                               _mixpanel.track("49_pack_clicked", properties: {
                                 "userId": widget.user.id,
                                 "amount": "49",
@@ -289,6 +297,12 @@ class _StoreScreenState extends State<StoreScreen> {
                               _coinsController.text = "550";
                             } else if (index == 1) {
                               _mixpanel.identify(widget.user.id);
+                              _mixpanel
+                                  .getPeople()
+                                  .increment("store_packs_clicked", 1);
+                              _mixpanel
+                                  .getPeople()
+                                  .increment("99_pack_clicked", 1);
                               _mixpanel.track("99_pack_clicked", properties: {
                                 "userId": widget.user.id,
                                 "amount": "99",
@@ -297,6 +311,12 @@ class _StoreScreenState extends State<StoreScreen> {
                               _coinsController.text = "1200";
                             } else if (index == 2) {
                               _mixpanel.identify(widget.user.id);
+                              _mixpanel
+                                  .getPeople()
+                                  .increment("store_packs_clicked", 1);
+                              _mixpanel
+                                  .getPeople()
+                                  .increment("199_pack_clicked", 1);
                               _mixpanel.track("199_pack_clicked", properties: {
                                 "userId": widget.user.id,
                                 "amount": "199",
@@ -305,6 +325,12 @@ class _StoreScreenState extends State<StoreScreen> {
                               _coinsController.text = "2500";
                             } else {
                               _mixpanel.identify(widget.user.id);
+                              _mixpanel
+                                  .getPeople()
+                                  .increment("store_packs_clicked", 1);
+                              _mixpanel
+                                  .getPeople()
+                                  .increment("499_pack_clicked", 1);
                               _mixpanel.track("499_pack_clicked", properties: {
                                 "userId": widget.user.id,
                                 "amount": "499",

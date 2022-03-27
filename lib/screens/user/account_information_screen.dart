@@ -621,6 +621,9 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
                                     );
                                     _mixpanel.identify(widget.userId);
                                     _mixpanel
+                                        .getPeople()
+                                        .increment("payouts_failed", 1);
+                                    _mixpanel
                                         .track("payout_failed", properties: {
                                       "userId": widget.userId,
                                     });
@@ -634,6 +637,9 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
                                       _done = true;
                                     });
                                     _mixpanel.identify(widget.userId);
+                                    _mixpanel
+                                        .getPeople()
+                                        .increment("payouts", 1);
                                     _mixpanel
                                         .track("payout_success", properties: {
                                       "userId": widget.userId,
@@ -662,6 +668,13 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
                                     setState(() => _isLoading = false);
                                   }
                                 } catch (error) {
+                                  _mixpanel.identify(widget.userId);
+                                  _mixpanel
+                                      .getPeople()
+                                      .increment("payouts_failed", 1);
+                                  _mixpanel.track("payout_failed", properties: {
+                                    "userId": widget.userId,
+                                  });
                                   setState(() => _isLoading = false);
                                   ScaffoldMessenger.of(context)
                                       .hideCurrentSnackBar();

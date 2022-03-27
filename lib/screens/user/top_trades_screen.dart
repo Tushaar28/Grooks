@@ -154,6 +154,8 @@ class _TopTradesScreenState extends State<TopTradesScreen>
                           setState(() => _isLoading = true);
                           await pairTrade(trade: trade);
                           _mixpanel.identify(widget.user.id);
+                          _mixpanel.getPeople().increment("paired_trades", 1);
+                          _mixpanel.getPeople().increment("total_trades", 1);
                           _mixpanel.track(
                             "trade_pair_success",
                             properties: {
@@ -171,6 +173,12 @@ class _TopTradesScreenState extends State<TopTradesScreen>
                           );
                         } catch (error) {
                           _mixpanel.identify(widget.user.id);
+                          _mixpanel
+                              .getPeople()
+                              .increment("paired_trades_failed", 1);
+                          _mixpanel
+                              .getPeople()
+                              .increment("total_trades_failed", 1);
                           _mixpanel.track(
                             "trade_pair_failed",
                             properties: {

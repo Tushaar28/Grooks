@@ -469,8 +469,12 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                                       await placeTrade(
                                         isYes: isYes,
                                       );
+                                      _mixpanel.identify(widget.user.id);
+                                      _mixpanel.getPeople().increment(
+                                          "total_trades", _count.toDouble());
+                                      _mixpanel.getPeople().increment(
+                                          "new_trades", _count.toDouble());
                                       for (int i = 0; i < _count; i++) {
-                                        _mixpanel.identify(widget.user.id);
                                         _mixpanel.track(
                                           "new_trade_success",
                                           properties: {
@@ -492,8 +496,14 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                                         ),
                                       );
                                     } catch (error) {
+                                      _mixpanel.identify(widget.user.id);
+                                      _mixpanel.getPeople().increment(
+                                          "total_trades_failed",
+                                          _count.toDouble());
+                                      _mixpanel.getPeople().increment(
+                                          "new_trades_failed",
+                                          _count.toDouble());
                                       for (int i = 0; i < _count; i++) {
-                                        _mixpanel.identify(widget.user.id);
                                         _mixpanel.track(
                                           "new_trade_failed",
                                           properties: {

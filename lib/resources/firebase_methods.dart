@@ -354,6 +354,8 @@ class FirebaseMethods {
             "userId": uid,
             "referringUserId": referringUser.id,
           });
+          _mixpanel!.identify(referringUser.id);
+          _mixpanel!.getPeople().increment("referrals", 1);
         }
         String docId = usersCollection
             .doc(referringUser.id)
