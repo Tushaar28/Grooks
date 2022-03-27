@@ -162,7 +162,8 @@ class FirebaseMethods {
   Future<double> get getPaymentGatewayCommission async {
     try {
       QuerySnapshot qs = await settingsCollection.get();
-      double? commission = qs.docs.first.get("paymentGatewayCommission");
+      double? commission =
+          qs.docs.first.get("paymentGatewayCommission").toDouble();
       if (commission == null) throw "An error occured";
       return commission;
     } catch (error) {

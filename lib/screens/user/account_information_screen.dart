@@ -149,6 +149,9 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
       ),
       body: SafeArea(
         child: Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: MediaQuery.of(context).size.width * 0.05,
+          ),
           color: Colors.white,
           height: MediaQuery.of(context).size.height * 0.9,
           child: Form(
