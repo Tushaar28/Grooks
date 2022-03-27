@@ -201,6 +201,16 @@ class FirebaseMethods {
     }
   }
 
+  Future<String> get getMixpanelToken async {
+    try {
+      QuerySnapshot qs = await settingsCollection.get();
+      String token = qs.docs.first.get("mixpanelToken");
+      return token;
+    } catch (error) {
+      throw error.toString();
+    }
+  }
+
   Future<bool> isNewUser({
     required String mobile,
   }) async {
