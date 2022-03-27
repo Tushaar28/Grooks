@@ -73,6 +73,7 @@ dependencies:
   share_plus: ^3.0.3
   double_back_to_close_app: ^2.1.0
   dbcrypt: ^2.0.0
+  mixpanel_flutter: ^1.4.5
 
 dev_dependencies:
   flutter_test:

@@ -6,7 +6,9 @@ import 'package:grooks_dev/models/question.dart';
 import 'package:grooks_dev/models/trade.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/authentication/login_screen.dart';
+import 'package:grooks_dev/services/mixpanel.dart';
 import 'package:intl/intl.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 
 class TradesActivityScreen extends StatefulWidget {
   final String userId;
@@ -30,10 +32,12 @@ class _TradesActivityScreenState extends State<TradesActivityScreen> {
   late bool _isLoading, _allLoaded, _isExpanded, _isActive;
   late int? _prevIndex, _pageSize;
   late Future<List<Map<String, dynamic>>> _initialData;
+  late final Mixpanel _mixpanel;
 
   @override
   void initState() {
     super.initState();
+    _initMixpanel();
     _repository = FirebaseRepository();
     getUserActiveStatus();
     _trades = [];
@@ -50,6 +54,14 @@ class _TradesActivityScreenState extends State<TradesActivityScreen> {
           !_isLoading) {
         getUserTradeActivities();
       }
+    });
+  }
+
+  Future<void> _initMixpanel() async {
+    _mixpanel = await MixpanelManager.init();
+    _mixpanel.identify(widget.userId);
+    _mixpanel.track("trades_activity_screen", properties: {
+      "userId": widget.userId,
     });
   }
 

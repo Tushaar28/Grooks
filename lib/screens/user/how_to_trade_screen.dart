@@ -1,7 +1,9 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:grooks_dev/models/user.dart';
+import 'package:grooks_dev/services/mixpanel.dart';
 import 'package:grooks_dev/widgets/how_to_trade_carousel.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 
 class HowToTradeScreen extends StatefulWidget {
   final Users user;
@@ -16,11 +18,21 @@ class HowToTradeScreen extends StatefulWidget {
 
 class _HowToTradeScreenState extends State<HowToTradeScreen> {
   late final GlobalKey<ScaffoldState> _scaffoldKey;
+  late final Mixpanel _mixpanel;
 
   @override
   void initState() {
     super.initState();
+    _initMixpanel();
     _scaffoldKey = GlobalKey<ScaffoldState>();
+  }
+
+  Future<void> _initMixpanel() async {
+    _mixpanel = await MixpanelManager.init();
+    _mixpanel.identify(widget.user.id);
+    _mixpanel.track("how_to_trade_screen", properties: {
+      "userId": widget.user.id,
+    });
   }
 
   @override

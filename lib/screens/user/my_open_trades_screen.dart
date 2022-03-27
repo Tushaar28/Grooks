@@ -7,6 +7,8 @@ import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/authentication/login_screen.dart';
 import 'package:grooks_dev/screens/user/question_detail_screen.dart';
+import 'package:grooks_dev/services/mixpanel.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:page_transition/page_transition.dart';
 
 class MyOpenTradesScreen extends StatefulWidget {
@@ -25,14 +27,24 @@ class _MyOpenTradesScreenState extends State<MyOpenTradesScreen>
   late final FirebaseRepository _repository;
   late List<Trade> _openTrades;
   late bool? _isActive;
+  late final Mixpanel _mixpanel;
 
   @override
   void initState() {
     super.initState();
+    _initMixpanel();
     _repository = FirebaseRepository();
     getUserActiveStatus();
     _openTrades = [];
     _isActive = null;
+  }
+
+  Future<void> _initMixpanel() async {
+    _mixpanel = await MixpanelManager.init();
+    _mixpanel.identify(widget.user.id);
+    _mixpanel.track("my_open_trades_screen", properties: {
+      "userId": widget.user.id,
+    });
   }
 
   Future<void> refresh() async {

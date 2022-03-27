@@ -17,6 +17,8 @@ import 'package:grooks_dev/models/transaction.dart';
 import 'package:grooks_dev/models/transfer.dart';
 import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/models/wallet.dart';
+import 'package:grooks_dev/services/mixpanel.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import '../models/transaction.dart' as model;
 import 'package:dbcrypt/dbcrypt.dart';
 
@@ -50,6 +52,12 @@ class FirebaseMethods {
       firestore.collection(PAYOUTS_COLLECTION);
   static final CollectionReference purchasesCollection =
       firestore.collection(PURCHASES_COLLECTION);
+  static Mixpanel? _mixpanel;
+
+  Future<void> get initMixpanel async {
+    if (_mixpanel != null) return;
+    _mixpanel = await MixpanelManager.init();
+  }
 
   Future<String> get getRequiredVersion async {
     try {
@@ -168,6 +176,36 @@ class FirebaseMethods {
       double? commission = qs.docs.first.get("payoutCommission").toDouble();
       if (commission == null) throw "An error occured";
       return commission;
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<String> get getMixpanelToken async {
+    try {
+      QuerySnapshot qs = await settingsCollection.get();
+      String token = qs.docs.first.get("mixpanelToken");
+      return token;
+    } catch (error) {
+      throw error.toString();
+    }
+  }
+
+  Future<String> get getMixpanelToken async {
+    try {
+      QuerySnapshot qs = await settingsCollection.get();
+      String token = qs.docs.first.get("mixpanelToken");
+      return token;
+    } catch (error) {
+      throw error.toString();
+    }
+  }
+
+  Future<String> get getMixpanelToken async {
+    try {
+      QuerySnapshot qs = await settingsCollection.get();
+      String token = qs.docs.first.get("mixpanelToken");
+      return token;
     } catch (error) {
       throw error.toString();
     }
@@ -329,6 +367,14 @@ class FirebaseMethods {
 
       //Update referring user details
       if (referringUser != null) {
+        await initMixpanel;
+        if (_mixpanel != null) {
+          _mixpanel!.identify(uid);
+          _mixpanel!.track("referral", properties: {
+            "userId": uid,
+            "referringUserId": referringUser.id,
+          });
+        }
         String docId = usersCollection
             .doc(referringUser.id)
             .collection('referrals')

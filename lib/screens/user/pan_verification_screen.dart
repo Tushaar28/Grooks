@@ -3,7 +3,9 @@ import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/user/account_information_screen.dart';
+import 'package:grooks_dev/services/mixpanel.dart';
 import 'package:grooks_dev/widgets/custom_button.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 
 class PanVerificationScreen extends StatefulWidget {
   final String userId;
@@ -30,15 +32,25 @@ class _PanVerificationScreenState extends State<PanVerificationScreen> {
   late final GlobalKey<FormState> _formKey;
   late TextEditingController _panController, _nameController;
   late bool _isLoading;
+  late final Mixpanel _mixpanel;
 
   @override
   void initState() {
     super.initState();
+    _initMixpanel();
     _repository = FirebaseRepository();
     _formKey = GlobalKey<FormState>();
     _panController = TextEditingController();
     _nameController = TextEditingController();
     _isLoading = false;
+  }
+
+  Future<void> _initMixpanel() async {
+    _mixpanel = await MixpanelManager.init();
+    _mixpanel.identify(widget.userId);
+    _mixpanel.track("pan_verification_screen", properties: {
+      "userId": widget.userId,
+    });
   }
 
   @override
@@ -224,6 +236,11 @@ class _PanVerificationScreenState extends State<PanVerificationScreen> {
                                 });
                                 bool isValid = isPanValid(result.data);
                                 if (!isValid) {
+                                  _mixpanel.identify(widget.userId);
+                                  _mixpanel.track("pan_verification_failed",
+                                      properties: {
+                                        "userId": widget.userId,
+                                      });
                                   setState(() => _isLoading = false);
                                   ScaffoldMessenger.of(context)
                                       .hideCurrentSnackBar();
@@ -237,6 +254,11 @@ class _PanVerificationScreenState extends State<PanVerificationScreen> {
                                   return;
                                 }
                                 await updatePanVerificationStatus();
+                                _mixpanel.identify(widget.userId);
+                                _mixpanel.track("pan_verification_success",
+                                    properties: {
+                                      "userId": widget.userId,
+                                    });
                                 ScaffoldMessenger.of(context)
                                     .hideCurrentSnackBar();
                                 ScaffoldMessenger.of(context).showSnackBar(

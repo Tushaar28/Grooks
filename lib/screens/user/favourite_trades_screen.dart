@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:grooks_dev/models/user.dart';
+import 'package:grooks_dev/services/mixpanel.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'my_closed_trades_screen.dart';
 import 'my_open_trades_screen.dart';
 
@@ -17,11 +19,21 @@ class FavouriteTradesScreen extends StatefulWidget {
 class _FavouriteTradesScreenState extends State<FavouriteTradesScreen> {
   late final GlobalKey<ScaffoldState> _scaffoldKey;
   final List<String> categories = ['OPEN', 'CLOSED'];
+  late Mixpanel _mixpanel;
 
   @override
   void initState() {
     super.initState();
+    _initMixpanel();
     _scaffoldKey = GlobalKey<ScaffoldState>();
+  }
+
+  Future<void> _initMixpanel() async {
+    _mixpanel = await MixpanelManager.init();
+    _mixpanel.identify(widget.user.id);
+    _mixpanel.track("favourite_trades_screen", properties: {
+      "userId": widget.user.id,
+    });
   }
 
   Future<void> refresh() async {

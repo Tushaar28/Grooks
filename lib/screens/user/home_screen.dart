@@ -6,7 +6,9 @@ import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/authentication/login_screen.dart';
 import 'package:grooks_dev/screens/user/navbar_screen.dart';
 import 'package:grooks_dev/screens/user/subcategories_screen.dart';
+import 'package:grooks_dev/services/mixpanel.dart';
 import 'package:grooks_dev/widgets/custom_tabview.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 
 class HomeScreen extends StatefulWidget {
   final Users user;
@@ -26,10 +28,12 @@ class _HomeScreenState extends State<HomeScreen> {
   late bool _isDataLoaded;
   late bool? _isActive;
   late final FirebaseRepository _repository;
+  late final Mixpanel _mixpanel;
 
   @override
   void initState() {
     super.initState();
+    _initMixpanel();
     _isActive = null;
     _scaffoldKey = GlobalKey<ScaffoldState>();
     _index = 0;
@@ -37,6 +41,14 @@ class _HomeScreenState extends State<HomeScreen> {
     _repository = FirebaseRepository();
     getUserActiveStatus();
     getCategories();
+  }
+
+  Future<void> _initMixpanel() async {
+    _mixpanel = await MixpanelManager.init();
+    _mixpanel.identify(widget.user.id);
+    _mixpanel.track("home_screen", properties: {
+      "userId": widget.user.id,
+    });
   }
 
   Future<void> refresh({
@@ -115,8 +127,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       children: [
                         CustomTabView(
                           initPosition: _index,
-                          onPositionChange: (int? value) =>
-                              setState(() => _index = value!),
+                          onPositionChange: (int? value) {
+                            _mixpanel.identify(widget.user.id);
+                            _mixpanel.track("category_clicked", properties: {
+                              "categoryId": _categories[value!].id,
+                              "categoryName": _categories[value].name,
+                            });
+                            setState(() => _index = value);
+                          },
                           itemCount: _categories.length,
                           tabBuilder: (context, index) {
                             _index = index;

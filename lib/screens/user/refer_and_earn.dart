@@ -4,7 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/services/dynamic_link.dart';
+import 'package:grooks_dev/services/mixpanel.dart';
 import 'package:grooks_dev/widgets/custom_button.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:share_plus/share_plus.dart';
 
 import 'error_screen.dart';
@@ -36,13 +38,23 @@ class _ReferralWidgetState extends State<ReferralWidget> {
   );
   bool _isLoading = false, _dataLoaded = false;
   String code = "";
+  late final Mixpanel _mixpanel;
 
   @override
   void initState() {
     super.initState();
+    _initMixpanel();
     _isLoading = false;
     repository = FirebaseRepository();
     getUserReferralCode();
+  }
+
+  Future<void> _initMixpanel() async {
+    _mixpanel = await MixpanelManager.init();
+    _mixpanel.identify(widget.user.id);
+    _mixpanel.track("refer_and_earn_screen", properties: {
+      "userId": widget.user.id,
+    });
   }
 
   Future<void> getUserReferralCode() async {
