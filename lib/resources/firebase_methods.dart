@@ -347,6 +347,14 @@ class FirebaseMethods {
 
       //Update referring user details
       if (referringUser != null) {
+        await initMixpanel;
+        if (_mixpanel != null) {
+          _mixpanel!.identify(uid);
+          _mixpanel!.track("referral", properties: {
+            "userId": uid,
+            "referringUserId": referringUser.id,
+          });
+        }
         String docId = usersCollection
             .doc(referringUser.id)
             .collection('referrals')

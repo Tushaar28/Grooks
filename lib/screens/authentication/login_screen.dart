@@ -5,8 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:grooks_dev/models/question.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/authentication/password_input_screen.dart';
-import 'package:grooks_dev/services/mixpanel.dart';
-import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'otp_input_screen.dart';
