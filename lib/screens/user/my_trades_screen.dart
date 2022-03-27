@@ -50,6 +50,10 @@ class _MyTradesScreenState extends State<MyTradesScreen>
 
   Future<void> _initMixpanel() async {
     _mixpanel = await MixpanelManager.init();
+    _mixpanel.identify(widget.user.id);
+    _mixpanel.track("my_trades_screen", properties: {
+      "userId": widget.user.id,
+    });
   }
 
   Future<void> getUserActiveStatus() async {
@@ -112,7 +116,7 @@ class _MyTradesScreenState extends State<MyTradesScreen>
                             );
                             _mixpanel.identify(widget.user.id);
                             _mixpanel.track(
-                              "trade_cancelled_by_user",
+                              "trade_cancelled_by_user_success",
                               properties: {
                                 "userId": widget.user.id,
                                 "questionId": widget.question.id,

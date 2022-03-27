@@ -4,7 +4,7 @@ import 'package:grooks_dev/models/question.dart';
 import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/user/closed_questions_screen.dart';
-import 'package:grooks_dev/screens/user/open_questions_widget.dart';
+import 'package:grooks_dev/screens/user/open_questions_screen.dart';
 
 class QuestionsScreen extends StatefulWidget {
   final Users user;

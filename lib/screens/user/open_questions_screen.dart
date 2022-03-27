@@ -47,6 +47,10 @@ class _OpenQuestionsDetailScreenState extends State<OpenQuestionsDetailScreen>
 
   Future<void> _initMixpanel() async {
     _mixpanel = await MixpanelManager.init();
+    _mixpanel.identify(widget.user.id);
+    _mixpanel.track("open_questions_screen", properties: {
+      "userId": widget.user.id,
+    });
   }
 
   Future<void> getUserActiveStatus() async {

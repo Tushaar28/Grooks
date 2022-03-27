@@ -4,8 +4,10 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/user/navbar_screen.dart';
+import 'package:grooks_dev/services/mixpanel.dart';
 import 'package:grooks_dev/widgets/custom_dropdown.dart';
 import 'package:grooks_dev/widgets/swipe_button.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 
 class AccountInformationScreen extends StatefulWidget {
   final String userId;
@@ -43,10 +45,12 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
       _isUpiVerified,
       _isBankVerified;
   String? _withdrawlType;
+  late Mixpanel _mixpanel;
 
   @override
   void initState() {
     super.initState();
+    _initMixpanel();
     _repository = FirebaseRepository();
     _formKey = GlobalKey<FormState>();
     _upiController = TextEditingController();
@@ -58,6 +62,14 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
         _isUpiVerified = _isBankVerified = _isUpiValid = _isBankValid = false;
     // _upiController.addListener(isUpiValid);
     // _nameController.addListener(isUpiValid);
+  }
+
+  Future<void> _initMixpanel() async {
+    _mixpanel = await MixpanelManager.init();
+    _mixpanel.identify(widget.userId);
+    _mixpanel.track("withdrawl_screen", properties: {
+      "userId": widget.userId,
+    });
   }
 
   @override
@@ -607,6 +619,11 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
                                         duration: Duration(seconds: 1),
                                       ),
                                     );
+                                    _mixpanel.identify(widget.userId);
+                                    _mixpanel
+                                        .track("payout_failed", properties: {
+                                      "userId": widget.userId,
+                                    });
                                     setState(() => _isLoading = false);
                                     return;
                                   }
@@ -615,6 +632,11 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
                                     setState(() {
                                       _isLoading = false;
                                       _done = true;
+                                    });
+                                    _mixpanel.identify(widget.userId);
+                                    _mixpanel
+                                        .track("payout_success", properties: {
+                                      "userId": widget.userId,
                                     });
                                     ScaffoldMessenger.of(context)
                                         .hideCurrentSnackBar();

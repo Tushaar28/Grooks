@@ -7,6 +7,8 @@ import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/authentication/login_screen.dart';
 import 'package:grooks_dev/screens/user/question_detail_screen.dart';
+import 'package:grooks_dev/services/mixpanel.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:page_transition/page_transition.dart';
 
 class MyClosedTradesScreen extends StatefulWidget {
@@ -25,21 +27,31 @@ class _MyClosedTradesScreenState extends State<MyClosedTradesScreen>
   late final FirebaseRepository _repository;
   late List<Trade> _closedTrades;
   late bool? _isActive;
+  late final Mixpanel _mixpanel;
+
+  @override
+  void initState() {
+    super.initState();
+    _initMixpanel();
+    _isActive = null;
+    _repository = FirebaseRepository();
+    getUserActiveStatus();
+    _closedTrades = [];
+  }
+
+  Future<void> _initMixpanel() async {
+    _mixpanel = await MixpanelManager.init();
+    _mixpanel.identify(widget.user.id);
+    _mixpanel.track("my_closed_trades_screen", properties: {
+      "userId": widget.user.id,
+    });
+  }
 
   @override
   bool get wantKeepAlive => false;
 
   Future<void> refresh() async {
     setState(() {});
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _isActive = null;
-    _repository = FirebaseRepository();
-    getUserActiveStatus();
-    _closedTrades = [];
   }
 
   Future<void> getUserActiveStatus() async {
