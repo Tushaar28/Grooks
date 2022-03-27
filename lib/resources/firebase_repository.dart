@@ -42,6 +42,8 @@ class FirebaseRepository {
 
   Future<double> get getPayoutCommission => firebaseMethods.getPayoutCommission;
 
+  Future<String> get getMixpanelToken => firebaseMethods.getMixpanelToken;
+
   Future<bool> isNewUser({
     required String mobile,
   }) =>

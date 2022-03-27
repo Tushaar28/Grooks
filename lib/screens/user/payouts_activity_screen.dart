@@ -5,6 +5,8 @@ import 'package:flutter/scheduler.dart';
 import 'package:grooks_dev/models/payout.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/authentication/login_screen.dart';
+import 'package:grooks_dev/services/mixpanel.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class PayoutsAcivityScreen extends StatefulWidget {
@@ -29,10 +31,12 @@ class _PayoutsAcivityScreenState extends State<PayoutsAcivityScreen> {
   late bool _isLoading, _allLoaded, _isExpanded, _isActive;
   late int? _prevIndex, _pageSize;
   late Future<List<Payout>> _initialData;
+  late final Mixpanel _mixpanel;
 
   @override
   void initState() {
     super.initState();
+    _initMixpanel();
     _repository = FirebaseRepository();
     getUserActiveStatus();
     _payouts = [];
@@ -49,6 +53,14 @@ class _PayoutsAcivityScreenState extends State<PayoutsAcivityScreen> {
           !_isLoading) {
         getUserPayoutActivities();
       }
+    });
+  }
+
+  Future<void> _initMixpanel() async {
+    _mixpanel = await MixpanelManager.init();
+    _mixpanel.identify(widget.userId);
+    _mixpanel.track("payouts_activity_screen", properties: {
+      "userId": widget.userId,
     });
   }
 

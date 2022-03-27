@@ -5,7 +5,9 @@ import 'package:grooks_dev/screens/user/payouts_activity_screen.dart';
 import 'package:grooks_dev/screens/user/purchases_activity_screen.dart';
 import 'package:grooks_dev/screens/user/trades_activity_screen.dart';
 import 'package:grooks_dev/screens/user/transfers_activity_screen.dart';
+import 'package:grooks_dev/services/mixpanel.dart';
 import 'package:grooks_dev/widgets/custom_dropdown.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 
 class ActivityScreen extends StatefulWidget {
   final String userId;
@@ -22,11 +24,21 @@ class ActivityScreen extends StatefulWidget {
 
 class _ActivityScreenState extends State<ActivityScreen> {
   late final GlobalKey<ScaffoldState> _scaffoldKey;
+  late Mixpanel _mixpanel;
 
   @override
   void initState() {
     super.initState();
+    _initMixpanel();
     _scaffoldKey = GlobalKey<ScaffoldState>();
+  }
+
+  Future<void> _initMixpanel() async {
+    _mixpanel = await MixpanelManager.init();
+    _mixpanel.identify(widget.userId);
+    _mixpanel.track("activity_screen", properties: {
+      "userId": widget.userId,
+    });
   }
 
   @override

@@ -6,7 +6,9 @@ import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/authentication/login_screen.dart';
 import 'package:grooks_dev/screens/user/navbar_screen.dart';
+import 'package:grooks_dev/services/mixpanel.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 
 class EditProfileScreen extends StatefulWidget {
   final Users user;
@@ -33,6 +35,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   late bool _isLoading, _done;
   late bool? _isActive;
   late bool _dataLoaded, _setPassword, _changePassword;
+  late Mixpanel _mixpanel;
 
   final updateSuccessSnackbar = const SnackBar(
     content: AutoSizeText('Details updated'),
@@ -48,6 +51,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void initState() {
     super.initState();
+    _initMixpanel();
     _scaffoldKey = GlobalKey<ScaffoldState>();
     _dataLoaded = false;
     _setPassword = false;
@@ -71,6 +75,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
+  }
+
+  Future<void> _initMixpanel() async {
+    _mixpanel = await MixpanelManager.init();
+    _mixpanel.identify(widget.user.id);
+    _mixpanel.track("edit_profile_screen", properties: {
+      "userId": widget.user.id,
+    });
   }
 
   Widget getProfilePicture() {

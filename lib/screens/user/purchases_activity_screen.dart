@@ -5,6 +5,8 @@ import 'package:flutter/scheduler.dart';
 import 'package:grooks_dev/models/transaction.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/authentication/login_screen.dart';
+import 'package:grooks_dev/services/mixpanel.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import '../../models/transaction.dart' as model;
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -31,10 +33,12 @@ class _PurchasesActivityScreenState extends State<PurchasesActivityScreen> {
   late bool _isLoading, _allLoaded, _isExpanded, _isActive;
   late int? _prevIndex, _pageSize;
   late Future<List<model.Transaction>> _initialData;
+  late final Mixpanel _mixpanel;
 
   @override
   void initState() {
     super.initState();
+    _initMixpanel();
     _repository = FirebaseRepository();
     getUserActiveStatus();
     _purchases = [];
@@ -51,6 +55,14 @@ class _PurchasesActivityScreenState extends State<PurchasesActivityScreen> {
           !_isLoading) {
         getUserPurchaseActivities();
       }
+    });
+  }
+
+  Future<void> _initMixpanel() async {
+    _mixpanel = await MixpanelManager.init();
+    _mixpanel.identify(widget.userId);
+    _mixpanel.track("purchases_activity_screen", properties: {
+      "userId": widget.userId,
     });
   }
 

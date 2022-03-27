@@ -35,6 +35,7 @@ class _TopTradesScreenState extends State<TopTradesScreen>
   late bool? _isActive;
   late bool _dataLoaded;
   late bool? _isQuestionActive;
+  late final Mixpanel _mixpanel;
 
   final viewSuccessSnackbar = const SnackBar(
     content: AutoSizeText("Your view has been placed"),
@@ -46,7 +47,6 @@ class _TopTradesScreenState extends State<TopTradesScreen>
     backgroundColor: Colors.red,
     duration: Duration(seconds: 2),
   );
-  late final Mixpanel _mixpanel;
 
   @override
   bool get wantKeepAlive => true;
@@ -69,6 +69,10 @@ class _TopTradesScreenState extends State<TopTradesScreen>
 
   Future<void> _initMixpanel() async {
     _mixpanel = await MixpanelManager.init();
+    _mixpanel.identify(widget.user.id);
+    _mixpanel.track("top_trades_screen", properties: {
+      "userId": widget.user.id,
+    });
   }
 
   Future<void> getUserActiveStatus() async {
@@ -151,7 +155,7 @@ class _TopTradesScreenState extends State<TopTradesScreen>
                           await pairTrade(trade: trade);
                           _mixpanel.identify(widget.user.id);
                           _mixpanel.track(
-                            "trade_matched",
+                            "trade_pair_success",
                             properties: {
                               "userId": widget.user.id,
                               "questionId": widget.question.id,
@@ -168,7 +172,7 @@ class _TopTradesScreenState extends State<TopTradesScreen>
                         } catch (error) {
                           _mixpanel.identify(widget.user.id);
                           _mixpanel.track(
-                            "trade_matched_failed",
+                            "trade_pair_failed",
                             properties: {
                               "userId": widget.user.id,
                               "questionId": widget.question.id,

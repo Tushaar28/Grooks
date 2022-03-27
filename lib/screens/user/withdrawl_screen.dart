@@ -6,9 +6,9 @@ import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/authentication/login_screen.dart';
 import 'package:grooks_dev/screens/user/pan_verification_screen.dart';
-import 'package:grooks_dev/widgets/custom_button.dart';
+import 'package:grooks_dev/services/mixpanel.dart';
 import 'package:grooks_dev/widgets/swipe_button.dart';
-
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'account_information_screen.dart';
 
 class WithdrawlScreen extends StatefulWidget {
@@ -31,10 +31,12 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
   int? _bonusCoins, _redeemableCoins;
   late TextEditingController _amountController;
   late double _payoutCommission;
+  late final Mixpanel _mixpanel;
 
   @override
   void initState() {
     super.initState();
+    _initMixpanel();
     _payoutCommission = 0;
     _bonusCoins = _redeemableCoins = 0;
     _repository = FirebaseRepository();
@@ -45,6 +47,14 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
     getUserCoins();
     getPayoutCommission();
     _amountController = TextEditingController();
+  }
+
+  Future<void> _initMixpanel() async {
+    _mixpanel = await MixpanelManager.init();
+    _mixpanel.identify(widget.userId);
+    _mixpanel.track("withdrawl_screen", properties: {
+      "userId": widget.userId,
+    });
   }
 
   @override

@@ -45,6 +45,10 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Future<void> _initMixpanel() async {
     _mixpanel = await MixpanelManager.init();
+    _mixpanel.identify(widget.user.id);
+    _mixpanel.track("home_screen", properties: {
+      "userId": widget.user.id,
+    });
   }
 
   Future<void> refresh({

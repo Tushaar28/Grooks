@@ -6,7 +6,9 @@ import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/authentication/login_screen.dart';
 import 'package:grooks_dev/screens/user/activity_screen.dart';
+import 'package:grooks_dev/services/mixpanel.dart';
 import 'package:grooks_dev/widgets/swipe_button.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:page_transition/page_transition.dart';
 
 class CoinsTransferScreen extends StatefulWidget {
@@ -48,10 +50,12 @@ class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
     backgroundColor: Colors.red,
     duration: Duration(seconds: 2),
   );
+  late Mixpanel _mixpanel;
 
   @override
   void initState() {
     super.initState();
+    _initMixpanel();
     _receiverUser = null;
     _transferCommission = 0;
     _userCoins = 0;
@@ -64,6 +68,14 @@ class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
     _mobileOrEmailController = TextEditingController();
     _coinsController = TextEditingController();
     _mobileOrEmailController.addListener(checkMobileValid);
+  }
+
+  Future<void> _initMixpanel() async {
+    _mixpanel = await MixpanelManager.init();
+    _mixpanel.identify(widget.user.id);
+    _mixpanel.track("coins_transfer_screen", properties: {
+      "userId": widget.user.id,
+    });
   }
 
   @override
@@ -536,7 +548,17 @@ class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
                                                 setState(
                                                     () => _isLoading = true);
                                                 await transferCoins();
-
+                                                _mixpanel
+                                                    .identify(widget.user.id);
+                                                _mixpanel.track(
+                                                    "coins_transfer_success",
+                                                    properties: {
+                                                      "userId": widget.user.id,
+                                                      "senderId":
+                                                          widget.user.id,
+                                                      "receiverId":
+                                                          _receiverUser!.id,
+                                                    });
                                                 ScaffoldMessenger.of(context)
                                                     .hideCurrentSnackBar();
                                                 ScaffoldMessenger.of(context)
@@ -567,6 +589,16 @@ class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
                                                 );
                                               }
                                             } catch (error) {
+                                              _mixpanel
+                                                  .identify(widget.user.id);
+                                              _mixpanel.track(
+                                                  "coins_transfer_failed",
+                                                  properties: {
+                                                    "userId": widget.user.id,
+                                                    "senderId": widget.user.id,
+                                                    "receiverId":
+                                                        _receiverUser!.id,
+                                                  });
                                               ScaffoldMessenger.of(context)
                                                   .hideCurrentSnackBar();
                                               if (error.toString() ==

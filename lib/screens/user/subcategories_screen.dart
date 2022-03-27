@@ -3,7 +3,9 @@ import 'package:grooks_dev/models/category.dart';
 import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/user/navbar_screen.dart';
+import 'package:grooks_dev/services/mixpanel.dart';
 import 'package:grooks_dev/widgets/subcategory_card.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 
 class SubcategoriesScreen extends StatefulWidget {
   final Category category;
@@ -22,13 +24,23 @@ class _SubcategoriesScreenState extends State<SubcategoriesScreen> {
   late List<Category> _subcategories;
   late final FirebaseRepository _repository;
   late bool _isDataLoaded;
+  late final Mixpanel _mixpanel;
 
   @override
   void initState() {
     super.initState();
+    _initMixpanel();
     _repository = FirebaseRepository();
     _isDataLoaded = false;
     getSubcategoriesFromCategory();
+  }
+
+  Future<void> _initMixpanel() async {
+    _mixpanel = await MixpanelManager.init();
+    _mixpanel.identify(widget.user.id);
+    _mixpanel.track("subcategories_screen", properties: {
+      "userId": widget.user.id,
+    });
   }
 
   Future<void> refresh({

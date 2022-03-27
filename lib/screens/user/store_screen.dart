@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
+import 'package:grooks_dev/services/mixpanel.dart';
 import 'package:grooks_dev/widgets/custom_button.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 
 class StoreScreen extends StatefulWidget {
   final Users user;
@@ -25,10 +27,12 @@ class _StoreScreenState extends State<StoreScreen> {
   late double _paymentGatewayCommission, _price, _paymentCharges, _totalAmount;
   final _scaffoldKey = GlobalKey<ScaffoldState>();
   late final List<String> _packs;
+  late final Mixpanel _mixpanel;
 
   @override
   void initState() {
     super.initState();
+    _initMixpanel();
     _hasDataLoaded = false;
     _repository = FirebaseRepository();
     getPaymentGatewayCommission();
@@ -44,6 +48,14 @@ class _StoreScreenState extends State<StoreScreen> {
     _totalAmount = 0;
     _coinsController = TextEditingController();
     _coinsController.addListener(isCoinsValid);
+  }
+
+  Future<void> _initMixpanel() async {
+    _mixpanel = await MixpanelManager.init();
+    _mixpanel.identify(widget.user.id);
+    _mixpanel.track("store_screen", properties: {
+      "userId": widget.user.id,
+    });
   }
 
   Future<void> getPaymentGatewayCommission() async {
@@ -112,6 +124,12 @@ class _StoreScreenState extends State<StoreScreen> {
             _isLoading = false;
             _done = false;
           });
+          _mixpanel.identify(widget.user.id);
+          _mixpanel.track("purchase_failed", properties: {
+            "userId": widget.user.id,
+            "amount": _totalAmount,
+            "coins": _coinsController.text,
+          });
           ScaffoldMessenger.maybeOf(context)!.hideCurrentSnackBar();
           ScaffoldMessenger.maybeOf(context)!.showSnackBar(
             const SnackBar(
@@ -122,6 +140,12 @@ class _StoreScreenState extends State<StoreScreen> {
           );
           rethrow;
         }
+        _mixpanel.identify(widget.user.id);
+        _mixpanel.track("purchase_success", properties: {
+          "userId": widget.user.id,
+          "amount": _totalAmount,
+          "coins": _coinsController.text,
+        });
         ScaffoldMessenger.maybeOf(context)!.hideCurrentSnackBar();
         ScaffoldMessenger.maybeOf(context)!.showSnackBar(
           const SnackBar(
@@ -256,12 +280,36 @@ class _StoreScreenState extends State<StoreScreen> {
                           ),
                           onTap: () {
                             if (index == 0) {
+                              _mixpanel.identify(widget.user.id);
+                              _mixpanel.track("49_pack_clicked", properties: {
+                                "userId": widget.user.id,
+                                "amount": "49",
+                                "coins": "550",
+                              });
                               _coinsController.text = "550";
                             } else if (index == 1) {
+                              _mixpanel.identify(widget.user.id);
+                              _mixpanel.track("99_pack_clicked", properties: {
+                                "userId": widget.user.id,
+                                "amount": "99",
+                                "coins": "1200",
+                              });
                               _coinsController.text = "1200";
                             } else if (index == 2) {
+                              _mixpanel.identify(widget.user.id);
+                              _mixpanel.track("199_pack_clicked", properties: {
+                                "userId": widget.user.id,
+                                "amount": "199",
+                                "coins": "2500",
+                              });
                               _coinsController.text = "2500";
                             } else {
+                              _mixpanel.identify(widget.user.id);
+                              _mixpanel.track("499_pack_clicked", properties: {
+                                "userId": widget.user.id,
+                                "amount": "499",
+                                "coins": "6500",
+                              });
                               _coinsController.text = "6500";
                             }
                             isCoinsValid();
@@ -290,6 +338,9 @@ class _StoreScreenState extends State<StoreScreen> {
                         textAlign: TextAlign.center,
                         decoration: const InputDecoration(
                           labelText: 'Coins',
+                          labelStyle: TextStyle(
+                            color: Colors.black,
+                          ),
                           hintText: 'Enter coins (Minimum 100 coins)',
                           contentPadding: EdgeInsets.symmetric(
                               vertical: 10, horizontal: 20),
@@ -300,7 +351,7 @@ class _StoreScreenState extends State<StoreScreen> {
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderSide: BorderSide(
-                              color: Colors.lightBlueAccent,
+                              color: Colors.black,
                               width: 1,
                             ),
                             borderRadius: BorderRadius.all(
@@ -308,8 +359,8 @@ class _StoreScreenState extends State<StoreScreen> {
                             ),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
-                                color: Colors.lightBlueAccent, width: 2.0),
+                            borderSide:
+                                BorderSide(color: Colors.black, width: 2.0),
                             borderRadius: BorderRadius.all(Radius.circular(10)),
                           ),
                         ),

@@ -6,9 +6,11 @@ import 'package:flutter/scheduler.dart';
 import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/authentication/login_screen.dart';
+import 'package:grooks_dev/services/mixpanel.dart';
 import 'package:grooks_dev/widgets/custom_button.dart';
 import 'package:grooks_dev/widgets/custom_dropdown.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 
 class FeedbackScreen extends StatefulWidget {
   final Users user;
@@ -41,10 +43,12 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     backgroundColor: Colors.red,
     duration: Duration(seconds: 2),
   );
+  late Mixpanel _mixpanel;
 
   @override
   void initState() {
     super.initState();
+    _initMixpanel();
     _repository = FirebaseRepository();
     getUserActiveStatus();
     _isActive = true;
@@ -55,6 +59,14 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
     _formKey = GlobalKey<FormState>();
     _picker = ImagePicker();
     _uploadedPhoto = null;
+  }
+
+  Future<void> _initMixpanel() async {
+    _mixpanel = await MixpanelManager.init();
+    _mixpanel.identify(widget.user.id);
+    _mixpanel.track("feedback_screen", properties: {
+      "userId": widget.user.id,
+    });
   }
 
   Future<void> getUserActiveStatus() async {
@@ -362,6 +374,11 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                                               .validate()) {
                                             setState(() => _isLoading = true);
                                             await sendFeedback();
+                                            _mixpanel.identify(widget.user.id);
+                                            _mixpanel.track("feedback_success",
+                                                properties: {
+                                                  "userId": widget.user.id,
+                                                });
                                             setState(() => _done = true);
                                             ScaffoldMessenger.of(context)
                                                 .showSnackBar(
@@ -373,6 +390,11 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                                                     .pop());
                                           }
                                         } catch (error) {
+                                          _mixpanel.identify(widget.user.id);
+                                          _mixpanel.track("feedback_failed",
+                                              properties: {
+                                                "userId": widget.user.id,
+                                              });
                                           setState(() => _isLoading = false);
                                           ScaffoldMessenger.of(context)
                                               .hideCurrentSnackBar();

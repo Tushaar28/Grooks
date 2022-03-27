@@ -6,7 +6,7 @@ import 'package:grooks_dev/models/question.dart';
 import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/authentication/login_screen.dart';
-import 'package:grooks_dev/screens/user/open_questions_widget.dart';
+import 'package:grooks_dev/screens/user/open_questions_screen.dart';
 import 'package:grooks_dev/screens/user/top_trades_screen.dart';
 import 'package:grooks_dev/screens/user/trade_success_screen.dart';
 import 'package:grooks_dev/services/mixpanel.dart';
@@ -465,16 +465,18 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                                       await placeTrade(
                                         isYes: isYes,
                                       );
-                                      _mixpanel.identify(widget.user.id);
-                                      _mixpanel.track(
-                                        "new_trade",
-                                        properties: {
-                                          "userId": widget.user.id,
-                                          "questionId": widget.questionId,
-                                          "questionName": widget.questionName,
-                                          "tradeCount": _count,
-                                        },
-                                      );
+                                      for (int i = 0; i < _count; i++) {
+                                        _mixpanel.identify(widget.user.id);
+                                        _mixpanel.track(
+                                          "new_trade_success",
+                                          properties: {
+                                            "userId": widget.user.id,
+                                            "questionId": widget.questionId,
+                                            "questionName": widget.questionName,
+                                            "tradeCount": _count,
+                                          },
+                                        );
+                                      }
                                       setState(() => _isLoading = false);
                                       Navigator.of(context).pop();
                                       Navigator.of(context).push(
@@ -486,16 +488,18 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                                         ),
                                       );
                                     } catch (error) {
-                                      _mixpanel.identify(widget.user.id);
-                                      _mixpanel.track(
-                                        "new_trade_failed",
-                                        properties: {
-                                          "userId": widget.user.id,
-                                          "questionId": widget.questionId,
-                                          "questionName": widget.questionName,
-                                          "tradeCount": _count,
-                                        },
-                                      );
+                                      for (int i = 0; i < _count; i++) {
+                                        _mixpanel.identify(widget.user.id);
+                                        _mixpanel.track(
+                                          "new_trade_failed",
+                                          properties: {
+                                            "userId": widget.user.id,
+                                            "questionId": widget.questionId,
+                                            "questionName": widget.questionName,
+                                            "tradeCount": _count,
+                                          },
+                                        );
+                                      }
                                       Navigator.of(context).pop();
                                       ScaffoldMessenger.of(context)
                                           .hideCurrentSnackBar();
