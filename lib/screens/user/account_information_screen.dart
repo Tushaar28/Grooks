@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
+import 'package:grooks_dev/screens/user/navbar_screen.dart';
 import 'package:grooks_dev/widgets/custom_dropdown.dart';
 import 'package:grooks_dev/widgets/swipe_button.dart';
 
@@ -31,10 +32,16 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
   late final FirebaseRepository _repository;
   late final GlobalKey<FormState> _formKey;
   late TextEditingController _upiController,
+      _nameController,
       _accountController,
       _confirmAccountController,
       _ifscController;
-  late bool _isLoading, _done;
+  late bool _isLoading,
+      _done,
+      _isUpiValid,
+      _isBankValid,
+      _isUpiVerified,
+      _isBankVerified;
   String? _withdrawlType;
 
   @override
@@ -43,10 +50,14 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
     _repository = FirebaseRepository();
     _formKey = GlobalKey<FormState>();
     _upiController = TextEditingController();
+    _nameController = TextEditingController();
     _accountController = TextEditingController();
     _confirmAccountController = TextEditingController();
     _ifscController = TextEditingController();
-    _isLoading = _done = false;
+    _isLoading = _done =
+        _isUpiVerified = _isBankVerified = _isUpiValid = _isBankValid = false;
+    // _upiController.addListener(isUpiValid);
+    // _nameController.addListener(isUpiValid);
   }
 
   @override
@@ -58,6 +69,17 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
     super.dispose();
   }
 
+  // void isUpiValid() {
+  //   Pattern pattern = r'^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$';
+  //   RegExp regex = RegExp(pattern.toString());
+  //   if (!regex.hasMatch(_upiController.text.trim()) ||
+  //       _nameController.text.trim().isEmpty) {
+  //     setState(() => _isUpiValid = false);
+  //   } else {
+  //     setState(() => _isUpiValid = true);
+  //   }
+  // }
+
   Future<void> submitPayoutRequest() async {
     try {
       if (_withdrawlType!.toLowerCase().contains("upi")) {
@@ -68,6 +90,7 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
           commission: widget.commission,
           coins: widget.coins,
           userId: widget.userId,
+          name: _nameController.text.trim(),
         );
       } else {
         await _repository.submitPayoutRequest(
@@ -78,6 +101,7 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
           commission: widget.commission,
           coins: widget.coins,
           userId: widget.userId,
+          name: _nameController.text.trim(),
         );
       }
     } catch (error) {
@@ -139,6 +163,11 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
                       "UPI",
                     ],
                     onChanged: (value) {
+                      _nameController.text = '';
+                      _ifscController.text = '';
+                      _accountController.text = '';
+                      _confirmAccountController.text = '';
+                      _upiController.text = '';
                       SchedulerBinding.instance!
                           .addPostFrameCallback((timeStamp) {
                         setState(() => _withdrawlType = value);
@@ -162,6 +191,47 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
                 ),
                 if (_withdrawlType != null &&
                     _withdrawlType!.toLowerCase().contains("upi")) ...[
+                  TextFormField(
+                    controller: _nameController,
+                    keyboardType: TextInputType.name,
+                    obscureText: false,
+                    decoration: const InputDecoration(
+                      labelText: 'Name',
+                      hintText: 'Enter Account holder name',
+                      labelStyle: TextStyle(
+                        color: Colors.black,
+                      ),
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black, width: 2.0),
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                      ),
+                    ),
+                    style: const TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 16,
+                    ),
+                    validator: (value) {
+                      return value!.isEmpty ? 'Please enter valid name' : null;
+                    },
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.03,
+                  ),
                   TextFormField(
                     controller: _upiController,
                     obscureText: false,
@@ -196,14 +266,99 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
                       fontSize: 16,
                     ),
                     validator: (value) {
-                      return value!.isEmpty
-                          ? 'Please enter valid UPI address'
-                          : null;
+                      if (value == null || value.isEmpty) {
+                        return "Enter UPI ID";
+                      }
+                      Pattern pattern =
+                          r'^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$';
+                      RegExp regex = RegExp(pattern.toString());
+                      if (!regex.hasMatch(value)) {
+                        return "Invalid UPI ID";
+                      }
+                      return null;
                     },
                   ),
+                  //   if (_isUpiValid) ...[
+                  //     SizedBox(
+                  //       height: MediaQuery.of(context).size.height * 0.01,
+                  //     ),
+                  //     Center(
+                  //       child: _isUpiVerified
+                  //           ? const Text(
+                  //               "Verified",
+                  //               style: TextStyle(
+                  //                 fontSize: 16,
+                  //                 color: Colors.green,
+                  //               ),
+                  //             )
+                  //           : TextButton(
+                  //               child: Text(
+                  //                 "Verify",
+                  //                 style: TextStyle(
+                  //                   fontSize: 16,
+                  //                   color: Theme.of(context).primaryColor,
+                  //                 ),
+                  //               ),
+                  //               onPressed: () async {
+                  //                 try {
+                  //                   var result = await FirebaseFunctions.instance
+                  //                       .httpsCallable("verifyUPI")
+                  //                       .call({
+                  //                     "name": _nameController.text.trim(),
+                  //                     "upi": _upiController.text.trim(),
+                  //                   });
+                  //                   print("RESULT = $result");
+                  //                 } catch (error) {
+                  //                   rethrow;
+                  //                 }
+                  //               },
+                  //             ),
+                  //     ),
+                  //   ],
                 ],
                 if (_withdrawlType != null &&
                     _withdrawlType!.toLowerCase().contains("bank")) ...[
+                  TextFormField(
+                    controller: _nameController,
+                    keyboardType: TextInputType.name,
+                    obscureText: false,
+                    decoration: const InputDecoration(
+                      labelText: 'Name',
+                      hintText: 'Enter Account holder name',
+                      labelStyle: TextStyle(
+                        color: Colors.black,
+                      ),
+                      contentPadding:
+                          EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          width: 1,
+                        ),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(10),
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.black, width: 2.0),
+                        borderRadius: BorderRadius.all(Radius.circular(10)),
+                      ),
+                    ),
+                    style: const TextStyle(
+                      fontFamily: 'Poppins',
+                      fontSize: 16,
+                    ),
+                    validator: (value) {
+                      return value!.isEmpty ? 'Please enter valid name' : null;
+                    },
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.03,
+                  ),
                   TextFormField(
                     controller: _accountController,
                     keyboardType: TextInputType.phone,
@@ -288,9 +443,15 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
                       fontSize: 16,
                     ),
                     validator: (value) {
-                      return value != _accountController.text
-                          ? 'Account Number do not match'
-                          : null;
+                      if (value == null || value.isEmpty) {
+                        return "Enter Account Number";
+                      }
+                      Pattern pattern = r'^\d{9,18}$';
+                      RegExp regex = RegExp(pattern.toString());
+                      if (!regex.hasMatch(value)) {
+                        return "Invalid Account Number";
+                      }
+                      return null;
                     },
                   ),
                   SizedBox(
@@ -345,7 +506,7 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
                   ),
                 ],
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.1,
+                  height: MediaQuery.of(context).size.height * 0.05,
                 ),
                 Row(
                   mainAxisSize: MainAxisSize.max,
@@ -364,7 +525,7 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
                       width: MediaQuery.of(context).size.width * 0.2,
                       child: Center(
                         child: Text(
-                          "Rs ${widget.requestedAmount}",
+                          "Rs ${widget.finalAmount}",
                           style: const TextStyle(
                             fontSize: 18,
                           ),
@@ -431,7 +592,7 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                         content: Text(
-                                            "Please select withdrawl type."),
+                                            "Please select withdrawl type"),
                                         backgroundColor: Colors.red,
                                         duration: Duration(seconds: 1),
                                       ),
@@ -439,7 +600,22 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
                                     setState(() => _isLoading = false);
                                     return;
                                   }
-
+                                  int currentRedeemableCoins =
+                                      await _repository.getUserRedeemableCoins(
+                                          userId: widget.userId);
+                                  if (widget.coins > currentRedeemableCoins) {
+                                    ScaffoldMessenger.of(context)
+                                        .hideCurrentSnackBar();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text("Insufficient coins"),
+                                        backgroundColor: Colors.red,
+                                        duration: Duration(seconds: 1),
+                                      ),
+                                    );
+                                    setState(() => _isLoading = false);
+                                    return;
+                                  }
                                   if (_formKey.currentState!.validate()) {
                                     await submitPayoutRequest();
                                     setState(() {
@@ -455,6 +631,16 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
                                         backgroundColor: Colors.green,
                                         duration: Duration(seconds: 1),
                                       ),
+                                    );
+                                    await Future.delayed(
+                                      const Duration(seconds: 1),
+                                      () => Navigator.of(context)
+                                          .pushAndRemoveUntil(
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    NavbarScreen(),
+                                              ),
+                                              (route) => false),
                                     );
                                   } else {
                                     setState(() => _isLoading = false);

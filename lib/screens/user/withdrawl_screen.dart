@@ -9,6 +9,8 @@ import 'package:grooks_dev/screens/user/pan_verification_screen.dart';
 import 'package:grooks_dev/widgets/custom_button.dart';
 import 'package:grooks_dev/widgets/swipe_button.dart';
 
+import 'account_information_screen.dart';
+
 class WithdrawlScreen extends StatefulWidget {
   final String userId;
   WithdrawlScreen({
@@ -385,27 +387,43 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
                                 onSwipeCallback: () async {
                                   try {
                                     setState(() => _isLoading = true);
-                                    if ((double.parse(_amountController.text)
-                                                .ceil() *
-                                            10) >
-                                        _redeemableCoins!) {
-                                      ScaffoldMessenger.of(context)
-                                          .hideCurrentSnackBar();
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        const SnackBar(
-                                          content: Text("Insufficient coins"),
-                                          backgroundColor: Colors.red,
-                                          duration: Duration(seconds: 1),
-                                        ),
-                                      );
-                                      setState(() => _isLoading = false);
-                                      return;
-                                    }
+                                    // if ((double.parse(_amountController.text)
+                                    //             .ceil() *
+                                    //         10) >
+                                    //     _redeemableCoins!) {
+                                    //   ScaffoldMessenger.of(context)
+                                    //       .hideCurrentSnackBar();
+                                    //   ScaffoldMessenger.of(context)
+                                    //       .showSnackBar(
+                                    //     const SnackBar(
+                                    //       content: Text("Insufficient coins"),
+                                    //       backgroundColor: Colors.red,
+                                    //       duration: Duration(seconds: 1),
+                                    //     ),
+                                    //   );
+                                    //   setState(() => _isLoading = false);
+                                    //   return;
+                                    // }
                                     bool isPanVerified = await _repository
                                         .getPanVerificationStatus(
                                             userId: widget.userId);
                                     if (isPanVerified) {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              AccountInformationScreen(
+                                            requestedAmount: double.parse(
+                                                _amountController.text),
+                                            finalAmount: getFinalAmount(),
+                                            commission: getWithdrawlCharges(),
+                                            userId: widget.userId,
+                                            coins: double.parse(
+                                                        _amountController.text)
+                                                    .ceil() *
+                                                10,
+                                          ),
+                                        ),
+                                      );
                                     } else {
                                       Navigator.of(context).push(
                                         MaterialPageRoute(

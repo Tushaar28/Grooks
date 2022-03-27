@@ -11,6 +11,7 @@ enum PayoutStatus {
 
 class Payout {
   late String? accountNumber;
+  late String accountHolderName;
   late DateTime createdAt;
   late int coins;
   late double commission;
@@ -25,6 +26,7 @@ class Payout {
 
   Payout({
     this.accountNumber,
+    required this.accountHolderName,
     required this.createdAt,
     required this.coins,
     required this.commission,
@@ -41,6 +43,7 @@ class Payout {
   Map toMap(Payout request) {
     var data = <String, dynamic>{};
     data["accountNumber"] = request.accountNumber;
+    data["accountHolderName"] = request.accountHolderName;
     data["createdAt"] = request.createdAt;
     data["coins"] = request.coins;
     data["commission"] = request.commission;
@@ -57,6 +60,7 @@ class Payout {
 
   Payout.fromMap(Map<String, dynamic> mapData) {
     accountNumber = mapData["accountNumber"];
+    accountHolderName = mapData["accountHolderName"];
     createdAt = mapData["createdAt"].toDate();
     coins = mapData["coins"];
     commission = mapData["commission"].toDouble();

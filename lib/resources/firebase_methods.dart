@@ -1495,6 +1495,7 @@ class FirebaseMethods {
     required double commission,
     required int coins,
     required String userId,
+    required String name,
   }) async {
     try {
       DateTime currentDate = DateTime.now();
@@ -1503,6 +1504,14 @@ class FirebaseMethods {
               .docs
               .first
               .id;
+      int currentRedeemableCoins = await getUserRedeemableCoins(userId: userId);
+      if (coins > currentRedeemableCoins) {
+        throw "Insufficient coins";
+      }
+      await walletsCollection.doc(walletId).update({
+        "redeemableCoins": currentRedeemableCoins - coins,
+        "updatedAt": currentDate,
+      });
       String docId =
           walletsCollection.doc(walletId).collection("payouts").doc().id;
       Payout? request;
@@ -1517,6 +1526,7 @@ class FirebaseMethods {
           createdAt: currentDate,
           updatedAt: currentDate,
           userId: userId,
+          accountHolderName: name,
           status: PayoutStatus.PENDING,
         );
       } else {
@@ -1531,6 +1541,7 @@ class FirebaseMethods {
           createdAt: currentDate,
           updatedAt: currentDate,
           userId: userId,
+          accountHolderName: name,
           status: PayoutStatus.PENDING,
         );
       }
@@ -1542,6 +1553,22 @@ class FirebaseMethods {
           .set(request.toMap(request) as Map<String, dynamic>);
     } catch (error) {
       throw error.toString();
+    }
+  }
+
+  Future<void> updatePanVerificationStatus({
+    required String userId,
+    required String pan,
+  }) async {
+    try {
+      DateTime currentDate = DateTime.now();
+      await usersCollection.doc(userId).update({
+        "isPanVerified": true,
+        "panNumber": pan,
+        "updatedAt": currentDate,
+      });
+    } catch (error) {
+      rethrow;
     }
   }
 }
