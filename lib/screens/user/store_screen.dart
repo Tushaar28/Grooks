@@ -269,6 +269,10 @@ class _StoreScreenState extends State<StoreScreen> {
                         ),
                       ),
                     ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.01,
+                    ),
+                    const Text("Minimum 100 coins should be purchased"),
                     Padding(
                       padding: EdgeInsets.fromLTRB(
                         MediaQuery.of(context).size.width * 0.1,

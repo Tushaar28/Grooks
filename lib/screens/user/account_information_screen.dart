@@ -137,12 +137,6 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
       ),
       body: SafeArea(
         child: Container(
-          padding: EdgeInsets.fromLTRB(
-            MediaQuery.of(context).size.width * 0.05,
-            MediaQuery.of(context).size.height * 0.05,
-            MediaQuery.of(context).size.width * 0.05,
-            0,
-          ),
           color: Colors.white,
           height: MediaQuery.of(context).size.height * 0.9,
           child: Form(
@@ -152,7 +146,7 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
               mainAxisSize: MainAxisSize.max,
               children: [
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(5, 30, 5, 0),
+                  padding: const EdgeInsets.fromLTRB(5, 15, 5, 0),
                   child: FlutterFlowDropDown(
                     hint: 'Choose Withdrawl Type',
                     initialOption: '',
