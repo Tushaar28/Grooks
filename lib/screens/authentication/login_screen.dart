@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:grooks_dev/models/question.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
-import 'package:grooks_dev/screens/authentication/password_input_screen.dart';
+import 'package:grooks_dev/screens/authentication/passcode_input_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'otp_input_screen.dart';
@@ -150,18 +150,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                   setState(() => _isLoading = false);
                                   return;
                                 } else {
-                                  // bool isNewUser = await _repository.isNewUser(
-                                  //   mobile:
-                                  //       '+91${_mobileController.text.trim()}',
-                                  // );
-                                  // bool isPasswordSet =
-                                  //     await _repository.isPasswordSet(
-                                  //   mobile:
-                                  //       '+91${_mobileController.text.trim()}',
-                                  // );
-                                  bool isNewUser = false, isPasswordSet = true;
-                                  if (isNewUser == false &&
-                                      isPasswordSet == true) {
+                                  bool isNewUser = await _repository.isNewUser(
+                                    mobile:
+                                        '+91${_mobileController.text.trim()}',
+                                  );
+
+                                  if (isNewUser == false) {
                                     Navigator.of(context).push(
                                       MaterialPageRoute(
                                         builder: (context) => PasswordScreen(

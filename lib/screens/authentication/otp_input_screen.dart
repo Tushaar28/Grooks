@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:grooks_dev/models/question.dart';
 import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
-import 'package:grooks_dev/screens/authentication/password_input_screen.dart';
+import 'package:grooks_dev/screens/authentication/passcode_input_screen.dart';
 import 'package:grooks_dev/screens/user/navbar_screen.dart';
 import 'package:grooks_dev/screens/user/set_password_screen.dart';
 import 'package:grooks_dev/screens/user/user_detail_screen.dart';
@@ -364,7 +364,7 @@ class _OTPInputScreenState extends State<OTPInputScreen> {
                             );
                           },
                           child: const AutoSizeText(
-                            'Login with password',
+                            'Login with passcode',
                             style: TextStyle(color: Colors.black),
                           ),
                         ),

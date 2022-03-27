@@ -300,7 +300,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                       ),
                       child: Center(
                         child: Text(
-                          "Set your 4 digit password",
+                          "Set your 4 digit passcode",
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w500,
@@ -345,7 +345,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                       ),
                       child: Center(
                         child: Text(
-                          "Confirm your 4 digit password",
+                          "Confirm your 4 digit passcode",
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w500,
@@ -452,6 +452,41 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
 
                                     saveReferralLink(referalCode);
                                     _mixpanel.identify(user.id);
+
+                                    _mixpanel.track("signup", properties: {
+                                      "userId": user.id,
+                                    });
+                                    _mixpanel.track("login", properties: {
+                                      "userId": user.id,
+                                    });
+                                    if (widget.sharedViewMap != null &&
+                                        widget.question != null) {
+                                      setState(() => _isLoading = false);
+                                      // Navigator.pushAndRemoveUntil(
+                                      //     context,
+                                      //     MaterialPageRoute(
+                                      //       builder: (context) =>
+                                      //           QuestionDetailScreen(
+                                      //         user: user,
+                                      //         questionId: widget.question!.id,
+                                      //         questionName:
+                                      //             widget.question!.name,
+                                      //         sharedViewMap:
+                                      //             widget.sharedViewMap,
+                                      //       ),
+                                      //     ),
+                                      //     (route) => false);
+                                    } else {
+                                      setState(() => _isLoading = false);
+                                      Navigator.pushAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              OnboardingScreen(user: user),
+                                        ),
+                                        (r) => false,
+                                      );
+                                    }
                                     _mixpanel
                                         .getPeople()
                                         .set("name", user.name);
@@ -509,43 +544,9 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                                     _mixpanel
                                         .getPeople()
                                         .increment("499_pack_clicked", 0);
-                                    _mixpanel
-                                        .getPeople()
-                                        .setOnce("createdAt", DateTime.now());
-                                    _mixpanel.track("signup", properties: {
-                                      "userId": user.id,
-                                    });
-                                    _mixpanel.track("login", properties: {
-                                      "userId": user.id,
-                                    });
-                                    if (widget.sharedViewMap != null &&
-                                        widget.question != null) {
-                                      setState(() => _isLoading = false);
-                                      // Navigator.pushAndRemoveUntil(
-                                      //     context,
-                                      //     MaterialPageRoute(
-                                      //       builder: (context) =>
-                                      //           QuestionDetailScreen(
-                                      //         user: user,
-                                      //         questionId: widget.question!.id,
-                                      //         questionName:
-                                      //             widget.question!.name,
-                                      //         sharedViewMap:
-                                      //             widget.sharedViewMap,
-                                      //       ),
-                                      //     ),
-                                      //     (route) => false);
-                                    } else {
-                                      setState(() => _isLoading = false);
-                                      Navigator.pushAndRemoveUntil(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              OnboardingScreen(user: user),
-                                        ),
-                                        (r) => false,
-                                      );
-                                    }
+                                    _mixpanel.getPeople().setOnce(
+                                        "createdAt", DateTime.now().toString());
+                                    _mixpanel.flush();
                                   }
                                 } catch (error) {
                                   setState(() => _isLoading = false);
