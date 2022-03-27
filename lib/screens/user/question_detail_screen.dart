@@ -84,6 +84,10 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
 
   Future<void> _initMixpanel() async {
     _mixpanel = await MixpanelManager.init();
+    _mixpanel.identify(widget.user.id);
+    _mixpanel.track("question_detail_screen", properties: {
+      "userId": widget.user.id,
+    });
   }
 
   @override
