@@ -5,14 +5,15 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:grooks_dev/models/question.dart';
-
 import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/authentication/password_input_screen.dart';
 import 'package:grooks_dev/screens/user/navbar_screen.dart';
 import 'package:grooks_dev/screens/user/set_password_screen.dart';
 import 'package:grooks_dev/screens/user/user_detail_screen.dart';
+import 'package:grooks_dev/services/mixpanel.dart';
 import 'package:grooks_dev/services/my_encryption.dart';
+import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import 'package:otp_text_field/otp_field.dart';
 import 'package:otp_text_field/otp_field_style.dart';
 import 'package:otp_text_field/style.dart';
@@ -49,6 +50,7 @@ class _OTPInputScreenState extends State<OTPInputScreen> {
   late Timer? _timer;
   late int _otpResendCount;
   late final GlobalKey<ScaffoldState> _scaffoldKey;
+  late final Mixpanel _mixpanel;
   final invalidOTPSnackbar = const SnackBar(
     content: AutoSizeText('Invalid OTP. Please try again.'),
     backgroundColor: Colors.red,
@@ -68,6 +70,7 @@ class _OTPInputScreenState extends State<OTPInputScreen> {
   @override
   void initState() {
     super.initState();
+    _initMixpanel();
     _otpController = TextEditingController();
     //_dynamicLink = DynamicLinkApi();
     _firebaseAuth = FirebaseAuth.instance;
@@ -80,6 +83,14 @@ class _OTPInputScreenState extends State<OTPInputScreen> {
     _scaffoldKey = GlobalKey<ScaffoldState>();
     verifyPhone();
     startTimer();
+  }
+
+  Future<void> _initMixpanel() async {
+    _mixpanel = await MixpanelManager.init();
+    _mixpanel.identify(widget.mobile);
+    _mixpanel.track("withdrawl_screen", properties: {
+      "mobile": widget.mobile,
+    });
   }
 
   @override
@@ -187,6 +198,10 @@ class _OTPInputScreenState extends State<OTPInputScreen> {
     // ignore: prefer_function_declarations_over_variables
     final PhoneVerificationFailed verificationFailed =
         (FirebaseAuthException exception) async {
+      _mixpanel.identify(widget.mobile);
+      _mixpanel.track("otp_sent_failed", properties: {
+        "mobile": widget.mobile,
+      });
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -199,6 +214,10 @@ class _OTPInputScreenState extends State<OTPInputScreen> {
 
     // ignore: prefer_function_declarations_over_variables
     final PhoneCodeSent smsSent = (String verId, [int? forceResend]) {
+      _mixpanel.identify(widget.mobile);
+      _mixpanel.track("otp_sent_success", properties: {
+        "mobile": widget.mobile,
+      });
       _verificationId = verId;
       setState(() => _isCodeSent = true);
     };

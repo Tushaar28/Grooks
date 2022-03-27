@@ -273,6 +273,11 @@ class _PasswordScreenState extends State<PasswordScreen> {
                                         }
                                       }
                                     } on FirebaseFunctionsException catch (error) {
+                                      _mixpanel.identify(widget.mobile);
+                                      _mixpanel
+                                          .track("wrong_password", properties: {
+                                        "mobile": widget.mobile,
+                                      });
                                       setState(() => _isLoading = false);
                                       ScaffoldMessenger.of(context)
                                           .hideCurrentSnackBar();
