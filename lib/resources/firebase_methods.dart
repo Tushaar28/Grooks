@@ -17,7 +17,6 @@ import 'package:grooks_dev/models/transaction.dart';
 import 'package:grooks_dev/models/transfer.dart';
 import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/models/wallet.dart';
-import 'package:grooks_dev/models/withdrawl.dart';
 import '../models/transaction.dart' as model;
 import 'package:dbcrypt/dbcrypt.dart';
 
@@ -1392,45 +1391,6 @@ class FirebaseMethods {
       bool status =
           (await usersCollection.doc(userId).get()).get("isPanVerified");
       return status;
-    } catch (error) {
-      rethrow;
-    }
-  }
-
-  Future<void> sendWithdrawlRequest({
-    required String userId,
-    required double amount,
-    String? upi,
-    String? accountNumber,
-    String? ifscCode,
-  }) async {
-    try {
-      String docId = withdrawlsCollection.doc().id;
-      DateTime currentDate = DateTime.now();
-      late final Withdrawl withdrawl;
-      if (upi != null && upi.isNotEmpty) {
-        withdrawl = Withdrawl(
-          id: docId,
-          userId: userId,
-          amount: amount,
-          createdAt: currentDate,
-          updatedAt: currentDate,
-          status: WithdrawlStatus.INITIATED,
-          upi: upi,
-        );
-      } else {
-        withdrawl = Withdrawl(
-          id: docId,
-          userId: userId,
-          amount: amount,
-          createdAt: currentDate,
-          updatedAt: currentDate,
-          status: WithdrawlStatus.INITIATED,
-          accountNumber: accountNumber,
-          ifscCode: ifscCode,
-        );
-      }
-      await withdrawlsCollection.doc(docId).set(withdrawl.toMap(withdrawl));
     } catch (error) {
       rethrow;
     }
