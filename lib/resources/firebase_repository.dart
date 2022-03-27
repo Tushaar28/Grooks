@@ -366,5 +366,4 @@ class FirebaseRepository {
         userId: userId,
         pan: pan,
       );
-  Future<String> get getMixpanelToken => firebaseMethods.getMixpanelToken;
 }
