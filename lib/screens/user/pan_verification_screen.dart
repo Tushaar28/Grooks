@@ -1,4 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/user/account_information_screen.dart';
@@ -45,6 +46,36 @@ class _PanVerificationScreenState extends State<PanVerificationScreen> {
     _panController.dispose();
     _nameController.dispose();
     super.dispose();
+  }
+
+  bool isPanValid(Map<String, dynamic> data) {
+    bool isNameMatch = data["registered_name"]
+            .toString()
+            .toLowerCase()
+            .compareTo(data["name_provided"].toString().toLowerCase()) ==
+        0;
+
+    bool isPanTypeIndividual =
+        data["type"].toString().toLowerCase().compareTo("individual") == 0;
+
+    bool isMessageSuccess = data["message"]
+            .toString()
+            .toLowerCase()
+            .compareTo("pan verified successfully") ==
+        0;
+
+    return isNameMatch && isPanTypeIndividual && isMessageSuccess;
+  }
+
+  Future<void> updatePanVerificationStatus() async {
+    try {
+      await _repository.updatePanVerificationStatus(
+        userId: widget.userId,
+        pan: _panController.text.trim().toUpperCase(),
+      );
+    } catch (error) {
+      rethrow;
+    }
   }
 
   @override
@@ -182,27 +213,55 @@ class _PanVerificationScreenState extends State<PanVerificationScreen> {
                       : CustomButton(
                           onPressed: () async {
                             try {
-                              if (_formKey.currentState!.validate() || true) {
+                              if (_formKey.currentState!.validate()) {
                                 setState(() => _isLoading = true);
-                                // var result = await FirebaseFunctions.instance
-                                //     .httpsCallable("verifyPAN")
-                                //     .call({
-                                //   "pan": "BDHPT4898L",
-                                //   "name": "TUSHAAR TIWARI",
-                                // });
-                              }
-                              Navigator.of(context).pushReplacement(
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      AccountInformationScreen(
-                                    commission: widget.commission,
-                                    finalAmount: widget.finalAmount,
-                                    requestedAmount: widget.requestedAmount,
-                                    userId: widget.userId,
-                                    coins: widget.coins,
+                                var result = await FirebaseFunctions.instance
+                                    .httpsCallable("verifyPAN")
+                                    .call({
+                                  "pan":
+                                      _panController.text.trim().toUpperCase(),
+                                  "name": _nameController.text.trim(),
+                                });
+                                bool isValid = isPanValid(result.data);
+                                if (!isValid) {
+                                  setState(() => _isLoading = false);
+                                  ScaffoldMessenger.of(context)
+                                      .hideCurrentSnackBar();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text("PAN Verification Failed"),
+                                      backgroundColor: Colors.red,
+                                      duration: Duration(seconds: 1),
+                                    ),
+                                  );
+                                  return;
+                                }
+                                await updatePanVerificationStatus();
+                                ScaffoldMessenger.of(context)
+                                    .hideCurrentSnackBar();
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text("PAN Verified"),
+                                    backgroundColor: Colors.green,
+                                    duration: Duration(seconds: 1),
                                   ),
-                                ),
-                              );
+                                );
+                                await Future.delayed(const Duration(seconds: 1),
+                                    () {
+                                  Navigator.of(context).pushReplacement(
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          AccountInformationScreen(
+                                        commission: widget.commission,
+                                        finalAmount: widget.finalAmount,
+                                        requestedAmount: widget.requestedAmount,
+                                        userId: widget.userId,
+                                        coins: widget.coins,
+                                      ),
+                                    ),
+                                  );
+                                });
+                              }
                               setState(() => _isLoading = false);
                             } catch (error) {
                               setState(() => _isLoading = false);

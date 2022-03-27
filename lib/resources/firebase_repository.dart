@@ -357,6 +357,7 @@ class FirebaseRepository {
     required double commission,
     required int coins,
     required String userId,
+    required String name,
   }) =>
       firebaseMethods.submitPayoutRequest(
         upi: upi,
@@ -367,5 +368,15 @@ class FirebaseRepository {
         requestedAmount: requestedAmount,
         coins: coins,
         userId: userId,
+        name: name,
+      );
+
+  Future<void> updatePanVerificationStatus({
+    required String userId,
+    required String pan,
+  }) =>
+      firebaseMethods.updatePanVerificationStatus(
+        userId: userId,
+        pan: pan,
       );
 }
