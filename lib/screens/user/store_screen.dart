@@ -43,6 +43,7 @@ class _StoreScreenState extends State<StoreScreen> {
     _paymentCharges = 0;
     _totalAmount = 0;
     _coinsController = TextEditingController();
+    _coinsController.addListener(isCoinsValid);
   }
 
   Future<void> getPaymentGatewayCommission() async {
@@ -62,11 +63,11 @@ class _StoreScreenState extends State<StoreScreen> {
       var result =
           await FirebaseFunctions.instance.httpsCallable("generateOrder").call({
         "orderId": orderId,
-        "orderAmount": "0.23",
+        "orderAmount": _totalAmount.toStringAsFixed(2),
         "orderCurrency": "INR",
       });
       String stage = "PROD";
-      String orderAmount = "0.23";
+      String orderAmount = _totalAmount.toStringAsFixed(2);
       String tokenData = result.data["cftoken"];
       String customerName = widget.user.name;
       String orderNote = "GROOKS_COINS_PURCHASE";
@@ -147,14 +148,26 @@ class _StoreScreenState extends State<StoreScreen> {
     bool isValid = int.tryParse(_coinsController.text) != null &&
         int.tryParse(_coinsController.text)! >= 100;
     if (isValid) {
-      _price = int.parse(_coinsController.text) / 10;
+      int coins = int.tryParse(_coinsController.text)!;
+      if (coins == 550) {
+        _price = 49;
+      } else if (coins == 1200) {
+        _price = 99;
+      } else if (coins == 2500) {
+        _price = 199;
+      } else if (coins == 6500) {
+        _price = 499;
+      } else {
+        _price = int.parse(_coinsController.text) / 10;
+      }
       _paymentCharges = _paymentGatewayCommission /
           100 *
           (int.parse(_coinsController.text) / 10);
-      _totalAmount = (int.parse(_coinsController.text) / 10) +
+      _totalAmount = _price +
           (_paymentGatewayCommission /
               100 *
               (int.parse(_coinsController.text) / 10));
+      setState(() {});
     }
     return isValid;
   }
@@ -238,10 +251,21 @@ class _StoreScreenState extends State<StoreScreen> {
                           mainAxisSpacing: 0.0,
                         ),
                         itemBuilder: (context, index) => InkWell(
-                          child: Card(
+                          child: InkWell(
                             child: Image.asset(_packs[index]),
                           ),
-                          onTap: () {},
+                          onTap: () {
+                            if (index == 0) {
+                              _coinsController.text = "550";
+                            } else if (index == 1) {
+                              _coinsController.text = "1200";
+                            } else if (index == 2) {
+                              _coinsController.text = "2500";
+                            } else {
+                              _coinsController.text = "6500";
+                            }
+                            isCoinsValid();
+                          },
                         ),
                       ),
                     ),
