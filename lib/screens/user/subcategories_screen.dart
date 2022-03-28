@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:grooks_dev/models/category.dart';
 import 'package:grooks_dev/models/user.dart';
@@ -79,7 +80,7 @@ class _SubcategoriesScreenState extends State<SubcategoriesScreen> {
           builder: (context, snapshot) {
             if (_subcategories.isEmpty) {
               return const Center(
-                child: Text(
+                child: AutoSizeText(
                   "No events",
                   style: TextStyle(
                     fontSize: 16,

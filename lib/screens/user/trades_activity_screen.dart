@@ -158,7 +158,7 @@ class _TradesActivityScreenState extends State<TradesActivityScreen> {
             builder: (context, constaints) {
               if (_trades.isEmpty) {
                 return const Center(
-                  child: Text(
+                  child: AutoSizeText(
                     'No trades yet',
                     style: TextStyle(
                       fontSize: 18,
@@ -323,7 +323,7 @@ class _TradesActivityScreenState extends State<TradesActivityScreen> {
                             width: widget.constraints.maxWidth,
                             height: MediaQuery.of(context).size.height * 0.1,
                             child: const Center(
-                              child: Text('All trades loaded'),
+                              child: AutoSizeText('All trades loaded'),
                             ),
                           );
                         }

@@ -182,7 +182,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
                                     MediaQuery.of(context).size.height * 0.05,
                                 width: MediaQuery.of(context).size.width * 0.8,
                                 child: ElevatedButton(
-                                  child: const Text("Validate"),
+                                  child: const AutoSizeText("Validate"),
                                   style: ElevatedButton.styleFrom(
                                     primary: Colors.black,
                                   ),

@@ -6,7 +6,6 @@ import 'package:grooks_dev/models/question.dart';
 import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/authentication/login_screen.dart';
-import 'package:grooks_dev/screens/user/open_questions_screen.dart';
 import 'package:grooks_dev/screens/user/top_trades_screen.dart';
 import 'package:grooks_dev/screens/user/trade_success_screen.dart';
 import 'package:grooks_dev/services/mixpanel.dart';
@@ -50,10 +49,6 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
   late final AssetsAudioPlayer _player;
   late double _winCommission;
   late final Mixpanel _mixpanel;
-  final _viewSuccessSnackbar = const SnackBar(
-    content: AutoSizeText('Your trade has been placed.'),
-    backgroundColor: Colors.green,
-  );
   final _viewFailureSnackbar = const SnackBar(
     content: AutoSizeText('An error occured.'),
     backgroundColor: Colors.red,
@@ -189,7 +184,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                           mainAxisSize: MainAxisSize.max,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const Text(
+                            const AutoSizeText(
                               "Number of trades",
                               style: TextStyle(
                                 fontSize: 18,
@@ -244,7 +239,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                                       color: Color(0xFF1C3857),
                                     ),
                                     child: Center(
-                                      child: Text(
+                                      child: AutoSizeText(
                                         "$_count",
                                         style: const TextStyle(
                                           color: Colors.white,
@@ -295,14 +290,14 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: const [
-                              Text(
+                              AutoSizeText(
                                 "Your trading amount",
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
-                              Text(
+                              AutoSizeText(
                                 "Your Potential Win",
                                 style: TextStyle(
                                   color: Color(0xFF007AFF),
@@ -316,14 +311,14 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
-                              Text(
+                              AutoSizeText(
                                 "$_currentTrade",
                                 style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
-                              Text(
+                              AutoSizeText(
                                 "${100 - _currentTrade}",
                                 style: const TextStyle(
                                   color: Color(0xFF007AFF),
@@ -362,7 +357,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          Text(
+                          AutoSizeText(
                             "If Final Outcome is : ${isYes ? "Yes" : "No"}",
                             style: const TextStyle(
                               color: Colors.grey,
@@ -370,7 +365,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                               fontWeight: FontWeight.w400,
                             ),
                           ),
-                          Text(
+                          AutoSizeText(
                             "You make profit of : ${100 - _currentTrade} coins",
                             style: const TextStyle(
                               color: Colors.green,
@@ -378,7 +373,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                               fontWeight: FontWeight.w400,
                             ),
                           ),
-                          Text(
+                          AutoSizeText(
                             "Else you will lose : $_currentTrade coins",
                             style: const TextStyle(
                               color: Colors.red,
@@ -386,7 +381,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                               fontWeight: FontWeight.w400,
                             ),
                           ),
-                          const Text(
+                          const AutoSizeText(
                             "Your coins will be multiplied with number of trades",
                             style: TextStyle(
                               color: Colors.grey,
@@ -396,7 +391,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                           ),
                           Row(
                             children: [
-                              const Text(
+                              const AutoSizeText(
                                 "10 ",
                                 style: TextStyle(
                                   color: Colors.grey,
@@ -406,7 +401,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                               ),
                               Image.asset("assets/images/coins.png",
                                   scale: 1.2),
-                              const Text(
+                              const AutoSizeText(
                                 " = ₹1 ",
                                 style: TextStyle(
                                   color: Colors.grey,
@@ -416,7 +411,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                               ),
                             ],
                           ),
-                          const Text(
+                          const AutoSizeText(
                             "So you can earn equivalent of ₹10 from 1 trade.",
                             style: TextStyle(
                               color: Colors.grey,
@@ -424,7 +419,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                               fontWeight: FontWeight.w400,
                             ),
                           ),
-                          Text(
+                          AutoSizeText(
                             "${(_winCommission / 100 * (100 - _currentTrade)).ceil()} coins will be deducted as commission from your winning",
                             style: const TextStyle(
                               color: Colors.grey,
@@ -522,7 +517,8 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(
                                           const SnackBar(
-                                            content: Text("Insufficient coins"),
+                                            content: AutoSizeText(
+                                                "Insufficient coins"),
                                             backgroundColor: Colors.red,
                                             duration: Duration(seconds: 2),
                                           ),
@@ -531,7 +527,8 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(
                                           const SnackBar(
-                                            content: Text("An error occured"),
+                                            content: AutoSizeText(
+                                                "An error occured"),
                                             backgroundColor: Colors.red,
                                             duration: Duration(seconds: 2),
                                           ),
@@ -604,31 +601,31 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
             user: widget.user,
           );
         }
-        return Scaffold(
-          key: _scaffoldKey,
-          appBar: AppBar(
-            iconTheme: const IconThemeData(color: Colors.black),
-            backgroundColor: Colors.white,
-            automaticallyImplyLeading: true,
-            title: const AutoSizeText(
-              "Details",
-              style: TextStyle(
-                fontFamily: 'Poppins',
-                fontSize: 22,
-                color: Colors.black,
+        return SafeArea(
+          child: Scaffold(
+            key: _scaffoldKey,
+            appBar: AppBar(
+              iconTheme: const IconThemeData(color: Colors.black),
+              backgroundColor: Colors.white,
+              automaticallyImplyLeading: true,
+              title: const AutoSizeText(
+                "Details",
+                style: TextStyle(
+                  fontFamily: 'Poppins',
+                  fontSize: 22,
+                  color: Colors.black,
+                ),
               ),
-            ),
-            shape: const RoundedRectangleBorder(
-              borderRadius: BorderRadius.vertical(
-                bottom: Radius.circular(20),
+              shape: const RoundedRectangleBorder(
+                borderRadius: BorderRadius.vertical(
+                  bottom: Radius.circular(20),
+                ),
               ),
+              centerTitle: false,
+              elevation: 0,
             ),
-            centerTitle: false,
-            elevation: 0,
-          ),
-          body: RefreshIndicator(
-            onRefresh: refresh,
-            child: SingleChildScrollView(
+            body: RefreshIndicator(
+              onRefresh: refresh,
               child: SafeArea(
                 child: Container(
                   width: MediaQuery.of(context).size.width,
@@ -745,7 +742,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                                   ),
                                 ),
                                 child: Center(
-                                  child: Text(
+                                  child: AutoSizeText(
                                     "YES",
                                     style: TextStyle(color: Colors.green[600]),
                                   ),
@@ -770,7 +767,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                                   ),
                                 ),
                                 child: const Center(
-                                  child: Text(
+                                  child: AutoSizeText(
                                     "NO",
                                     style: TextStyle(color: Colors.deepOrange),
                                   ),
@@ -785,7 +782,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                           height: MediaQuery.of(context).size.height * 0.05,
                           width: double.infinity,
                           child: Center(
-                            child: Text(
+                            child: AutoSizeText(
                               (_question!.answer)!
                                   ? "Event settled at Yes"
                                   : "Event settled at No",

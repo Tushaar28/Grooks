@@ -236,7 +236,7 @@ class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
                           ),
                           Padding(
                             padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-                            child: Text(
+                            child: AutoSizeText(
                               "$_userCoins coins available for transfer",
                               style: const TextStyle(
                                 fontSize: 16,
@@ -611,7 +611,7 @@ class _CoinsTransferScreenState extends State<CoinsTransferScreen> {
                                                 ScaffoldMessenger.of(context)
                                                     .showSnackBar(
                                                   const SnackBar(
-                                                    content: Text(
+                                                    content: AutoSizeText(
                                                         "Insufficient coins"),
                                                     backgroundColor: Colors.red,
                                                     duration:

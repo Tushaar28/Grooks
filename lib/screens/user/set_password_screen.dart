@@ -67,7 +67,7 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                 top: MediaQuery.of(context).size.height * 0.15,
               ),
               child: const Center(
-                child: Text(
+                child: AutoSizeText(
                   "Set your 4 digit password",
                   style: TextStyle(
                     fontSize: 20,
@@ -112,7 +112,7 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                 top: MediaQuery.of(context).size.height * 0.08,
               ),
               child: const Center(
-                child: Text(
+                child: AutoSizeText(
                   "Confirm your 4 digit password",
                   style: TextStyle(
                     fontSize: 20,
@@ -171,7 +171,7 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                             ScaffoldMessenger.of(context).hideCurrentSnackBar();
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text("Password is required"),
+                                content: AutoSizeText("Password is required"),
                                 backgroundColor: Colors.red,
                                 duration: Duration(seconds: 1),
                               ),
@@ -183,8 +183,8 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                             ScaffoldMessenger.of(context).hideCurrentSnackBar();
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content:
-                                    Text("Password should contain 4 digits"),
+                                content: AutoSizeText(
+                                    "Password should contain 4 digits"),
                                 backgroundColor: Colors.red,
                                 duration: Duration(seconds: 1),
                               ),
@@ -196,7 +196,7 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                             ScaffoldMessenger.of(context).hideCurrentSnackBar();
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text("Password do not match"),
+                                content: AutoSizeText("Password do not match"),
                                 backgroundColor: Colors.red,
                                 duration: Duration(seconds: 1),
                               ),
@@ -218,7 +218,7 @@ class _SetPasswordScreenState extends State<SetPasswordScreen> {
                           ScaffoldMessenger.of(context).hideCurrentSnackBar();
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text('An error occured'),
+                              content: AutoSizeText('An error occured'),
                               backgroundColor: Colors.red,
                               duration: Duration(seconds: 2),
                             ),

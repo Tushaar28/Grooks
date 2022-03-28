@@ -226,7 +226,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             ScaffoldMessenger.of(context).hideCurrentSnackBar();
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text("Password is required"),
+                                content: AutoSizeText("Password is required"),
                                 backgroundColor: Colors.red,
                                 duration: Duration(seconds: 1),
                               ),
@@ -238,8 +238,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             ScaffoldMessenger.of(context).hideCurrentSnackBar();
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content:
-                                    Text("Password should contain 4 digits"),
+                                content: AutoSizeText(
+                                    "Password should contain 4 digits"),
                                 backgroundColor: Colors.red,
                                 duration: Duration(seconds: 1),
                               ),
@@ -251,7 +251,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             ScaffoldMessenger.of(context).hideCurrentSnackBar();
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text("Password do not match"),
+                                content: AutoSizeText("Password do not match"),
                                 backgroundColor: Colors.red,
                                 duration: Duration(seconds: 1),
                               ),
@@ -388,7 +388,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           //       children: [
                           //         if (_changePassword == false) ...[
                           //           TextButton(
-                          //             child: const Text(
+                          //             child: const AutoSizeText(
                           //               "Change Password",
                           //               style: TextStyle(
                           //                 fontSize: 18,
@@ -405,7 +405,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           //               top: 20,
                           //             ),
                           //             child: Center(
-                          //               child: Text(
+                          //               child: AutoSizeText(
                           //                 "Your old password",
                           //                 style: TextStyle(
                           //                   fontSize: 20,
@@ -458,7 +458,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           //               top: 20,
                           //             ),
                           //             child: Center(
-                          //               child: Text(
+                          //               child: AutoSizeText(
                           //                 "Set your 4 digit password",
                           //                 style: TextStyle(
                           //                   fontSize: 20,
@@ -511,7 +511,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           //               top: 20,
                           //             ),
                           //             child: Center(
-                          //               child: Text(
+                          //               child: AutoSizeText(
                           //                 "Confirm your 4 digit password",
                           //                 style: TextStyle(
                           //                   fontSize: 20,
@@ -571,7 +571,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           //       children: [
                           //         if (_setPassword == false) ...[
                           //           TextButton(
-                          //             child: const Text(
+                          //             child: const AutoSizeText(
                           //               "Set Password",
                           //               style: TextStyle(
                           //                 fontSize: 18,
@@ -588,7 +588,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           //               top: 20,
                           //             ),
                           //             child: Center(
-                          //               child: Text(
+                          //               child: AutoSizeText(
                           //                 "Set your 4 digit password",
                           //                 style: TextStyle(
                           //                   fontSize: 20,
@@ -641,7 +641,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           //               top: 20,
                           //             ),
                           //             child: Center(
-                          //               child: Text(
+                          //               child: AutoSizeText(
                           //                 "Confirm your 4 digit password",
                           //                 style: TextStyle(
                           //                   fontSize: 20,

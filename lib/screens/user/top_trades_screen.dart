@@ -135,8 +135,9 @@ class _TopTradesScreenState extends State<TopTradesScreen>
       builder: (BuildContext context) => StatefulBuilder(
         builder: (context, setState) {
           return AlertDialog(
-            title: const Text('Alert'),
-            content: const Text('Are you sure you want to pair this trade?'),
+            title: const AutoSizeText('Alert'),
+            content:
+                const AutoSizeText('Are you sure you want to pair this trade?'),
             actions: [
               _isLoading
                   ? const Center(
@@ -193,7 +194,7 @@ class _TopTradesScreenState extends State<TopTradesScreen>
                           if (error.toString() == "Insufficient coins") {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text("Insufficient coins"),
+                                content: AutoSizeText("Insufficient coins"),
                                 backgroundColor: Colors.red,
                                 duration: Duration(seconds: 2),
                               ),
@@ -201,7 +202,7 @@ class _TopTradesScreenState extends State<TopTradesScreen>
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text("An error occured"),
+                                content: AutoSizeText("An error occured"),
                                 backgroundColor: Colors.red,
                                 duration: Duration(seconds: 2),
                               ),
@@ -253,7 +254,7 @@ class _TopTradesScreenState extends State<TopTradesScreen>
   Widget build(BuildContext context) {
     if (widget.question.answer != null) {
       return const Center(
-        child: Text("No trades"),
+        child: AutoSizeText("No trades"),
       );
     }
     if (_isActive == null || _isQuestionActive == null) {
@@ -275,7 +276,7 @@ class _TopTradesScreenState extends State<TopTradesScreen>
     }
     if (_isQuestionActive == false) {
       return const Center(
-        child: Text(
+        child: AutoSizeText(
           "Question is closed",
           style: TextStyle(
             fontSize: 18,
@@ -405,7 +406,7 @@ class _TopTradesScreenState extends State<TopTradesScreen>
                                   trade: _trades[_tradesKeys[index]].first);
                             } catch (error) {}
                           },
-                          child: Text(
+                          child: AutoSizeText(
                             _trades[_tradesKeys[index]].first.response
                                 ? 'SAY NO @ ${100 - _trades[_tradesKeys[index]].first.coins}'
                                 : 'SAY YES @ ${100 - _trades[_tradesKeys[index]].first.coins}',

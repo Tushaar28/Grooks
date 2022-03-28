@@ -118,7 +118,7 @@ class _QuestionCardState extends State<QuestionCard> {
                                 ),
                               ),
                               child: Center(
-                                child: Text(
+                                child: AutoSizeText(
                                   snapshot.data == 0 ? "" : "${snapshot.data}%",
                                   style: TextStyle(
                                     color: Colors.green[600],
@@ -163,7 +163,7 @@ class _QuestionCardState extends State<QuestionCard> {
                         child: Center(
                           child: RotationTransition(
                             turns: const AlwaysStoppedAnimation(335 / 360),
-                            child: Text(
+                            child: AutoSizeText(
                               widget.question.answer! ? "YES" : "NO",
                               style: TextStyle(
                                 fontSize: 16,
@@ -186,7 +186,7 @@ class _QuestionCardState extends State<QuestionCard> {
                             SizedBox(
                               width: MediaQuery.of(context).size.width * 0.1,
                               child: Center(
-                                child: Text(
+                                child: AutoSizeText(
                                   "Yes",
                                   style: TextStyle(
                                     color: Colors.green[600],
@@ -197,7 +197,7 @@ class _QuestionCardState extends State<QuestionCard> {
                             SizedBox(
                               width: MediaQuery.of(context).size.width * 0.1,
                               child: const Center(
-                                child: Text(
+                                child: AutoSizeText(
                                   "No",
                                   style: TextStyle(
                                     color: Colors.deepOrange,
@@ -230,7 +230,7 @@ class _QuestionCardState extends State<QuestionCard> {
                       SizedBox(
                         width: MediaQuery.of(context).size.width * 0.02,
                       ),
-                      Text(
+                      AutoSizeText(
                         getFooterText(),
                         style: const TextStyle(
                           color: Colors.grey,
@@ -245,7 +245,7 @@ class _QuestionCardState extends State<QuestionCard> {
                       widget.question.pairedTradesCount! ==
                   0) ...[
                 const Expanded(
-                  child: Text(
+                  child: AutoSizeText(
                     "Be the first to trade",
                     style: TextStyle(
                       color: Colors.grey,

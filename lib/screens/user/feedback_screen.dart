@@ -305,7 +305,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             TextButton(
-                              child: const Text(
+                              child: const AutoSizeText(
                                 "Upload photo",
                                 style: TextStyle(
                                   color: Colors.blue,
@@ -318,7 +318,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                                 );
                               },
                             ),
-                            Text(
+                            AutoSizeText(
                               _uploadedPhoto == null
                                   ? "No file is selected"
                                   : "Image attached",
@@ -338,7 +338,7 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                             mainAxisAlignment: MainAxisAlignment.end,
                             children: [
                               TextButton(
-                                child: const Text(
+                                child: const AutoSizeText(
                                   'Remove',
                                   style: TextStyle(
                                     color: Colors.red,

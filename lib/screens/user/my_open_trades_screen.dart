@@ -151,7 +151,8 @@ class _MyOpenTradesScreenState extends State<MyOpenTradesScreen>
                   }
                   if (snapshot.hasError) {
                     return const Center(
-                      child: Text('Unable to load details. Please try again'),
+                      child: AutoSizeText(
+                          'Unable to load details. Please try again'),
                     );
                   } else {
                     Question question = snapshot.data!;
@@ -200,7 +201,7 @@ class _MyOpenTradesScreenState extends State<MyOpenTradesScreen>
                                     return Padding(
                                       padding: const EdgeInsets.fromLTRB(
                                           10, 5, 10, 10),
-                                      child: Text(
+                                      child: AutoSizeText(
                                         snapshot.data!,
                                         style: const TextStyle(
                                           fontSize: 16,

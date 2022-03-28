@@ -125,7 +125,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             style: ElevatedButton.styleFrom(
                               primary: Colors.black,
                             ),
-                            child: const Text(
+                            child: const AutoSizeText(
                               "Continue",
                               style: TextStyle(
                                 color: Colors.white,
@@ -182,7 +182,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     .hideCurrentSnackBar();
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                    content: Text("An error occured"),
+                                    content: AutoSizeText("An error occured"),
                                     backgroundColor: Colors.red,
                                     duration: Duration(seconds: 1),
                                   ),

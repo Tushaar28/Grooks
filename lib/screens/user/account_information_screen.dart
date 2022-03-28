@@ -293,7 +293,7 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
                   //     ),
                   //     Center(
                   //       child: _isUpiVerified
-                  //           ? const Text(
+                  //           ? const AutoSizeText(
                   //               "Verified",
                   //               style: TextStyle(
                   //                 fontSize: 16,
@@ -301,7 +301,7 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
                   //               ),
                   //             )
                   //           : TextButton(
-                  //               child: Text(
+                  //               child: AutoSizeText(
                   //                 "Verify",
                   //                 style: TextStyle(
                   //                   fontSize: 16,
@@ -523,7 +523,7 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
                   children: [
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.4,
-                      child: const Text(
+                      child: const AutoSizeText(
                         "Amount",
                         style: TextStyle(
                           fontSize: 18,
@@ -533,7 +533,7 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.2,
                       child: Center(
-                        child: Text(
+                        child: AutoSizeText(
                           "Rs ${widget.finalAmount}",
                           style: const TextStyle(
                             fontSize: 18,
@@ -552,7 +552,7 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
                   children: [
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.4,
-                      child: const Text(
+                      child: const AutoSizeText(
                         "Coins to be used",
                         style: TextStyle(
                           fontSize: 18,
@@ -562,7 +562,7 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.2,
                       child: Center(
-                        child: Text(
+                        child: AutoSizeText(
                           "${widget.coins}",
                           style: const TextStyle(
                             fontSize: 18,
@@ -575,7 +575,7 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.03,
                 ),
-                const Text(
+                const AutoSizeText(
                     "It may take upto 24 hours to transfer amount to your account"),
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.09,
@@ -600,7 +600,7 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
                                         .hideCurrentSnackBar();
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
-                                        content: Text(
+                                        content: AutoSizeText(
                                             "Please select withdrawl type"),
                                         backgroundColor: Colors.red,
                                         duration: Duration(seconds: 1),
@@ -617,7 +617,8 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
                                         .hideCurrentSnackBar();
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
-                                        content: Text("Insufficient coins"),
+                                        content:
+                                            AutoSizeText("Insufficient coins"),
                                         backgroundColor: Colors.red,
                                         duration: Duration(seconds: 1),
                                       ),
@@ -651,7 +652,7 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
                                         .hideCurrentSnackBar();
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
-                                        content: Text(
+                                        content: AutoSizeText(
                                             "Withdrawl request has been submitted. It may take 24 hours to process your request."),
                                         backgroundColor: Colors.green,
                                         duration: Duration(seconds: 1),
@@ -683,7 +684,7 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
                                       .hideCurrentSnackBar();
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
-                                      content: Text("An error occured"),
+                                      content: AutoSizeText("An error occured"),
                                       backgroundColor: Colors.red,
                                       duration: Duration(seconds: 1),
                                     ),

@@ -135,7 +135,7 @@ class _TransfersActivityScreenState extends State<TransfersActivityScreen> {
             builder: (context, constraints) {
               if (_transfers.isEmpty) {
                 return const Center(
-                  child: Text(
+                  child: AutoSizeText(
                     'No transfers yet',
                     style: TextStyle(
                       fontSize: 18,
@@ -237,7 +237,7 @@ class _TransfersActivityScreenState extends State<TransfersActivityScreen> {
                             width: widget.constraints.maxWidth,
                             height: MediaQuery.of(context).size.height * 0.1,
                             child: const Center(
-                              child: Text('All transfers loaded'),
+                              child: AutoSizeText('All transfers loaded'),
                             ),
                           );
                         }

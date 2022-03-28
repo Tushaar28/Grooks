@@ -299,7 +299,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                         top: 20,
                       ),
                       child: Center(
-                        child: Text(
+                        child: AutoSizeText(
                           "Set your 4 digit passcode",
                           style: TextStyle(
                             fontSize: 20,
@@ -344,7 +344,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                         top: 20,
                       ),
                       child: Center(
-                        child: Text(
+                        child: AutoSizeText(
                           "Confirm your 4 digit passcode",
                           style: TextStyle(
                             fontSize: 20,
@@ -406,7 +406,8 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                                         .hideCurrentSnackBar();
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
-                                        content: Text("Password is required"),
+                                        content: AutoSizeText(
+                                            "Password is required"),
                                         backgroundColor: Colors.red,
                                         duration: Duration(seconds: 1),
                                       ),
@@ -420,7 +421,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                                         .hideCurrentSnackBar();
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
-                                        content: Text(
+                                        content: AutoSizeText(
                                             "Password should contain 4 digits"),
                                         backgroundColor: Colors.red,
                                         duration: Duration(seconds: 1),
@@ -435,7 +436,8 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                                         .hideCurrentSnackBar();
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
-                                        content: Text("Password do not match"),
+                                        content: AutoSizeText(
+                                            "Password do not match"),
                                         backgroundColor: Colors.red,
                                         duration: Duration(seconds: 1),
                                       ),
@@ -557,7 +559,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                                       .hideCurrentSnackBar();
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
-                                      content: Text('An error occured'),
+                                      content: AutoSizeText('An error occured'),
                                       backgroundColor: Colors.red,
                                       duration: Duration(seconds: 2),
                                     ),

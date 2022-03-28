@@ -202,7 +202,7 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            const Text(
+                            const AutoSizeText(
                               "Total Coins ",
                               style: TextStyle(
                                 fontSize: 22,
@@ -212,7 +212,7 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
                             SizedBox(
                               width: MediaQuery.of(context).size.width * 0.07,
                             ),
-                            Text(
+                            AutoSizeText(
                               "${_bonusCoins! + _redeemableCoins!}",
                               style: TextStyle(
                                 fontSize: 20,
@@ -233,7 +233,7 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(
+                            AutoSizeText(
                               "$_redeemableCoins ",
                               style: TextStyle(
                                 fontSize: 20,
@@ -244,7 +244,7 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
                             SizedBox(
                               width: MediaQuery.of(context).size.width * 0.02,
                             ),
-                            const Text(
+                            const AutoSizeText(
                               "coins can be redeemed.",
                               style: TextStyle(
                                 fontSize: 16,
@@ -261,11 +261,11 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.01,
               ),
-              const Text("PAN Verification is mandatory for withdrawl"),
+              const AutoSizeText("PAN Verification is mandatory for withdrawl"),
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.01,
               ),
-              const Text("Rs 1 = 10 coins"),
+              const AutoSizeText("Rs 1 = 10 coins"),
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.08,
               ),
@@ -323,7 +323,7 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
                         children: [
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.4,
-                            child: const Text(
+                            child: const AutoSizeText(
                               "Coins to be used",
                               style: TextStyle(
                                 fontSize: 16,
@@ -333,7 +333,7 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.2,
                             child: Center(
-                              child: Text(
+                              child: AutoSizeText(
                                 "${double.parse(_amountController.text).ceil() * 10}",
                                 style: const TextStyle(
                                   fontSize: 16,
@@ -349,7 +349,7 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
                         children: [
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.4,
-                            child: const Text(
+                            child: const AutoSizeText(
                               "Withdrawl charges",
                               style: TextStyle(
                                 fontSize: 16,
@@ -359,7 +359,8 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.2,
                             child: Center(
-                              child: Text("Rs ${getWithdrawlCharges()}"),
+                              child:
+                                  AutoSizeText("Rs ${getWithdrawlCharges()}"),
                             ),
                           ),
                         ],
@@ -370,7 +371,7 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
                         children: [
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.4,
-                            child: const Text(
+                            child: const AutoSizeText(
                               "Final Amount",
                               style: TextStyle(
                                 fontSize: 16,
@@ -380,7 +381,7 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.2,
                             child: Center(
-                              child: Text("Rs ${getFinalAmount()}"),
+                              child: AutoSizeText("Rs ${getFinalAmount()}"),
                             ),
                           ),
                         ],
@@ -410,7 +411,7 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
                                     //   ScaffoldMessenger.of(context)
                                     //       .showSnackBar(
                                     //     const SnackBar(
-                                    //       content: Text("Insufficient coins"),
+                                    //       content: AutoSizeText("Insufficient coins"),
                                     //       backgroundColor: Colors.red,
                                     //       duration: Duration(seconds: 1),
                                     //     ),
@@ -461,7 +462,8 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
                                         .hideCurrentSnackBar();
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
-                                        content: Text("An error occured"),
+                                        content:
+                                            AutoSizeText("An error occured"),
                                         backgroundColor: Colors.red,
                                         duration: Duration(seconds: 1),
                                       ),
@@ -485,7 +487,7 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
               //         SizedBox(
               //           height: MediaQuery.of(context).size.height * 0.01,
               //         ),
-              //         const Text(
+              //         const AutoSizeText(
               //           "Choose amount to withdraw",
               //           style: TextStyle(
               //             fontSize: 20,
@@ -500,7 +502,7 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
               //           mainAxisSize: MainAxisSize.max,
               //           children: [
               //             TextButton(
-              //               child: Text(
+              //               child: AutoSizeText(
               //                 "Rs 250",
               //                 style: TextStyle(
               //                   fontSize: 16,
@@ -512,7 +514,7 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
               //               onPressed: () {},
               //             ),
               //             TextButton(
-              //               child: Text(
+              //               child: AutoSizeText(
               //                 "Rs 500",
               //                 style: TextStyle(
               //                   fontSize: 16,
@@ -528,7 +530,7 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
               //               },
               //             ),
               //             TextButton(
-              //               child: Text(
+              //               child: AutoSizeText(
               //                 "Rs 1000",
               //                 style: TextStyle(
               //                   fontSize: 16,

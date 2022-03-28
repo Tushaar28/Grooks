@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:grooks_dev/models/user.dart';
@@ -34,7 +35,7 @@ class ErrorScreen extends StatelessWidget {
                 ),
               ),
               TextButton(
-                child: const Text("Go to Home page"),
+                child: const AutoSizeText("Go to Home page"),
                 onPressed: () => Navigator.of(context).pushAndRemoveUntil(
                     MaterialPageRoute(
                       builder: (context) => NavbarScreen(user: user),

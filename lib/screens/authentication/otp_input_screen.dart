@@ -205,7 +205,7 @@ class _OTPInputScreenState extends State<OTPInputScreen> {
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text("Unable to send OTP. Please try again later."),
+          content: AutoSizeText("Unable to send OTP. Please try again later."),
           backgroundColor: Colors.red,
           duration: Duration(seconds: 1),
         ),
@@ -427,7 +427,7 @@ class _OTPInputScreenState extends State<OTPInputScreen> {
                                     MediaQuery.of(context).size.height * 0.05,
                                 width: MediaQuery.of(context).size.width * 0.8,
                                 child: ElevatedButton(
-                                  child: const Text("Validate"),
+                                  child: const AutoSizeText("Validate"),
                                   style: ElevatedButton.styleFrom(
                                     primary: Colors.black,
                                   ),

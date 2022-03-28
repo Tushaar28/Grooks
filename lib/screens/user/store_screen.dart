@@ -134,7 +134,7 @@ class _StoreScreenState extends State<StoreScreen> {
           ScaffoldMessenger.maybeOf(context)!.hideCurrentSnackBar();
           ScaffoldMessenger.maybeOf(context)!.showSnackBar(
             const SnackBar(
-              content: Text("Payment failed. Please try again"),
+              content: AutoSizeText("Payment failed. Please try again"),
               backgroundColor: Colors.red,
               duration: Duration(seconds: 2),
             ),
@@ -151,7 +151,7 @@ class _StoreScreenState extends State<StoreScreen> {
         ScaffoldMessenger.maybeOf(context)!.hideCurrentSnackBar();
         ScaffoldMessenger.maybeOf(context)!.showSnackBar(
           const SnackBar(
-            content: Text("Payment successful"),
+            content: AutoSizeText("Payment successful"),
             backgroundColor: Colors.green,
             duration: Duration(seconds: 2),
           ),
@@ -346,7 +346,7 @@ class _StoreScreenState extends State<StoreScreen> {
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.01,
                     ),
-                    const Text("Minimum 100 coins should be purchased"),
+                    const AutoSizeText("Minimum 100 coins should be purchased"),
                     Padding(
                       padding: EdgeInsets.fromLTRB(
                         MediaQuery.of(context).size.width * 0.1,
@@ -412,13 +412,13 @@ class _StoreScreenState extends State<StoreScreen> {
                                 SizedBox(
                                   width:
                                       MediaQuery.of(context).size.width * 0.3,
-                                  child: const Text("Price"),
+                                  child: const AutoSizeText("Price"),
                                 ),
                                 SizedBox(
                                   width:
                                       MediaQuery.of(context).size.width * 0.2,
                                   child: Center(
-                                    child: Text("Rs $_price"),
+                                    child: AutoSizeText("Rs $_price"),
                                   ),
                                 ),
                               ],
@@ -430,13 +430,13 @@ class _StoreScreenState extends State<StoreScreen> {
                                 SizedBox(
                                   width:
                                       MediaQuery.of(context).size.width * 0.3,
-                                  child: const Text("Payment charges"),
+                                  child: const AutoSizeText("Payment charges"),
                                 ),
                                 SizedBox(
                                   width:
                                       MediaQuery.of(context).size.width * 0.2,
                                   child: Center(
-                                    child: Text(
+                                    child: AutoSizeText(
                                         "Rs ${_paymentCharges.toStringAsFixed(2)}"),
                                   ),
                                 ),
@@ -449,13 +449,13 @@ class _StoreScreenState extends State<StoreScreen> {
                                 SizedBox(
                                   width:
                                       MediaQuery.of(context).size.width * 0.3,
-                                  child: const Text("Total Amount"),
+                                  child: const AutoSizeText("Total Amount"),
                                 ),
                                 SizedBox(
                                   width:
                                       MediaQuery.of(context).size.width * 0.2,
                                   child: Center(
-                                    child: Text(
+                                    child: AutoSizeText(
                                         "Rs ${_totalAmount.toStringAsFixed(2)}"),
                                   ),
                                 ),

@@ -39,8 +39,8 @@ class CustomDrawer extends StatelessWidget {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('Alert'),
-          content: const Text('Are you sure you want to logout?'),
+          title: const AutoSizeText('Alert'),
+          content: const AutoSizeText('Are you sure you want to logout?'),
           actions: [
             SwipeButton(
               text: 'Slide to logout',
@@ -133,7 +133,7 @@ class CustomDrawer extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: MediaQuery.of(context).size.height * 0.01),
-                  Text(
+                  AutoSizeText(
                     user.name,
                     style: const TextStyle(
                       color: Colors.white,
@@ -150,7 +150,7 @@ class CustomDrawer extends StatelessWidget {
                       mainAxisSize: MainAxisSize.max,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
+                        AutoSizeText(
                           user.mobile?.substring(3) ?? "",
                           style: const TextStyle(
                             color: Colors.white,

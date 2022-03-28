@@ -126,7 +126,7 @@ class _PayoutsAcivityScreenState extends State<PayoutsAcivityScreen> {
             builder: (context, constraints) {
               if (_payouts.isEmpty) {
                 return const Center(
-                  child: Text(
+                  child: AutoSizeText(
                     'No payouts yet',
                     style: TextStyle(
                       fontSize: 18,
@@ -256,7 +256,7 @@ class _PayoutsAcivityScreenState extends State<PayoutsAcivityScreen> {
                             width: widget.constraints.maxWidth,
                             height: MediaQuery.of(context).size.height * 0.1,
                             child: const Center(
-                              child: Text('All payouts loaded'),
+                              child: AutoSizeText('All payouts loaded'),
                             ),
                           );
                         }

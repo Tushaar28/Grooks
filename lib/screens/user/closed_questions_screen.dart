@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:grooks_dev/models/question.dart';
@@ -112,7 +113,7 @@ class _ClosedQuestionsDetailScreenState
         }
         if (_questions.isEmpty) {
           return const Center(
-            child: Text(
+            child: AutoSizeText(
               "No closed questions",
               style: TextStyle(
                 fontFamily: 'Poppins',

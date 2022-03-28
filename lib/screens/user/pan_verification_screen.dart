@@ -132,7 +132,7 @@ class _PanVerificationScreenState extends State<PanVerificationScreen> {
                   height: MediaQuery.of(context).size.height * 0.1,
                 ),
                 const Center(
-                  child: Text(
+                  child: AutoSizeText(
                     "Enter your PAN details",
                     style: TextStyle(
                       fontSize: 18,
@@ -246,7 +246,8 @@ class _PanVerificationScreenState extends State<PanVerificationScreen> {
                                       .hideCurrentSnackBar();
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
-                                      content: Text("PAN Verification Failed"),
+                                      content: AutoSizeText(
+                                          "PAN Verification Failed"),
                                       backgroundColor: Colors.red,
                                       duration: Duration(seconds: 1),
                                     ),
@@ -263,7 +264,7 @@ class _PanVerificationScreenState extends State<PanVerificationScreen> {
                                     .hideCurrentSnackBar();
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
-                                    content: Text("PAN Verified"),
+                                    content: AutoSizeText("PAN Verified"),
                                     backgroundColor: Colors.green,
                                     duration: Duration(seconds: 1),
                                   ),
@@ -291,7 +292,7 @@ class _PanVerificationScreenState extends State<PanVerificationScreen> {
                                   .hideCurrentSnackBar();
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text("An error occured"),
+                                  content: AutoSizeText("An error occured"),
                                   backgroundColor: Colors.red,
                                   duration: Duration(seconds: 1),
                                 ),

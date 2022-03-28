@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:ota_update/ota_update.dart';
 
@@ -37,8 +38,8 @@ class _AppUpdateScreenState extends State<AppUpdateScreen> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: const Text("App update"),
-      content: const Text("A new version of app is available"),
+      title: const AutoSizeText("App update"),
+      content: const AutoSizeText("A new version of app is available"),
       actions: [
         Center(
           child: _isLoading
@@ -46,7 +47,7 @@ class _AppUpdateScreenState extends State<AppUpdateScreen> {
                   backgroundColor: Colors.white,
                 )
               : TextButton(
-                  child: const Text("Update now"),
+                  child: const AutoSizeText("Update now"),
                   onPressed: () async {
                     setState(() => _isLoading = true);
                     OtaUpdate().execute(widget.link).listen(

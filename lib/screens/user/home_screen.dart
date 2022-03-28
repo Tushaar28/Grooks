@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:grooks_dev/models/category.dart';
@@ -115,7 +116,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               child: _categories.isEmpty
                   ? const Center(
-                      child: Text(
+                      child: AutoSizeText(
                         "No categories",
                         style: TextStyle(
                           fontSize: 22,

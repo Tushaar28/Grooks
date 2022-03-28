@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:grooks_dev/models/question.dart';
@@ -84,8 +85,9 @@ class _MyTradesScreenState extends State<MyTradesScreen>
         context: context,
         builder: (BuildContext context) => StatefulBuilder(
           builder: (context, setState) => AlertDialog(
-            title: const Text('Alert'),
-            content: const Text('Are you sure you want to cancel your trade?'),
+            title: const AutoSizeText('Alert'),
+            content: const AutoSizeText(
+                'Are you sure you want to cancel your trade?'),
             actions: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
@@ -201,7 +203,7 @@ class _MyTradesScreenState extends State<MyTradesScreen>
 
           if (_trades.isEmpty) {
             return const Center(
-              child: Text('No trades'),
+              child: AutoSizeText('No trades'),
             );
           }
           return ListView.separated(
@@ -235,7 +237,7 @@ class _MyTradesScreenState extends State<MyTradesScreen>
                     children: [
                       SizedBox(
                         width: MediaQuery.of(context).size.width * 0.3,
-                        child: Text(
+                        child: AutoSizeText(
                           _trades[index].response
                               ? 'YES @ ${_trades[index].coins}'
                               : 'NO @ ${_trades[index].coins}',
@@ -248,7 +250,7 @@ class _MyTradesScreenState extends State<MyTradesScreen>
                       if (_trades[index].status != Status.ACTIVE_UNPAIRED)
                         Expanded(
                           child: Center(
-                            child: Text(
+                            child: AutoSizeText(
                               getTradeStatus(_trades[index]),
                               style: const TextStyle(
                                 fontSize: 14,
@@ -300,7 +302,8 @@ class _MyTradesScreenState extends State<MyTradesScreen>
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(
                                             const SnackBar(
-                                              content: Text("An error occured"),
+                                              content: AutoSizeText(
+                                                  "An error occured"),
                                               backgroundColor: Colors.red,
                                               duration: Duration(seconds: 2),
                                             ),
@@ -318,7 +321,7 @@ class _MyTradesScreenState extends State<MyTradesScreen>
                                           );
                                         }
                                       },
-                                      child: const Text('Cancel'),
+                                      child: const AutoSizeText('Cancel'),
                                       style: TextButton.styleFrom(
                                         primary: const Color(0xFFC31D1D),
                                       ),

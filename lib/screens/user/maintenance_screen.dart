@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 
 class MaintenanceScreen extends StatelessWidget {
@@ -23,7 +24,7 @@ class MaintenanceScreen extends StatelessWidget {
             child: Padding(
               padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
               child: Center(
-                child: Text(
+                child: AutoSizeText(
                   maintenanceMessage ??
                       'App is under maintenance. Please check again after some time.',
                   style: const TextStyle(

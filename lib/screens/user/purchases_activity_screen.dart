@@ -122,7 +122,7 @@ class _PurchasesActivityScreenState extends State<PurchasesActivityScreen> {
             builder: (context, constraints) {
               if (_purchases.isEmpty) {
                 return const Center(
-                  child: Text(
+                  child: AutoSizeText(
                     'No purchases yet',
                     style: TextStyle(
                       fontSize: 18,
@@ -258,7 +258,7 @@ class _PurchasesActivityScreenState extends State<PurchasesActivityScreen> {
                             width: widget.constraints.maxWidth,
                             height: MediaQuery.of(context).size.height * 0.1,
                             child: const Center(
-                              child: Text('All purchases loaded'),
+                              child: AutoSizeText('All purchases loaded'),
                             ),
                           );
                         }
