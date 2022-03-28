@@ -86,7 +86,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
                   const Padding(
                     padding: EdgeInsets.fromLTRB(0, 90, 0, 0),
                     child: AutoSizeText(
-                      'Enter your password',
+                      'Enter your passcode',
                       style: TextStyle(
                         fontFamily: 'Poppins',
                         fontSize: 22,
@@ -271,6 +271,67 @@ class _PasswordScreenState extends State<PasswordScreen> {
                                             (Route<dynamic> route) => false,
                                           );
                                         }
+                                        _mixpanel
+                                            .getPeople()
+                                            .set("name", userDetails.name);
+                                        _mixpanel.getPeople().set("mobile",
+                                            userDetails.mobile!.substring(2));
+                                        _mixpanel
+                                            .getPeople()
+                                            .set("referrals", 0);
+                                        _mixpanel
+                                            .getPeople()
+                                            .set("app_share_success", 0);
+                                        _mixpanel
+                                            .getPeople()
+                                            .increment("total_trades", 0);
+                                        _mixpanel.getPeople().increment(
+                                            "total_trades_failed", 0);
+                                        _mixpanel
+                                            .getPeople()
+                                            .increment("new_trades", 0);
+                                        _mixpanel
+                                            .getPeople()
+                                            .increment("new_trades_failed", 0);
+                                        _mixpanel
+                                            .getPeople()
+                                            .increment("paired_trades", 0);
+                                        _mixpanel.getPeople().increment(
+                                            "paired_trades_failed", 0);
+                                        _mixpanel
+                                            .getPeople()
+                                            .increment("cancelled_trades", 0);
+                                        _mixpanel.getPeople().increment(
+                                            "cancelled_trades_failed", 0);
+                                        _mixpanel
+                                            .getPeople()
+                                            .increment("purchases", 0);
+                                        _mixpanel
+                                            .getPeople()
+                                            .increment("purchases_failed", 0);
+                                        _mixpanel
+                                            .getPeople()
+                                            .increment("payouts", 0);
+                                        _mixpanel
+                                            .getPeople()
+                                            .increment("payouts_failed", 0);
+                                        _mixpanel
+                                            .getPeople()
+                                            .set("referrals", 0);
+                                        _mixpanel.getPeople().increment(
+                                            "store_packs_clicked", 0);
+                                        _mixpanel
+                                            .getPeople()
+                                            .increment("49_pack_clicked", 0);
+                                        _mixpanel
+                                            .getPeople()
+                                            .increment("99_pack_clicked", 0);
+                                        _mixpanel
+                                            .getPeople()
+                                            .increment("199_pack_clicked", 0);
+                                        _mixpanel
+                                            .getPeople()
+                                            .increment("499_pack_clicked", 0);
                                       }
                                     } on FirebaseFunctionsException catch (error) {
                                       _mixpanel.identify(widget.mobile);

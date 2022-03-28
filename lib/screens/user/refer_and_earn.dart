@@ -245,6 +245,13 @@ class _ReferralWidgetState extends State<ReferralWidget> {
                                     await dynamicLink.createReferralLink(code);
                                 Share.share(
                                     'Inviting you to join Grooks app with me. On Grooks we can make opinions using real money on various topics like Sports, Weather, Politics, BigBoss, Kabaddi, Finance, News and win if our opinions are right. Join me on Grooks and trade on your opinions. Use the link to claim your free trades worth ₹250. Download Grooks here: $referalLink');
+                                _mixpanel.identify(widget.user.id);
+                                _mixpanel.track("app_share", properties: {
+                                  "userId": widget.user.id,
+                                });
+                                _mixpanel
+                                    .getPeople()
+                                    .increment("app_share_success", 1);
                                 Future.delayed(
                                   const Duration(milliseconds: 500),
                                   () => setState(() => _isLoading = false),

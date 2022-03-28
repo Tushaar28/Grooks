@@ -495,6 +495,9 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                                     _mixpanel.getPeople().set("referrals", 0);
                                     _mixpanel
                                         .getPeople()
+                                        .set("app_share_success", 0);
+                                    _mixpanel
+                                        .getPeople()
                                         .increment("total_trades", 0);
                                     _mixpanel
                                         .getPeople()

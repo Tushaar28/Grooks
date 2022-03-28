@@ -143,6 +143,7 @@ class _AuthState extends State<Auth> {
                                 .getPeople()
                                 .set("mobile", _user!.mobile!.substring(2));
                             _mixpanel.getPeople().set("referrals", 0);
+                            _mixpanel.getPeople().set("app_share_success", 0);
                             _mixpanel.getPeople().increment("total_trades", 0);
                             _mixpanel
                                 .getPeople()
@@ -185,8 +186,6 @@ class _AuthState extends State<Auth> {
                             _mixpanel
                                 .getPeople()
                                 .increment("499_pack_clicked", 0);
-                            _mixpanel.getPeople().setOnce(
-                                "createdAt", DateTime.now().toString());
                             _mixpanel.flush();
                             FirebaseCrashlytics.instance
                                 .setUserIdentifier(_user!.id);
