@@ -219,11 +219,11 @@ class CustomDrawer extends StatelessWidget {
                 ),
                 ListTile(
                   leading: Image.asset(
-                    "assets/images/help_your_friends_drawer.png",
+                    "assets/images/WithdrawIcon.png",
                     height: 40,
                   ),
                   title: const AutoSizeText(
-                    'Help your friends',
+                    'Withdraw',
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 18,
@@ -238,7 +238,9 @@ class CustomDrawer extends StatelessWidget {
                     Navigator.of(context).pop();
                     Navigator.of(context).push(
                       PageTransition(
-                        child: CoinsTransferScreen(user: user),
+                        child: WithdrawlScreen(
+                          userId: user.id,
+                        ),
                         type: PageTransitionType.bottomToTop,
                         duration: const Duration(milliseconds: 300),
                         reverseDuration: const Duration(milliseconds: 300),
@@ -335,11 +337,11 @@ class CustomDrawer extends StatelessWidget {
                 ),
                 ListTile(
                   leading: Image.asset(
-                    "assets/images/WithdrawIcon.png",
+                    "assets/images/help_your_friends_drawer.png",
                     height: 40,
                   ),
                   title: const AutoSizeText(
-                    'Withdraw',
+                    'Help your friends',
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 18,
@@ -354,9 +356,7 @@ class CustomDrawer extends StatelessWidget {
                     Navigator.of(context).pop();
                     Navigator.of(context).push(
                       PageTransition(
-                        child: WithdrawlScreen(
-                          userId: user.id,
-                        ),
+                        child: CoinsTransferScreen(user: user),
                         type: PageTransitionType.bottomToTop,
                         duration: const Duration(milliseconds: 300),
                         reverseDuration: const Duration(milliseconds: 300),

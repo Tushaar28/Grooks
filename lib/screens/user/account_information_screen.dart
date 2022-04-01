@@ -576,7 +576,7 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
                   height: MediaQuery.of(context).size.height * 0.03,
                 ),
                 const AutoSizeText(
-                    "It may take upto 24 hours to transfer amount to your account"),
+                    "It may take upto 48 hours to transfer amount to your account"),
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.09,
                 ),

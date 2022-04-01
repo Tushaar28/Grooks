@@ -91,7 +91,7 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
     try {
       double? amount = double.tryParse(_amountController.text);
       if (amount == null) return false;
-      return amount >= 100;
+      return amount >= 300;
     } catch (error) {
       return false;
     }
@@ -265,9 +265,13 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.01,
               ),
-              const AutoSizeText("Rs 1 = 10 coins"),
+              const AutoSizeText("10 coins = Re 1"),
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.08,
+              ),
+              const AutoSizeText("Minimum Rs 300 can be redeemed"),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.01,
               ),
               TextField(
                 controller: _amountController,
@@ -282,7 +286,7 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
                   labelStyle: TextStyle(
                     color: Colors.black,
                   ),
-                  hintText: 'Enter amount (Minimum Rs 100)',
+                  hintText: 'Enter amount (Minimum Rs 300)',
                   contentPadding:
                       EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                   border: OutlineInputBorder(
