@@ -212,6 +212,14 @@ class _PanVerificationScreenState extends State<PanVerificationScreen> {
                   ),
                 ),
                 SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.02,
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.05,
+                  child: const AutoSizeText(
+                      "The name on PAN card should be same as account holder's registered name"),
+                ),
+                SizedBox(
                   height: MediaQuery.of(context).size.height * 0.1,
                 ),
                 SizedBox(

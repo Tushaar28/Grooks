@@ -18,6 +18,7 @@ class Payout {
   late double finalAmount;
   late String id;
   late String? ifscCode;
+  late String? message;
   late double requestedAmount;
   late PayoutStatus status;
   late DateTime updatedAt;
@@ -33,6 +34,7 @@ class Payout {
     required this.finalAmount,
     required this.id,
     this.ifscCode,
+    this.message,
     required this.requestedAmount,
     required this.status,
     required this.updatedAt,
@@ -50,6 +52,7 @@ class Payout {
     data["finalAmount"] = request.finalAmount;
     data["id"] = request.id;
     data["ifscCode"] = request.ifscCode;
+    data["message"] = request.message;
     data["requestedAmount"] = request.requestedAmount;
     data["status"] = request.status.toString().split('.').last;
     data["updatedAt"] = request.updatedAt;
@@ -67,6 +70,7 @@ class Payout {
     finalAmount = mapData["finalAmount"].toDouble();
     id = mapData["id"];
     ifscCode = mapData["ifscCode"];
+    message = mapData["message"];
     requestedAmount = mapData["requestedAmount"].toDouble();
     status = PayoutStatus.values.firstWhere(
         (element) => element.toString().split('.').last == mapData['status']);

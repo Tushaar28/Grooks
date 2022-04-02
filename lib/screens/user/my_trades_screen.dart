@@ -7,7 +7,6 @@ import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/authentication/login_screen.dart';
 import 'package:grooks_dev/screens/user/navbar_screen.dart';
-import 'package:grooks_dev/screens/user/question_detail_screen.dart';
 import 'package:grooks_dev/services/mixpanel.dart';
 import 'package:grooks_dev/widgets/swipe_button.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
@@ -81,78 +80,129 @@ class _MyTradesScreenState extends State<MyTradesScreen>
     required BuildContext context,
   }) async {
     try {
-      await showDialog(
+      await showModalBottomSheet(
+        backgroundColor: Colors.transparent,
         context: context,
         builder: (BuildContext context) => StatefulBuilder(
-          builder: (context, setState) => AlertDialog(
-            title: const AutoSizeText('Alert'),
-            content: const AutoSizeText(
-                'Are you sure you want to cancel your trade?'),
-            actions: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-                child: _isLoading
-                    ? const Center(
-                        child: CircularProgressIndicator.adaptive(
-                          backgroundColor: Colors.white,
-                        ),
-                      )
-                    : SwipeButton(
-                        text: 'Slide to cancel',
-                        height: MediaQuery.of(context).size.height * 0.07,
-                        width: 300,
+          builder: (context, setState) => Card(
+            elevation: 10,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height * 0.25,
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.02,
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.035,
+                    child: const AutoSizeText(
+                      "Cancel Trade",
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.w500,
                         color: Colors.red,
-                        backgroundColorEnd: Colors.redAccent[100],
-                        onSwipeCallback: () async {
-                          try {
-                            setState(() => _isLoading = true);
-                            bool isQuestionActive =
-                                await _repository.getQuestionActiveStatus(
-                                    questionId: trade.questionId);
-                            if (isQuestionActive == false) {
-                              throw 'An error occured';
-                            }
-                            await _repository.cancelTrade(
-                              trade: trade,
-                              userId: widget.user.id,
-                            );
-                            _mixpanel.identify(widget.user.id);
-                            _mixpanel
-                                .getPeople()
-                                .increment("cancelled_trades", 1);
-                            _mixpanel.getPeople().increment("total_trades", 1);
-                            _mixpanel.track(
-                              "trade_cancelled_by_user_success",
-                              properties: {
-                                "userId": widget.user.id,
-                                "questionId": widget.question.id,
-                                "questionName": widget.question.name,
-                              },
-                            );
-                            setState(() => _isLoading = false);
-                            Navigator.maybeOf(context)!.pop();
-                          } catch (error) {
-                            _mixpanel.identify(widget.user.id);
-                            _mixpanel
-                                .getPeople()
-                                .increment("cancelled_trades_failed", 1);
-                            _mixpanel
-                                .getPeople()
-                                .increment("total_trades_failed", 1);
-                            _mixpanel.track(
-                              "trade_cancelled_by_user_failed",
-                              properties: {
-                                "userId": widget.user.id,
-                                "questionId": widget.question.id,
-                                "questionName": widget.question.name,
-                              },
-                            );
-                            rethrow;
-                          }
-                        },
                       ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.04,
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.035,
+                    child: const AutoSizeText(
+                      "Are you sure you want to cancel the trade?",
+                      style: TextStyle(
+                        fontSize: 18,
+                      ),
+                    ),
+                  ),
+                  const Expanded(
+                    child: SizedBox(
+                      height: 0,
+                    ),
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.065,
+                    width: MediaQuery.of(context).size.width * 0.8,
+                    child: _isLoading
+                        ? const Center(
+                            child: CircularProgressIndicator.adaptive(
+                              backgroundColor: Colors.white,
+                            ),
+                          )
+                        : SwipeButton(
+                            text: 'Slide to cancel',
+                            height: MediaQuery.of(context).size.height * 0.065,
+                            //width: 300,
+                            color: Colors.red,
+                            backgroundColorEnd: Colors.redAccent[100],
+                            onSwipeCallback: () async {
+                              try {
+                                setState(() => _isLoading = true);
+                                bool isQuestionActive =
+                                    await _repository.getQuestionActiveStatus(
+                                        questionId: trade.questionId);
+                                if (isQuestionActive == false) {
+                                  throw 'An error occured';
+                                }
+                                await _repository.cancelTrade(
+                                  trade: trade,
+                                  userId: widget.user.id,
+                                );
+                                _mixpanel.identify(widget.user.id);
+                                _mixpanel
+                                    .getPeople()
+                                    .increment("cancelled_trades", 1);
+                                _mixpanel
+                                    .getPeople()
+                                    .increment("total_trades", 1);
+                                _mixpanel.track(
+                                  "trade_cancelled_by_user_success",
+                                  properties: {
+                                    "userId": widget.user.id,
+                                    "questionId": widget.question.id,
+                                    "questionName": widget.question.name,
+                                  },
+                                );
+                                setState(() => _isLoading = false);
+                                Navigator.maybeOf(context)!.pushReplacement(
+                                  MaterialPageRoute(
+                                    builder: (context) => TradeSuccessScreen(
+                                      user: widget.user,
+                                    ),
+                                  ),
+                                );
+                              } catch (error) {
+                                _mixpanel.identify(widget.user.id);
+                                _mixpanel
+                                    .getPeople()
+                                    .increment("cancelled_trades_failed", 1);
+                                _mixpanel
+                                    .getPeople()
+                                    .increment("total_trades_failed", 1);
+                                _mixpanel.track(
+                                  "trade_cancelled_by_user_failed",
+                                  properties: {
+                                    "userId": widget.user.id,
+                                    "questionId": widget.question.id,
+                                    "questionName": widget.question.name,
+                                  },
+                                );
+                                rethrow;
+                              }
+                            },
+                          ),
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.03,
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       );
@@ -203,7 +253,12 @@ class _MyTradesScreenState extends State<MyTradesScreen>
 
           if (_trades.isEmpty) {
             return const Center(
-              child: AutoSizeText('No trades'),
+              child: AutoSizeText(
+                'No trades',
+                style: TextStyle(
+                  fontSize: 18,
+                ),
+              ),
             );
           }
           return ListView.separated(
@@ -285,15 +340,6 @@ class _MyTradesScreenState extends State<MyTradesScreen>
                                           await cancelTrade(
                                               trade: _trades[index],
                                               context: context);
-                                          Navigator.maybeOf(context)!
-                                              .pushReplacement(
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  TradeSuccessScreen(
-                                                user: widget.user,
-                                              ),
-                                            ),
-                                          );
                                         } catch (error) {
                                           setState(() => _isLoading = false);
                                           Navigator.of(context).pop();

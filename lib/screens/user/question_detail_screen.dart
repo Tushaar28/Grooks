@@ -165,6 +165,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
           builder: (BuildContext context, setState) {
             return Container(
               height: MediaQuery.of(context).size.height * 0.7,
+              width: MediaQuery.of(context).size.width,
               decoration: BoxDecoration(
                 color: const Color(0xFFCDE5FF),
                 borderRadius: BorderRadius.circular(15),
@@ -184,11 +185,17 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                           mainAxisSize: MainAxisSize.max,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            const AutoSizeText(
-                              "Number of trades",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.w500,
+                            SizedBox(
+                              height: MediaQuery.of(context).size.height * 0.1,
+                              width: MediaQuery.of(context).size.width * 0.4,
+                              child: const Center(
+                                child: AutoSizeText(
+                                  "Number of trades",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
                               ),
                             ),
                             Container(
@@ -201,76 +208,81 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                                 ),
                                 borderRadius: BorderRadius.circular(5),
                               ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                children: [
-                                  SizedBox(
-                                    width: MediaQuery.of(context).size.width *
-                                        0.05,
-                                    child: IconButton(
-                                      padding: EdgeInsets.fromLTRB(
-                                        MediaQuery.of(context).size.width *
-                                            0.01,
-                                        0,
-                                        0,
-                                        MediaQuery.of(context).size.width *
-                                            0.001,
+                              child: SizedBox(
+                                width: MediaQuery.of(context).size.width * 0.2,
+                                height:
+                                    MediaQuery.of(context).size.height * 0.03,
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.05,
+                                      child: IconButton(
+                                        padding: EdgeInsets.fromLTRB(
+                                          MediaQuery.of(context).size.width *
+                                              0.01,
+                                          0,
+                                          0,
+                                          MediaQuery.of(context).size.width *
+                                              0.001,
+                                        ),
+                                        icon: const Icon(
+                                          Icons.remove,
+                                          size: 22,
+                                        ),
+                                        onPressed: () {
+                                          if (_count > 1) {
+                                            setState(() => _count--);
+                                          }
+                                        },
                                       ),
-                                      icon: const Icon(
-                                        Icons.remove,
-                                        size: 22,
+                                    ),
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.02,
+                                    ),
+                                    Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.05,
+                                      decoration: const BoxDecoration(
+                                        color: Color(0xFF1C3857),
                                       ),
-                                      onPressed: () {
-                                        if (_count > 1) {
-                                          setState(() => _count--);
-                                        }
-                                      },
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: MediaQuery.of(context).size.width *
-                                        0.02,
-                                  ),
-                                  Container(
-                                    width: MediaQuery.of(context).size.width *
-                                        0.05,
-                                    decoration: const BoxDecoration(
-                                      color: Color(0xFF1C3857),
-                                    ),
-                                    child: Center(
-                                      child: AutoSizeText(
-                                        "$_count",
-                                        style: const TextStyle(
-                                          color: Colors.white,
+                                      child: Center(
+                                        child: AutoSizeText(
+                                          "$_count",
+                                          style: const TextStyle(
+                                            color: Colors.white,
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  SizedBox(
-                                    width: MediaQuery.of(context).size.width *
-                                        0.05,
-                                    child: IconButton(
-                                      padding: EdgeInsets.fromLTRB(
-                                        MediaQuery.of(context).size.width *
-                                            0.01,
-                                        0,
-                                        0,
-                                        MediaQuery.of(context).size.width *
-                                            0.001,
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.05,
+                                      child: IconButton(
+                                        padding: EdgeInsets.fromLTRB(
+                                          MediaQuery.of(context).size.width *
+                                              0.01,
+                                          0,
+                                          0,
+                                          MediaQuery.of(context).size.width *
+                                              0.001,
+                                        ),
+                                        icon: const Icon(
+                                          Icons.add,
+                                          size: 22,
+                                        ),
+                                        onPressed: () {
+                                          if (_count < 10) {
+                                            setState(() => _count++);
+                                          }
+                                        },
                                       ),
-                                      icon: const Icon(
-                                        Icons.add,
-                                        size: 22,
-                                      ),
-                                      onPressed: () {
-                                        if (_count < 10) {
-                                          setState(() => _count++);
-                                        }
-                                      },
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
                             ),
                           ],
@@ -282,6 +294,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                     ),
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.17,
+                      width: MediaQuery.of(context).size.width,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         mainAxisSize: MainAxisSize.max,
@@ -289,20 +302,32 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                           Row(
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: const [
-                              AutoSizeText(
-                                "Your trading amount",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
+                            children: [
+                              SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.03,
+                                width: MediaQuery.of(context).size.width * 0.4,
+                                child: const AutoSizeText(
+                                  "Your trading amount",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
                               ),
-                              AutoSizeText(
-                                "Your Potential Win",
-                                style: TextStyle(
-                                  color: Color(0xFF007AFF),
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
+                              SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.03,
+                                width: MediaQuery.of(context).size.width * 0.5,
+                                child: const Center(
+                                  child: AutoSizeText(
+                                    "Your Potential Win",
+                                    style: TextStyle(
+                                      color: Color(0xFF007AFF),
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ],
@@ -358,7 +383,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           AutoSizeText(
-                            "If Final Outcome is : ${isYes ? "Yes" : "No"}",
+                            "If Final Outcome is ${isYes ? "Yes" : "No"}",
                             style: const TextStyle(
                               color: Colors.grey,
                               fontSize: 14,
@@ -366,7 +391,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                             ),
                           ),
                           AutoSizeText(
-                            "You make profit of : ${100 - _currentTrade} coins",
+                            "You make profit of ${100 - _currentTrade} coins",
                             style: const TextStyle(
                               color: Colors.green,
                               fontSize: 14,
@@ -374,7 +399,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                             ),
                           ),
                           AutoSizeText(
-                            "Else you will lose : $_currentTrade coins",
+                            "Else you will lose $_currentTrade coins",
                             style: const TextStyle(
                               color: Colors.red,
                               fontSize: 14,
@@ -412,7 +437,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                             ],
                           ),
                           const AutoSizeText(
-                            "So you can earn equivalent of ₹10 from 1 trade.",
+                            "Your trade will be cancelled if it is not matched by any other user",
                             style: TextStyle(
                               color: Colors.grey,
                               fontSize: 14,

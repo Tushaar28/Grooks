@@ -21,14 +21,14 @@ void main() async {
   );
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
 
-  // runApp(
-  //   DevicePreview(
-  //     enabled: !kReleaseMode,
-  //     builder: (context) => const MyApp(), // Wrap your app
-  //   ),
-  // );
+  runApp(
+    DevicePreview(
+      enabled: !kReleaseMode,
+      builder: (context) => const MyApp(), // Wrap your app
+    ),
+  );
 
-  runApp(const MyApp());
+  //runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {

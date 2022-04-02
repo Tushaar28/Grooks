@@ -35,41 +35,89 @@ class CustomDrawer extends StatelessWidget {
   void logout({
     required BuildContext context,
   }) {
-    showDialog(
+    showModalBottomSheet(
+      backgroundColor: Colors.transparent,
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
-          title: const AutoSizeText('Alert'),
-          content: const AutoSizeText('Are you sure you want to logout?'),
-          actions: [
-            SwipeButton(
-              text: 'Slide to logout',
-              height: MediaQuery.of(context).size.height * 0.06,
-              width: 300,
-              color: Colors.red,
-              backgroundColorEnd: Colors.redAccent[100],
-              onSwipeCallback: () async {
-                try {
-                  _mixpanel.identify(user.id);
-                  _mixpanel.track(
-                    "logout",
-                    properties: {
-                      "userId": user.id,
+        return Card(
+          elevation: 10,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: SizedBox(
+            height: MediaQuery.of(context).size.height * 0.25,
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.02,
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.035,
+                  child: const AutoSizeText(
+                    "Logout",
+                    minFontSize: 18,
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.red,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.04,
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.035,
+                  child: const AutoSizeText(
+                    "Are you sure you want to logout?",
+                    style: TextStyle(
+                      fontSize: 18,
+                    ),
+                  ),
+                ),
+                const Expanded(
+                  child: SizedBox(
+                    height: 0,
+                  ),
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.065,
+                  width: 300,
+                  child: SwipeButton(
+                    text: 'Slide to logout',
+                    height: MediaQuery.of(context).size.height * 0.065,
+                    width: 300,
+                    color: Colors.red,
+                    backgroundColorEnd: Colors.redAccent[100],
+                    onSwipeCallback: () async {
+                      try {
+                        _mixpanel.identify(user.id);
+                        _mixpanel.track(
+                          "logout",
+                          properties: {
+                            "userId": user.id,
+                          },
+                        );
+                        await _repository.signOut();
+                        Navigator.of(context).pushAndRemoveUntil(
+                            MaterialPageRoute(
+                              builder: (context) => const LoginScreen(),
+                            ),
+                            (route) => false);
+                      } catch (error) {
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(logoutFailureSnackbar);
+                      }
                     },
-                  );
-                  await _repository.signOut();
-                  Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(
-                        builder: (context) => const LoginScreen(),
-                      ),
-                      (route) => false);
-                } catch (error) {
-                  ScaffoldMessenger.of(context)
-                      .showSnackBar(logoutFailureSnackbar);
-                }
-              },
+                  ),
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.03,
+                ),
+              ],
             ),
-          ],
+          ),
         );
       },
     );
@@ -188,181 +236,199 @@ class CustomDrawer extends StatelessWidget {
             color: Colors.transparent,
             child: Column(
               children: [
-                ListTile(
-                  leading: Image.asset(
-                    "assets/images/refer_drawer.png",
-                    height: 40,
-                  ),
-                  title: const AutoSizeText(
-                    'Refer and Earn',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w400,
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.06,
+                  child: ListTile(
+                    leading: Image.asset(
+                      "assets/images/refer_drawer.png",
+                      height: 40,
                     ),
-                  ),
-                  trailing: const Icon(
-                    Icons.arrow_forward_ios,
-                    color: Colors.black87,
-                  ),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).push(
-                      PageTransition(
-                        child: ReferralWidget(user: user),
-                        type: PageTransitionType.bottomToTop,
-                        duration: const Duration(milliseconds: 300),
-                        reverseDuration: const Duration(milliseconds: 300),
+                    title: const AutoSizeText(
+                      'Refer and Earn',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w400,
                       ),
-                    );
-                  },
-                ),
-                ListTile(
-                  leading: Image.asset(
-                    "assets/images/WithdrawIcon.png",
-                    height: 40,
-                  ),
-                  title: const AutoSizeText(
-                    'Withdraw',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w400,
                     ),
-                  ),
-                  trailing: const Icon(
-                    Icons.arrow_forward_ios,
-                    color: Colors.black87,
-                  ),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).push(
-                      PageTransition(
-                        child: WithdrawlScreen(
-                          userId: user.id,
+                    trailing: const Icon(
+                      Icons.arrow_forward_ios,
+                      color: Colors.black87,
+                    ),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Navigator.of(context).push(
+                        PageTransition(
+                          child: ReferralWidget(user: user),
+                          type: PageTransitionType.bottomToTop,
+                          duration: const Duration(milliseconds: 300),
+                          reverseDuration: const Duration(milliseconds: 300),
                         ),
-                        type: PageTransitionType.bottomToTop,
-                        duration: const Duration(milliseconds: 300),
-                        reverseDuration: const Duration(milliseconds: 300),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
-                ListTile(
-                  leading: Image.asset(
-                    "assets/images/how_to_trade_drawer.png",
-                    height: 40,
-                  ),
-                  title: const AutoSizeText(
-                    'How to trade',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w400,
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.06,
+                  child: ListTile(
+                    leading: Image.asset(
+                      "assets/images/WithdrawIcon.png",
+                      height: 40,
                     ),
-                  ),
-                  trailing: const Icon(
-                    Icons.arrow_forward_ios,
-                    color: Colors.black87,
-                  ),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).push(
-                      PageTransition(
-                        child: HowToTradeScreen(user: user),
-                        type: PageTransitionType.bottomToTop,
-                        duration: const Duration(milliseconds: 300),
-                        reverseDuration: const Duration(milliseconds: 300),
+                    title: const AutoSizeText(
+                      'Withdraw',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w400,
                       ),
-                    );
-                  },
+                    ),
+                    trailing: const Icon(
+                      Icons.arrow_forward_ios,
+                      color: Colors.black87,
+                    ),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Navigator.of(context).push(
+                        PageTransition(
+                          child: WithdrawlScreen(
+                            userId: user.id,
+                          ),
+                          type: PageTransitionType.bottomToTop,
+                          duration: const Duration(milliseconds: 300),
+                          reverseDuration: const Duration(milliseconds: 300),
+                        ),
+                      );
+                    },
+                  ),
                 ),
-                ListTile(
-                  leading: Image.asset(
-                    "assets/images/support_drawer.png",
-                    height: 40,
-                  ),
-                  title: const AutoSizeText(
-                    'Support',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w400,
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.06,
+                  child: ListTile(
+                    leading: Image.asset(
+                      "assets/images/how_to_trade_drawer.png",
+                      height: 40,
                     ),
-                  ),
-                  trailing: const Icon(
-                    Icons.arrow_forward_ios,
-                    color: Colors.black87,
-                  ),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).push(
-                      PageTransition(
-                        child: FeedbackScreen(user: user),
-                        type: PageTransitionType.bottomToTop,
-                        duration: const Duration(milliseconds: 300),
-                        reverseDuration: const Duration(milliseconds: 300),
+                    title: const AutoSizeText(
+                      'How to trade',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w400,
                       ),
-                    );
-                  },
+                    ),
+                    trailing: const Icon(
+                      Icons.arrow_forward_ios,
+                      color: Colors.black87,
+                    ),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Navigator.of(context).push(
+                        PageTransition(
+                          child: HowToTradeScreen(user: user),
+                          type: PageTransitionType.bottomToTop,
+                          duration: const Duration(milliseconds: 300),
+                          reverseDuration: const Duration(milliseconds: 300),
+                        ),
+                      );
+                    },
+                  ),
                 ),
-                ListTile(
-                  leading: Image.asset(
-                    "assets/images/StoreIcon.png",
-                    height: 40,
-                  ),
-                  title: const AutoSizeText(
-                    'Store',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w400,
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.06,
+                  child: ListTile(
+                    leading: Image.asset(
+                      "assets/images/support_drawer.png",
+                      height: 40,
                     ),
-                  ),
-                  trailing: const Icon(
-                    Icons.arrow_forward_ios,
-                    color: Colors.black87,
-                  ),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).push(
-                      PageTransition(
-                        child: StoreScreen(user: user),
-                        type: PageTransitionType.bottomToTop,
-                        duration: const Duration(milliseconds: 300),
-                        reverseDuration: const Duration(milliseconds: 300),
+                    title: const AutoSizeText(
+                      'Support',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w400,
                       ),
-                    );
-                  },
+                    ),
+                    trailing: const Icon(
+                      Icons.arrow_forward_ios,
+                      color: Colors.black87,
+                    ),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Navigator.of(context).push(
+                        PageTransition(
+                          child: FeedbackScreen(user: user),
+                          type: PageTransitionType.bottomToTop,
+                          duration: const Duration(milliseconds: 300),
+                          reverseDuration: const Duration(milliseconds: 300),
+                        ),
+                      );
+                    },
+                  ),
                 ),
-                ListTile(
-                  leading: Image.asset(
-                    "assets/images/help_your_friends_drawer.png",
-                    height: 40,
-                  ),
-                  title: const AutoSizeText(
-                    'Help your friends',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w400,
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.06,
+                  child: ListTile(
+                    leading: Image.asset(
+                      "assets/images/StoreIcon.png",
+                      height: 40,
                     ),
-                  ),
-                  trailing: const Icon(
-                    Icons.arrow_forward_ios,
-                    color: Colors.black87,
-                  ),
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).push(
-                      PageTransition(
-                        child: CoinsTransferScreen(user: user),
-                        type: PageTransitionType.bottomToTop,
-                        duration: const Duration(milliseconds: 300),
-                        reverseDuration: const Duration(milliseconds: 300),
+                    title: const AutoSizeText(
+                      'Store',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w400,
                       ),
-                    );
-                  },
+                    ),
+                    trailing: const Icon(
+                      Icons.arrow_forward_ios,
+                      color: Colors.black87,
+                    ),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Navigator.of(context).push(
+                        PageTransition(
+                          child: StoreScreen(user: user),
+                          type: PageTransitionType.bottomToTop,
+                          duration: const Duration(milliseconds: 300),
+                          reverseDuration: const Duration(milliseconds: 300),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.06,
+                  child: ListTile(
+                    leading: Image.asset(
+                      "assets/images/help_your_friends_drawer.png",
+                      height: 40,
+                    ),
+                    title: const AutoSizeText(
+                      'Help your friends',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                    trailing: const Icon(
+                      Icons.arrow_forward_ios,
+                      color: Colors.black87,
+                    ),
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Navigator.of(context).push(
+                        PageTransition(
+                          child: CoinsTransferScreen(user: user),
+                          type: PageTransitionType.bottomToTop,
+                          duration: const Duration(milliseconds: 300),
+                          reverseDuration: const Duration(milliseconds: 300),
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ],
             ),

@@ -95,9 +95,9 @@ class _TradesActivityScreenState extends State<TradesActivityScreen> {
       case Status.LOST:
         return "${trade.coinsWon!.abs()} coins lost";
       case Status.ACTIVE_PAIRED:
-        return "Trade is Filled";
+        return "Trade is paired";
       case Status.ACTIVE_UNPAIRED:
-        return "Trade is not Filled";
+        return "Trade is not paired";
       case Status.AUTO_CANCEL:
         return "${trade.coins} coins returned";
       case Status.CANCELLED_BY_USER:

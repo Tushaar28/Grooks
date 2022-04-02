@@ -9,7 +9,6 @@ import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/authentication/login_screen.dart';
 import 'package:grooks_dev/screens/user/trade_success_screen.dart';
 import 'package:grooks_dev/services/mixpanel.dart';
-import 'package:grooks_dev/widgets/custom_button.dart';
 import 'package:grooks_dev/widgets/swipe_button.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 
@@ -36,6 +35,7 @@ class _TopTradesScreenState extends State<TopTradesScreen>
   late bool _dataLoaded;
   late bool? _isQuestionActive;
   late final Mixpanel _mixpanel;
+  late bool _done;
 
   final viewSuccessSnackbar = const SnackBar(
     content: AutoSizeText("Your view has been placed"),
@@ -57,6 +57,7 @@ class _TopTradesScreenState extends State<TopTradesScreen>
     _initMixpanel();
     _isActive = true;
     _dataLoaded = false;
+    _done = false;
     _isQuestionActive = true;
     _repository = FirebaseRepository();
     getUserActiveStatus();
@@ -126,100 +127,157 @@ class _TopTradesScreenState extends State<TopTradesScreen>
     return data;
   }
 
-  Future<bool> pairTradeConfirmation({
+  Future<void> showTradeSlider({
     required BuildContext context,
     required Trade trade,
   }) async {
-    bool answer = await showDialog(
+    await showModalBottomSheet(
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
       context: context,
-      builder: (BuildContext context) => StatefulBuilder(
-        builder: (context, setState) {
-          return AlertDialog(
-            title: const AutoSizeText('Alert'),
-            content:
-                const AutoSizeText('Are you sure you want to pair this trade?'),
-            actions: [
-              _isLoading
-                  ? const Center(
-                      child: CircularProgressIndicator.adaptive(
-                        backgroundColor: Colors.white,
-                      ),
-                    )
-                  : SwipeButton(
-                      text: 'Slide to confirm',
-                      height: MediaQuery.of(context).size.height * 0.06,
-                      width: 300,
-                      backgroundColorEnd: Colors.blueAccent[100],
-                      onSwipeCallback: () async {
-                        try {
-                          setState(() => _isLoading = true);
-                          await pairTrade(trade: trade);
-                          _mixpanel.identify(widget.user.id);
-                          _mixpanel.getPeople().increment("paired_trades", 1);
-                          _mixpanel.getPeople().increment("total_trades", 1);
-                          _mixpanel.track(
-                            "trade_pair_success",
-                            properties: {
-                              "userId": widget.user.id,
-                              "questionId": widget.question.id,
-                              "questionName": widget.question.name,
-                            },
-                          );
-                          Navigator.of(context).pushAndRemoveUntil(
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  TradeSuccessScreen(user: widget.user),
-                            ),
-                            (r) => false,
-                          );
-                        } catch (error) {
-                          _mixpanel.identify(widget.user.id);
-                          _mixpanel
-                              .getPeople()
-                              .increment("paired_trades_failed", 1);
-                          _mixpanel
-                              .getPeople()
-                              .increment("total_trades_failed", 1);
-                          _mixpanel.track(
-                            "trade_pair_failed",
-                            properties: {
-                              "userId": widget.user.id,
-                              "questionId": widget.question.id,
-                              "questionName": widget.question.name,
-                            },
-                          );
-                          Navigator.of(context).pop();
-                          setState(() => _isLoading = false);
-                          ScaffoldMessenger.of(context).hideCurrentSnackBar();
-                          if (error.toString() == "Insufficient coins") {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: AutoSizeText("Insufficient coins"),
-                                backgroundColor: Colors.red,
-                                duration: Duration(seconds: 2),
-                              ),
-                            );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: AutoSizeText("An error occured"),
-                                backgroundColor: Colors.red,
-                                duration: Duration(seconds: 2),
-                              ),
-                            );
-                          }
-                          rethrow;
-                        } finally {
-                          setState(() => _isLoading = false);
-                        }
-                      },
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, setState) {
+            return Card(
+              elevation: 10,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: SizedBox(
+                height: MediaQuery.of(context).size.height * 0.25,
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.02,
                     ),
-            ],
-          );
-        },
-      ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.035,
+                      child: const AutoSizeText(
+                        "Match Trade",
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.blue,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.04,
+                    ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.035,
+                      child: const AutoSizeText(
+                        "Are you sure you want to pair this trade?",
+                        style: TextStyle(
+                          fontSize: 18,
+                        ),
+                      ),
+                    ),
+                    const Expanded(
+                      child: SizedBox(
+                        height: 0,
+                      ),
+                    ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.065,
+                      width: MediaQuery.of(context).size.width * 0.8,
+                      child: _isLoading
+                          ? const Center(
+                              child: CircularProgressIndicator.adaptive(
+                                backgroundColor: Colors.white,
+                              ),
+                            )
+                          : SwipeButton(
+                              text: 'Slide to pair',
+                              height: MediaQuery.of(context).size.height * 0.06,
+                              width: 300,
+                              color: Theme.of(context).primaryColor,
+                              backgroundColorEnd: Colors.blueAccent[100],
+                              onSwipeCallback: () async {
+                                try {
+                                  setState(() => _isLoading = true);
+                                  await pairTrade(trade: trade);
+                                  _mixpanel.identify(widget.user.id);
+                                  _mixpanel
+                                      .getPeople()
+                                      .increment("paired_trades", 1);
+                                  _mixpanel
+                                      .getPeople()
+                                      .increment("total_trades", 1);
+                                  _mixpanel.track(
+                                    "trade_pair_success",
+                                    properties: {
+                                      "userId": widget.user.id,
+                                      "questionId": widget.question.id,
+                                      "questionName": widget.question.name,
+                                    },
+                                  );
+                                  Navigator.of(context).pushAndRemoveUntil(
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          TradeSuccessScreen(user: widget.user),
+                                    ),
+                                    (r) => false,
+                                  );
+                                } catch (error) {
+                                  _mixpanel.identify(widget.user.id);
+                                  _mixpanel
+                                      .getPeople()
+                                      .increment("paired_trades_failed", 1);
+                                  _mixpanel
+                                      .getPeople()
+                                      .increment("total_trades_failed", 1);
+                                  _mixpanel.track(
+                                    "trade_pair_failed",
+                                    properties: {
+                                      "userId": widget.user.id,
+                                      "questionId": widget.question.id,
+                                      "questionName": widget.question.name,
+                                    },
+                                  );
+                                  Navigator.of(context).pop();
+                                  setState(() => _isLoading = false);
+                                  ScaffoldMessenger.of(context)
+                                      .hideCurrentSnackBar();
+                                  if (error.toString() ==
+                                      "Insufficient coins") {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content:
+                                            AutoSizeText("Insufficient coins"),
+                                        backgroundColor: Colors.red,
+                                        duration: Duration(seconds: 2),
+                                      ),
+                                    );
+                                  } else {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content:
+                                            AutoSizeText("An error occured"),
+                                        backgroundColor: Colors.red,
+                                        duration: Duration(seconds: 2),
+                                      ),
+                                    );
+                                  }
+                                  rethrow;
+                                } finally {
+                                  setState(() => _isLoading = false);
+                                }
+                              },
+                            ),
+                    ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.03,
+                    ),
+                  ],
+                ),
+              ),
+            );
+          },
+        );
+      },
     );
-    return answer;
   }
 
   Future<void> pairTrade({
@@ -288,6 +346,16 @@ class _TopTradesScreenState extends State<TopTradesScreen>
       return const Center(
         child: CircularProgressIndicator.adaptive(
           backgroundColor: Colors.white,
+        ),
+      );
+    }
+    if (_trades.isEmpty) {
+      return const Center(
+        child: AutoSizeText(
+          "No trades",
+          style: TextStyle(
+            fontSize: 18,
+          ),
         ),
       );
     }
@@ -401,7 +469,7 @@ class _TopTradesScreenState extends State<TopTradesScreen>
                         child: ElevatedButton(
                           onPressed: () async {
                             try {
-                              await pairTradeConfirmation(
+                              await showTradeSlider(
                                   context: context,
                                   trade: _trades[_tradesKeys[index]].first);
                             } catch (error) {}

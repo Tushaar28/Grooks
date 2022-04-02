@@ -18,6 +18,7 @@ import 'package:grooks_dev/models/transfer.dart';
 import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/models/wallet.dart';
 import 'package:grooks_dev/services/mixpanel.dart';
+import 'package:grooks_dev/services/my_encryption.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
 import '../models/transaction.dart' as model;
 import 'package:dbcrypt/dbcrypt.dart';
@@ -192,6 +193,26 @@ class FirebaseMethods {
     }
   }
 
+  Future<int> get getUserReferralCoins async {
+    try {
+      int coins =
+          (await settingsCollection.get()).docs.first.get("referralCoins");
+      return coins;
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<String> get getUserReferralMessage async {
+    try {
+      String message =
+          (await settingsCollection.get()).docs.first.get("referralMessage");
+      return message;
+    } catch (error) {
+      rethrow;
+    }
+  }
+
   Future<bool> isNewUser({
     required String mobile,
   }) async {
@@ -286,10 +307,13 @@ class FirebaseMethods {
     }
   }
 
-  String generateReferralCode({
-    required String userId,
-  }) {
-    return (userId.split('').reversed.join('')).substring(0, 7);
+  Future<String> generateReferralCode({
+    required String userName,
+    required String userMobile,
+  }) async {
+    var id = MyEncryptionDecryption.encryptAES(userMobile);
+    var randomCode = "${userName.substring(0, 3)}-${id.base64.substring(0, 8)}";
+    return randomCode;
   }
 
   Future<void> addUser({
@@ -316,7 +340,10 @@ class FirebaseMethods {
           code: referralCode,
         );
       }
-      String refCode = generateReferralCode(userId: uid);
+      String refCode = await generateReferralCode(
+        userMobile: mobile!,
+        userName: name,
+      );
       FirebaseMessaging _messaging = FirebaseMessaging.instance;
       String? token = await _messaging.getToken();
       DBCrypt dBCrypt = DBCrypt();

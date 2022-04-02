@@ -35,7 +35,7 @@ class _QuestionCardState extends State<QuestionCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: MediaQuery.of(context).size.height * 0.215,
+      height: MediaQuery.of(context).size.height * 0.24,
       width: double.infinity,
       color: Colors.transparent,
       child: Card(
@@ -55,14 +55,12 @@ class _QuestionCardState extends State<QuestionCard> {
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 0.035,
-                width: MediaQuery.of(context).size.width,
+              Expanded(
                 child: Center(
                   child: AutoSizeText(
                     widget.question.name,
                     style: const TextStyle(
-                      fontSize: 12,
+                      fontSize: 14,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
@@ -218,7 +216,9 @@ class _QuestionCardState extends State<QuestionCard> {
               if (widget.question.openTradesCount! +
                       widget.question.pairedTradesCount! >
                   0) ...[
-                Expanded(
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.02,
+                  width: double.infinity,
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -244,8 +244,10 @@ class _QuestionCardState extends State<QuestionCard> {
               if (widget.question.openTradesCount! +
                       widget.question.pairedTradesCount! ==
                   0) ...[
-                const Expanded(
-                  child: AutoSizeText(
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.02,
+                  width: double.infinity,
+                  child: const AutoSizeText(
                     "Be the first to trade",
                     style: TextStyle(
                       color: Colors.grey,

@@ -44,6 +44,11 @@ class FirebaseRepository {
 
   Future<String> get getMixpanelToken => firebaseMethods.getMixpanelToken;
 
+  Future<int> get getUserReferralCoins => firebaseMethods.getUserReferralCoins;
+
+  Future<String> get getUserReferralMessage =>
+      firebaseMethods.getUserReferralMessage;
+
   Future<bool> isNewUser({
     required String mobile,
   }) =>

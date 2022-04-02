@@ -37,14 +37,18 @@ class _ReferralWidgetState extends State<ReferralWidget> {
     duration: Duration(seconds: 2),
   );
   bool _isLoading = false, _dataLoaded = false;
-  String code = "";
+  late String _code, _referralMessage;
   late final Mixpanel _mixpanel;
+  late int _referralCoins;
 
   @override
   void initState() {
     super.initState();
     _initMixpanel();
     _isLoading = false;
+    _code = "";
+    _referralMessage = "";
+    _referralCoins = 500;
     repository = FirebaseRepository();
     getUserReferralCode();
   }
@@ -59,9 +63,11 @@ class _ReferralWidgetState extends State<ReferralWidget> {
 
   Future<void> getUserReferralCode() async {
     try {
-      code = await repository.getUserReferralCode(
+      _code = await repository.getUserReferralCode(
         userId: widget.user.id,
       );
+      _referralMessage = await repository.getUserReferralMessage;
+      _referralCoins = await repository.getUserReferralCoins;
       setState(() => _dataLoaded = true);
     } catch (error) {
       Navigator.of(context).pushReplacement(
@@ -98,7 +104,6 @@ class _ReferralWidgetState extends State<ReferralWidget> {
             fontSize: 18,
           ),
         ),
-        actions: [],
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(
             bottom: Radius.circular(20),
@@ -131,11 +136,13 @@ class _ReferralWidgetState extends State<ReferralWidget> {
                   Container(
                     width: MediaQuery.of(context).size.width,
                     height: MediaQuery.of(context).size.height * 0.07,
-                    padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
-                    child: const Center(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: MediaQuery.of(context).size.width * 0.05,
+                    ),
+                    child: Center(
                       child: AutoSizeText(
-                        'Refer your friends and earn 500 coins on every successful referral',
-                        style: TextStyle(
+                        'Refer your friends and earn $_referralCoins coins on every successful referral',
+                        style: const TextStyle(
                           fontFamily: 'Poppins',
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -152,7 +159,7 @@ class _ReferralWidgetState extends State<ReferralWidget> {
                     ),
                     child: const Center(
                       child: AutoSizeText(
-                        'Your Referral code',
+                        'Your Referral Code',
                         style: TextStyle(
                           fontFamily: 'Poppins',
                           fontSize: 18,
@@ -179,7 +186,7 @@ class _ReferralWidgetState extends State<ReferralWidget> {
                           child: Align(
                             alignment: const Alignment(0, 0),
                             child: AutoSizeText(
-                              code,
+                              _code,
                               style: const TextStyle(
                                 fontFamily: 'Poppins',
                                 fontSize: 18,
@@ -203,8 +210,8 @@ class _ReferralWidgetState extends State<ReferralWidget> {
                               onPressed: () async {
                                 try {
                                   // await ClipboardManager.copyToClipBoard(
-                                  //     code);
-                                  await FlutterClipboard.copy(code);
+                                  //     _code);
+                                  await FlutterClipboard.copy(_code);
                                   ScaffoldMessenger.of(context)
                                       .showSnackBar(copySuccessSnakbar);
                                 } catch (error) {
@@ -242,9 +249,10 @@ class _ReferralWidgetState extends State<ReferralWidget> {
                               onPressed: () async {
                                 setState(() => _isLoading = true);
                                 var referalLink =
-                                    await dynamicLink.createReferralLink(code);
-                                Share.share(
-                                    'Inviting you to join Grooks app with me. On Grooks we can make opinions using real money on various topics like Sports, Weather, Politics, BigBoss, Kabaddi, Finance, News and win if our opinions are right. Join me on Grooks and trade on your opinions. Use the link to claim your free trades worth ₹250. Download Grooks here: $referalLink');
+                                    await dynamicLink.createReferralLink(_code);
+                                String message =
+                                    "$_referralMessage $referalLink or sign up using my referral code: $_code";
+                                Share.share(message);
                                 _mixpanel.identify(widget.user.id);
                                 _mixpanel.track("app_share", properties: {
                                   "userId": widget.user.id,
