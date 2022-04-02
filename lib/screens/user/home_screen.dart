@@ -126,37 +126,42 @@ class _HomeScreenState extends State<HomeScreen> {
                     )
                   : Column(
                       children: [
-                        CustomTabView(
-                          initPosition: _index,
-                          onPositionChange: (int? value) {
-                            _mixpanel.identify(widget.user.id);
-                            _mixpanel.track("category_clicked", properties: {
-                              "categoryId": _categories[value!].id,
-                              "categoryName": _categories[value].name,
-                            });
-                            setState(() => _index = value);
-                          },
-                          itemCount: _categories.length,
-                          tabBuilder: (context, index) {
-                            _index = index;
-                            return Tab(
-                              height: MediaQuery.of(context).size.height * 0.1,
-                              text: _categories[_index].name,
-                              icon: CircleAvatar(
-                                radius:
-                                    MediaQuery.of(context).size.width * 0.07,
-                                backgroundColor: Colors.transparent,
-                                child: _categories[_index].image == null ||
-                                        _categories[_index].image!.isEmpty
-                                    ? Image.asset("assets/images/fallback.png")
-                                    : FadeInImage.assetNetwork(
-                                        placeholder:
-                                            "assets/images/fallback.png",
-                                        image: _categories[_index].image ??
-                                            "assets/images/fallback.png"),
-                              ),
-                            );
-                          },
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.11,
+                          child: CustomTabView(
+                            initPosition: _index,
+                            onPositionChange: (int? value) {
+                              _mixpanel.identify(widget.user.id);
+                              _mixpanel.track("category_clicked", properties: {
+                                "categoryId": _categories[value!].id,
+                                "categoryName": _categories[value].name,
+                              });
+                              setState(() => _index = value);
+                            },
+                            itemCount: _categories.length,
+                            tabBuilder: (context, index) {
+                              _index = index;
+                              return Tab(
+                                height:
+                                    MediaQuery.of(context).size.height * 0.11,
+                                text: _categories[_index].name,
+                                icon: CircleAvatar(
+                                  radius:
+                                      MediaQuery.of(context).size.width * 0.06,
+                                  backgroundColor: Colors.transparent,
+                                  child: _categories[_index].image == null ||
+                                          _categories[_index].image!.isEmpty
+                                      ? Image.asset(
+                                          "assets/images/fallback.png")
+                                      : FadeInImage.assetNetwork(
+                                          placeholder:
+                                              "assets/images/fallback.png",
+                                          image: _categories[_index].image ??
+                                              "assets/images/fallback.png"),
+                                ),
+                              );
+                            },
+                          ),
                         ),
                         SizedBox(
                           height: MediaQuery.of(context).size.height * 0.015,
