@@ -619,6 +619,45 @@ class FirebaseMethods {
     }
   }
 
+  Future<String?> findMatchingTrade({
+    required String userId,
+    required String questionId,
+    required bool response,
+    required int coins,
+  }) async {
+    try {
+      QuerySnapshot tradeSnapshot = await tradesCollection
+          .where("questionId", isEqualTo: questionId)
+          .where("response", isEqualTo: !response)
+          .where("coins", isEqualTo: 100 - coins)
+          .where("status",
+              isEqualTo: Status.ACTIVE_UNPAIRED.toString().split('.').last)
+          .where("userId", isNotEqualTo: userId)
+          .orderBy("userId")
+          .orderBy("updatedAt", descending: false)
+          .limit(1)
+          .get();
+      if (tradeSnapshot.size == 0) return null;
+      String id = tradeSnapshot.docs.first.get("id");
+      return id;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  Future<Trade> getTradeDetails({
+    required String tradeId,
+  }) async {
+    try {
+      DocumentSnapshot tradeSnapshot =
+          await tradesCollection.doc(tradeId).get();
+      Trade trade = Trade.fromMap(tradeSnapshot.data() as Map<String, dynamic>);
+      return trade;
+    } catch (error) {
+      rethrow;
+    }
+  }
+
   Future<void> placeTrade({
     required String userId,
     required bool response,
@@ -656,32 +695,36 @@ class FirebaseMethods {
           redeemableCoins -= remainingExpense;
           redeemableCoinsUsed = remainingExpense;
         }
-        String tradeId = tradesCollection.doc().id;
-        Trade trade = Trade(
-          id: tradeId,
-          bonusCoinsUsed: bonusCoinsUsed,
-          redeemableCoinsUsed: redeemableCoinsUsed,
+        String? potentialPairTradeId = await findMatchingTrade(
           coins: bet,
-          createdAt: currentDate,
           questionId: questionId,
           response: response,
-          status: Status.ACTIVE_UNPAIRED,
           userId: userId,
-          updatedAt: currentDate,
         );
-        trades.add(trade);
-        tradeIds.add(tradeId);
-
-        // String transactionId =
-        //     walletsCollection.doc(walletId).collection('transactions').doc().id;
-        // model.Transaction transaction = model.Transaction(
-        //   id: transactionId,
-        //   createdAt: currentDate,
-        //   status: model.TransactionStatus.PROCESSED,
-        //   amount: bet.toDouble(),
-        //   updatedAt: currentDate,
-        // );
-        // transactions.add(transaction);
+        if (potentialPairTradeId != null) {
+          Trade potentialTrade =
+              await getTradeDetails(tradeId: potentialPairTradeId);
+          await pairTrade(
+            firstTrade: potentialTrade,
+            userId: userId,
+          );
+        } else {
+          String tradeId = tradesCollection.doc().id;
+          Trade trade = Trade(
+            id: tradeId,
+            bonusCoinsUsed: bonusCoinsUsed,
+            redeemableCoinsUsed: redeemableCoinsUsed,
+            coins: bet,
+            createdAt: currentDate,
+            questionId: questionId,
+            response: response,
+            status: Status.ACTIVE_UNPAIRED,
+            userId: userId,
+            updatedAt: currentDate,
+          );
+          trades.add(trade);
+          tradeIds.add(tradeId);
+        }
       }
 
       //Add to database
@@ -1583,6 +1626,39 @@ class FirebaseMethods {
         "panNumber": pan,
         "updatedAt": currentDate,
       });
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> getUserReferrals({
+    required String userId,
+  }) async {
+    try {
+      List<Map<String, dynamic>> data = [];
+      List<QueryDocumentSnapshot> snapshotList = [];
+      QuerySnapshot referralSnapshot =
+          await usersCollection.doc(userId).collection("referrals").get();
+      for (var element in referralSnapshot.docs) {
+        snapshotList.add(element);
+      }
+      await Future.forEach(snapshotList, (QueryDocumentSnapshot element) async {
+        Map<String, dynamic> mapData = {};
+        Map<String, dynamic> referralMap =
+            element.data() as Map<String, dynamic>;
+        mapData["referralCoins"] =
+            referralMap.containsKey("referralCoins") == true
+                ? referralMap["referralCoins"]
+                : 500;
+        DocumentSnapshot userSnapshot =
+            await usersCollection.doc(referralMap["userId"]).get();
+        Map<String, dynamic> userMap =
+            userSnapshot.data() as Map<String, dynamic>;
+
+        mapData = {...mapData, ...referralMap, ...userMap};
+        data.add(mapData);
+      });
+      return data;
     } catch (error) {
       rethrow;
     }

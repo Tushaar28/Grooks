@@ -3,10 +3,12 @@ import 'package:clipboard/clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
+import 'package:grooks_dev/screens/user/view_referrals_screen.dart';
 import 'package:grooks_dev/services/dynamic_link.dart';
 import 'package:grooks_dev/services/mixpanel.dart';
 import 'package:grooks_dev/widgets/custom_button.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:share_plus/share_plus.dart';
 
 import 'error_screen.dart';
@@ -267,6 +269,27 @@ class _ReferralWidgetState extends State<ReferralWidget> {
                               },
                             ),
                           ),
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.05,
+                  ),
+                  TextButton(
+                    child: const Text(
+                      "View Referrals",
+                      style: TextStyle(
+                        fontSize: 16,
+                      ),
+                    ),
+                    onPressed: () => Navigator.of(context).push(
+                      PageTransition(
+                        child: ViewReferralsScreen(
+                          userId: widget.user.id,
+                        ),
+                        type: PageTransitionType.bottomToTop,
+                        duration: const Duration(milliseconds: 300),
+                        reverseDuration: const Duration(milliseconds: 300),
+                      ),
+                    ),
                   ),
                 ],
               ),

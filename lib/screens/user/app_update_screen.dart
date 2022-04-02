@@ -38,73 +38,75 @@ class _AppUpdateScreenState extends State<AppUpdateScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      bottomSheet: StatefulBuilder(
-        builder: (BuildContext context, setState) => Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          elevation: 20,
-          child: Container(
-            height: MediaQuery.of(context).size.height * 0.3,
-            width: MediaQuery.of(context).size.width,
-            decoration: const BoxDecoration(
-              color: Colors.white,
+    return SafeArea(
+      child: Scaffold(
+        bottomSheet: StatefulBuilder(
+          builder: (BuildContext context, setState) => Card(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
             ),
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.02,
-                ),
-                Text(
-                  "App Update",
-                  style: TextStyle(
-                    fontSize: 24,
-                    color: Theme.of(context).primaryColor,
-                    fontWeight: FontWeight.w500,
+            elevation: 20,
+            child: Container(
+              height: MediaQuery.of(context).size.height * 0.3,
+              width: MediaQuery.of(context).size.width,
+              decoration: const BoxDecoration(
+                color: Colors.white,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.02,
                   ),
-                ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.06,
-                ),
-                const Text(
-                  "A newer version of app is available",
-                  style: TextStyle(
-                    fontSize: 18,
+                  Text(
+                    "App Update",
+                    style: TextStyle(
+                      fontSize: 24,
+                      color: Theme.of(context).primaryColor,
+                      fontWeight: FontWeight.w500,
+                    ),
                   ),
-                ),
-                const Expanded(
-                  child: SizedBox(
-                    height: 0,
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.06,
                   ),
-                ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.06,
-                  width: double.infinity,
-                  child: _isLoading
-                      ? const Center(
-                          child: CircularProgressIndicator.adaptive(
-                            backgroundColor: Colors.white,
+                  const Text(
+                    "A newer version of app is available",
+                    style: TextStyle(
+                      fontSize: 18,
+                    ),
+                  ),
+                  const Expanded(
+                    child: SizedBox(
+                      height: 0,
+                    ),
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.06,
+                    width: double.infinity,
+                    child: _isLoading
+                        ? const Center(
+                            child: CircularProgressIndicator.adaptive(
+                              backgroundColor: Colors.white,
+                            ),
+                          )
+                        : CustomButton(
+                            text: "Update Now",
+                            onPressed: () async {
+                              try {
+                                setState(() => _isLoading = true);
+                                OtaUpdate().execute(widget.link).listen(
+                                  (event) {
+                                    showProgressIndicator(value: event.value);
+                                  },
+                                );
+                              } catch (error) {
+                                setState(() => _isLoading = false);
+                              }
+                            },
                           ),
-                        )
-                      : CustomButton(
-                          text: "Update Now",
-                          onPressed: () async {
-                            try {
-                              setState(() => _isLoading = true);
-                              OtaUpdate().execute(widget.link).listen(
-                                (event) {
-                                  showProgressIndicator(value: event.value);
-                                },
-                              );
-                            } catch (error) {
-                              setState(() => _isLoading = false);
-                            }
-                          },
-                        ),
-                ),
-              ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),

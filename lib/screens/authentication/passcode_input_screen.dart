@@ -275,7 +275,7 @@ class _PasswordScreenState extends State<PasswordScreen> {
                                             .getPeople()
                                             .set("name", userDetails.name);
                                         _mixpanel.getPeople().set("mobile",
-                                            userDetails.mobile!.substring(2));
+                                            userDetails.mobile!.substring(3));
                                         _mixpanel
                                             .getPeople()
                                             .set("referrals", 0);

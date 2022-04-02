@@ -523,7 +523,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                                   _mixpanel.getPeople().set("name", user.name);
                                   _mixpanel
                                       .getPeople()
-                                      .set("mobile", user.mobile!.substring(2));
+                                      .set("mobile", user.mobile!.substring(3));
                                   _mixpanel.getPeople().set("referrals", 0);
                                   _mixpanel
                                       .getPeople()

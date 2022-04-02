@@ -7,8 +7,8 @@ import 'package:grooks_dev/models/trade.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/authentication/login_screen.dart';
 import 'package:grooks_dev/services/mixpanel.dart';
-import 'package:intl/intl.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class TradesActivityScreen extends StatefulWidget {
   final String userId;
@@ -292,7 +292,7 @@ class _TradesActivityScreenState extends State<TradesActivityScreen> {
                                         vertical: 8.0,
                                       ),
                                       child: AutoSizeText(
-                                          'Timestamp:  ${DateFormat.yMMMd().format(trade.updatedAt).toString()}',
+                                          'Timestamp:  ${timeago.format(trade.updatedAt)}',
                                           style: const TextStyle(
                                             fontFamily: 'Poppins',
                                             fontSize: 12,

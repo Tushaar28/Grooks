@@ -371,4 +371,9 @@ class FirebaseRepository {
         userId: userId,
         pan: pan,
       );
+
+  Future<List<Map<String, dynamic>>> getUserReferrals({
+    required String userId,
+  }) =>
+      firebaseMethods.getUserReferrals(userId: userId);
 }
