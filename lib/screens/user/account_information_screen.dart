@@ -1,4 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -121,6 +122,33 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
     }
   }
 
+  Future<bool> verifyBankDetails() async {
+    try {
+      String panName =
+          await _repository.getNameOnPanCard(userId: widget.userId);
+      if (_upiController.text.trim().isEmpty) {
+        var res = await FirebaseFunctions.instance
+            .httpsCallable("verifyBankAccount")
+            .call({
+          "name": _nameController.text.trim(),
+          "account": _accountController.text.trim(),
+          "ifsc": _ifscController.text.trim(),
+          "panName": panName,
+        });
+        return res.data;
+      }
+      var res =
+          await FirebaseFunctions.instance.httpsCallable("verifyUPI").call({
+        "name": _nameController.text.trim(),
+        "upi": _upiController.text.trim(),
+        "panName": panName,
+      });
+      return res.data;
+    } catch (error) {
+      rethrow;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -237,6 +265,14 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
                     validator: (value) {
                       return value!.isEmpty ? 'Please enter valid name' : null;
                     },
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.02,
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.05,
+                    child: const AutoSizeText(
+                        "The name on PAN card should be same as account holder's registered name"),
                   ),
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.03,
@@ -364,6 +400,14 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
                     validator: (value) {
                       return value!.isEmpty ? 'Please enter valid name' : null;
                     },
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.02,
+                  ),
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.05,
+                    child: const AutoSizeText(
+                        "The name on PAN card should be same as account holder's registered name"),
                   ),
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.03,
@@ -505,7 +549,7 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
                       if (value == null || value.isEmpty) {
                         return "Enter IFSC Code";
                       }
-                      Pattern pattern = r'^[6789]\d{9}$';
+                      Pattern pattern = r'^[A-Z]{4}0[A-Z0-9]{6}$';
                       RegExp regex = RegExp(pattern.toString());
                       if (!regex.hasMatch(value)) {
                         return "Invalid IFSC Code";
@@ -635,6 +679,22 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
                                     return;
                                   }
                                   if (_formKey.currentState!.validate()) {
+                                    bool isValid = await verifyBankDetails();
+                                    if (!isValid) {
+                                      ScaffoldMessenger.of(context)
+                                          .hideCurrentSnackBar();
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                          content: AutoSizeText(
+                                              "Account Verification failed"),
+                                          backgroundColor: Colors.red,
+                                          duration: Duration(seconds: 1),
+                                        ),
+                                      );
+                                      setState(() => _isLoading = false);
+                                      return;
+                                    }
                                     await submitPayoutRequest();
                                     setState(() {
                                       _isLoading = false;
@@ -653,7 +713,7 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                         content: AutoSizeText(
-                                            "Withdrawl request has been submitted. It may take 24 hours to process your request."),
+                                            "Withdrawl request has been submitted. It may take 48 hours to process your request."),
                                         backgroundColor: Colors.green,
                                         duration: Duration(seconds: 1),
                                       ),

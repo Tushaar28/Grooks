@@ -84,6 +84,7 @@ class _PanVerificationScreenState extends State<PanVerificationScreen> {
       await _repository.updatePanVerificationStatus(
         userId: widget.userId,
         pan: _panController.text.trim().toUpperCase(),
+        name: _nameController.text.trim(),
       );
     } catch (error) {
       rethrow;
@@ -145,7 +146,7 @@ class _PanVerificationScreenState extends State<PanVerificationScreen> {
                 ),
                 TextFormField(
                   controller: _panController,
-                  keyboardType: TextInputType.text,
+                  keyboardType: TextInputType.name,
                   obscureText: false,
                   textCapitalization: TextCapitalization.characters,
                   decoration: const InputDecoration(
@@ -184,7 +185,7 @@ class _PanVerificationScreenState extends State<PanVerificationScreen> {
                 ),
                 TextFormField(
                   controller: _nameController,
-                  keyboardType: TextInputType.text,
+                  keyboardType: TextInputType.name,
                   obscureText: false,
                   decoration: const InputDecoration(
                     labelText: 'Name',

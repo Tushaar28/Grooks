@@ -213,6 +213,16 @@ class FirebaseMethods {
     }
   }
 
+  Future<int> get getWithdrawlLimit async {
+    try {
+      int limit =
+          (await settingsCollection.get()).docs.first.get("withdrawlLimit");
+      return limit;
+    } catch (error) {
+      rethrow;
+    }
+  }
+
   Future<bool> isNewUser({
     required String mobile,
   }) async {
@@ -1618,12 +1628,14 @@ class FirebaseMethods {
   Future<void> updatePanVerificationStatus({
     required String userId,
     required String pan,
+    required String name,
   }) async {
     try {
       DateTime currentDate = DateTime.now();
       await usersCollection.doc(userId).update({
         "isPanVerified": true,
         "panNumber": pan,
+        "nameOnPanCard": name,
         "updatedAt": currentDate,
       });
     } catch (error) {
@@ -1659,6 +1671,18 @@ class FirebaseMethods {
         data.add(mapData);
       });
       return data;
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<String> getNameOnPanCard({
+    required String userId,
+  }) async {
+    try {
+      String name =
+          (await usersCollection.doc(userId).get()).get("nameOnPanCard");
+      return name;
     } catch (error) {
       rethrow;
     }

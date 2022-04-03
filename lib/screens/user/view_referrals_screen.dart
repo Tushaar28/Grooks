@@ -137,7 +137,7 @@ class _ViewReferralsScreenState extends State<ViewReferralsScreen> {
                   style: TextStyle(
                     fontFamily: 'Poppins',
                     color: Theme.of(context).primaryColor,
-                    fontSize: 22,
+                    fontSize: 20,
                   ),
                 ),
               ),

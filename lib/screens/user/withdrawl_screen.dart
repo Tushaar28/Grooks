@@ -32,12 +32,14 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
   late TextEditingController _amountController;
   late double _payoutCommission;
   late final Mixpanel _mixpanel;
+  late int _withdrawlLimit;
 
   @override
   void initState() {
     super.initState();
     _initMixpanel();
     _payoutCommission = 0;
+    _withdrawlLimit = 0;
     _bonusCoins = _redeemableCoins = 0;
     _repository = FirebaseRepository();
     _isLoading = false;
@@ -45,6 +47,7 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
     getUserActiveStatus();
     getUserDetails();
     getUserCoins();
+    getWithdrawlLimit();
     getPayoutCommission();
     _amountController = TextEditingController();
   }
@@ -73,6 +76,15 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
     }
   }
 
+  Future<void> getWithdrawlLimit() async {
+    try {
+      int limit = await _repository.getWithdrawlLimit;
+      _withdrawlLimit = limit;
+    } catch (error) {
+      rethrow;
+    }
+  }
+
   Future<void> getUserDetails() async {
     try {
       Users? user = await _repository.getUserDetails(userId: widget.userId);
@@ -91,7 +103,7 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
     try {
       double? amount = double.tryParse(_amountController.text);
       if (amount == null) return false;
-      return amount >= 300;
+      return amount >= _withdrawlLimit;
     } catch (error) {
       return false;
     }
@@ -269,7 +281,7 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.08,
               ),
-              const AutoSizeText("Minimum Rs 300 can be redeemed"),
+              AutoSizeText("Minimum Rs $_withdrawlLimit can be redeemed"),
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.01,
               ),
@@ -281,20 +293,20 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
                 ],
                 obscureText: false,
                 textAlign: TextAlign.center,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   labelText: 'Amount',
-                  labelStyle: TextStyle(
+                  labelStyle: const TextStyle(
                     color: Colors.black,
                   ),
-                  hintText: 'Enter amount (Minimum Rs 300)',
+                  hintText: 'Enter amount (Minimum Rs $_withdrawlLimit)',
                   contentPadding:
-                      EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                  border: OutlineInputBorder(
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                  border: const OutlineInputBorder(
                     borderRadius: BorderRadius.all(
                       Radius.circular(10),
                     ),
                   ),
-                  enabledBorder: OutlineInputBorder(
+                  enabledBorder: const OutlineInputBorder(
                     borderSide: BorderSide(
                       width: 1,
                     ),
@@ -302,7 +314,7 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
                       Radius.circular(10),
                     ),
                   ),
-                  focusedBorder: OutlineInputBorder(
+                  focusedBorder: const OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.black, width: 2.0),
                     borderRadius: BorderRadius.all(Radius.circular(10)),
                   ),
@@ -406,23 +418,6 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
                                 onSwipeCallback: () async {
                                   try {
                                     setState(() => _isLoading = true);
-                                    // if ((double.parse(_amountController.text)
-                                    //             .ceil() *
-                                    //         10) >
-                                    //     _redeemableCoins!) {
-                                    //   ScaffoldMessenger.of(context)
-                                    //       .hideCurrentSnackBar();
-                                    //   ScaffoldMessenger.of(context)
-                                    //       .showSnackBar(
-                                    //     const SnackBar(
-                                    //       content: AutoSizeText("Insufficient coins"),
-                                    //       backgroundColor: Colors.red,
-                                    //       duration: Duration(seconds: 1),
-                                    //     ),
-                                    //   );
-                                    //   setState(() => _isLoading = false);
-                                    //   return;
-                                    // }
                                     bool isPanVerified = await _repository
                                         .getPanVerificationStatus(
                                             userId: widget.userId);

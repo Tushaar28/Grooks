@@ -49,6 +49,8 @@ class FirebaseRepository {
   Future<String> get getUserReferralMessage =>
       firebaseMethods.getUserReferralMessage;
 
+  Future<int> get getWithdrawlLimit => firebaseMethods.getWithdrawlLimit;
+
   Future<bool> isNewUser({
     required String mobile,
   }) =>
@@ -366,14 +368,21 @@ class FirebaseRepository {
   Future<void> updatePanVerificationStatus({
     required String userId,
     required String pan,
+    required String name,
   }) =>
       firebaseMethods.updatePanVerificationStatus(
         userId: userId,
         pan: pan,
+        name: name,
       );
 
   Future<List<Map<String, dynamic>>> getUserReferrals({
     required String userId,
   }) =>
       firebaseMethods.getUserReferrals(userId: userId);
+
+  Future<String> getNameOnPanCard({
+    required String userId,
+  }) =>
+      firebaseMethods.getNameOnPanCard(userId: userId);
 }
