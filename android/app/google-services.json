@@ -1,42 +1,66 @@
 {
   "project_info": {
-    "project_number": "103105942817",
-    "project_id": "grooks-dev-1",
-    "storage_bucket": "grooks-dev-1.appspot.com"
+    "project_number": "522271326917",
+    "firebase_url": "https://polls-d6bfe-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "polls-d6bfe",
+    "storage_bucket": "polls-d6bfe.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:103105942817:android:59b30e642989b1c80b5a60",
+        "mobilesdk_app_id": "1:522271326917:android:f8a8e1abf8eda60f4226ac",
         "android_client_info": {
-          "package_name": "com.bagoyo.grooks_dev"
+          "package_name": "com.bagoyo.polls"
         }
       },
       "oauth_client": [
         {
-          "client_id": "103105942817-cghm51bnmvu09ii40ejtlrhsvv8cie29.apps.googleusercontent.com",
+          "client_id": "522271326917-ctlq7165kbap1fdi8frud98579kfo4hb.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.bagoyo.grooks_dev",
+            "package_name": "com.bagoyo.polls",
+            "certificate_hash": "9e04bbc0f8156960a67bea49570e58d136284d3c"
+          }
+        },
+        {
+          "client_id": "522271326917-jbu6qef4cskk6np6p9miejg5b2923eav.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bagoyo.polls",
             "certificate_hash": "685921fa2c7c4dc9f4b8084b27556ad6bacea117"
           }
         },
         {
-          "client_id": "103105942817-5gq4p8512qvucgin7icrha9kmfqnddru.apps.googleusercontent.com",
+          "client_id": "522271326917-po1q8a2br9f0krrkp26r1h1a87d57dpi.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.bagoyo.polls",
+            "certificate_hash": "35661d49fd4efce7a7e942c3dcc3e74a97de1a52"
+          }
+        },
+        {
+          "client_id": "522271326917-kgjp0cck0vie7opnvc0rlkk76737sdu2.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBUX6NvDn-6RPpwDOOAfOuebEVftkDco2M"
+          "current_key": "AIzaSyAEI4oMLUVpFRXoRQqqwX9v1xKMIPMsNbk"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "103105942817-5gq4p8512qvucgin7icrha9kmfqnddru.apps.googleusercontent.com",
+              "client_id": "522271326917-kgjp0cck0vie7opnvc0rlkk76737sdu2.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "522271326917-grmnevcq072gcum21t9po0f7sbnp4ojn.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.bagoyo.polls"
+              }
             }
           ]
         }
