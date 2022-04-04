@@ -203,6 +203,20 @@ class _PayoutsAcivityScreenState extends State<PayoutsAcivityScreen> {
                                           "Status: ${payout.status.toString().split('.').last}"),
                                     ),
                                   ),
+                                  if (payout.message != null &&
+                                      payout.message!.isNotEmpty) ...[
+                                    Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 16.0,
+                                          vertical: 8.0,
+                                        ),
+                                        child: AutoSizeText(
+                                            "Reason: ${payout.message}"),
+                                      ),
+                                    ),
+                                  ],
                                   Align(
                                     alignment: Alignment.centerLeft,
                                     child: Padding(

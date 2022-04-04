@@ -33,6 +33,7 @@ class _PanVerificationScreenState extends State<PanVerificationScreen> {
   late TextEditingController _panController, _nameController;
   late bool _isLoading;
   late final Mixpanel _mixpanel;
+  late String panName;
 
   @override
   void initState() {
@@ -43,6 +44,7 @@ class _PanVerificationScreenState extends State<PanVerificationScreen> {
     _panController = TextEditingController();
     _nameController = TextEditingController();
     _isLoading = false;
+    panName = "";
   }
 
   Future<void> _initMixpanel() async {
@@ -60,12 +62,24 @@ class _PanVerificationScreenState extends State<PanVerificationScreen> {
     super.dispose();
   }
 
+  Future<bool> checkIfPanAlreadyLinked() async {
+    try {
+      bool isLinked = await _repository.checkIfPanAlreadyLinked(
+          pan: _panController.text.trim());
+      return isLinked;
+    } catch (error) {
+      rethrow;
+    }
+  }
+
   bool isPanValid(Map<String, dynamic> data) {
     bool isNameMatch = data["registered_name"]
             .toString()
             .toLowerCase()
             .compareTo(data["name_provided"].toString().toLowerCase()) ==
         0;
+
+    panName = data["registered_name"];
 
     bool isPanTypeIndividual =
         data["type"].toString().toLowerCase().compareTo("individual") == 0;
@@ -84,7 +98,7 @@ class _PanVerificationScreenState extends State<PanVerificationScreen> {
       await _repository.updatePanVerificationStatus(
         userId: widget.userId,
         pan: _panController.text.trim().toUpperCase(),
-        name: _nameController.text.trim(),
+        name: panName,
       );
     } catch (error) {
       rethrow;
@@ -236,6 +250,21 @@ class _PanVerificationScreenState extends State<PanVerificationScreen> {
                             try {
                               if (_formKey.currentState!.validate()) {
                                 setState(() => _isLoading = true);
+                                bool isLinked = await checkIfPanAlreadyLinked();
+                                if (isLinked) {
+                                  setState(() => _isLoading = false);
+                                  ScaffoldMessenger.of(context)
+                                      .hideCurrentSnackBar();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: AutoSizeText(
+                                          "PAN is already linked to another account"),
+                                      backgroundColor: Colors.red,
+                                      duration: Duration(seconds: 1),
+                                    ),
+                                  );
+                                  return;
+                                }
                                 var result = await FirebaseFunctions.instance
                                     .httpsCallable("verifyPAN")
                                     .call({

@@ -9,6 +9,7 @@ import 'package:grooks_dev/screens/authentication/login_screen.dart';
 import 'package:grooks_dev/services/mixpanel.dart';
 import 'package:intl/intl.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class TransfersActivityScreen extends StatefulWidget {
   final String userId;
@@ -151,7 +152,8 @@ class _TransfersActivityScreenState extends State<TransfersActivityScreen> {
                       itemBuilder: (context, index) {
                         if (index < _transfers.length) {
                           Transfer transfer = _transfers[index]['transfer'];
-                          Users user = _transfers[index]['user'];
+                          Users sender = _transfers[index]['sender'];
+                          Users receiver = _transfers[index]['receiver'];
                           return Scrollbar(
                             child: Padding(
                               padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
@@ -167,7 +169,7 @@ class _TransfersActivityScreenState extends State<TransfersActivityScreen> {
                                       MediaQuery.of(context).size.height * 0.15,
                                   child: Align(
                                     alignment: const Alignment(0, 0),
-                                    child: transfer.receiverId != null
+                                    child: transfer.receiverId != widget.userId
                                         ? AutoSizeText(
                                             '-${transfer.coins}',
                                             style: const TextStyle(
@@ -188,9 +190,9 @@ class _TransfersActivityScreenState extends State<TransfersActivityScreen> {
                                   ),
                                 ),
                                 title: AutoSizeText(
-                                  transfer.receiverId != null
-                                      ? 'Sent to ${user.name}'
-                                      : 'Received from ${user.name}',
+                                  transfer.receiverId != widget.userId
+                                      ? 'Sent to ${receiver.name}'
+                                      : 'Received from ${sender.name}',
                                 ),
                                 children: [
                                   const Divider(
@@ -205,7 +207,7 @@ class _TransfersActivityScreenState extends State<TransfersActivityScreen> {
                                         vertical: 8.0,
                                       ),
                                       child: AutoSizeText(
-                                        'Timestamp:  ${DateFormat.yMMMd().format(transfer.createdAt).toString()}',
+                                        'Timestamp:  ${timeago.format(transfer.createdAt)}',
                                         style: const TextStyle(
                                           fontFamily: 'Poppins',
                                           fontSize: 12,

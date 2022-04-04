@@ -223,6 +223,16 @@ class FirebaseMethods {
     }
   }
 
+  Future<int> get getWithdrawlPeriod async {
+    try {
+      int period =
+          (await settingsCollection.get()).docs.first.get("withdrawlPeriod");
+      return period;
+    } catch (error) {
+      rethrow;
+    }
+  }
+
   Future<bool> isNewUser({
     required String mobile,
   }) async {
@@ -802,8 +812,8 @@ class FirebaseMethods {
               isEqualTo: Status.ACTIVE_UNPAIRED.toString().split('.').last)
           .where('userId', isNotEqualTo: userId)
           .orderBy('userId')
-          .orderBy('createdAt', descending: true)
-          .limit(100)
+          .orderBy('createdAt', descending: false)
+          .limit(10)
           .get();
       return data;
     } catch (error) {
@@ -1335,18 +1345,18 @@ class FirebaseMethods {
       await Future.forEach(snapshotList, (QueryDocumentSnapshot element) async {
         Transfer transfer =
             Transfer.fromMap(element.data() as Map<String, dynamic>);
-        Users user;
-        if (transfer.receiverId != null) {
-          user = (await getUserDetails(userId: transfer.receiverId))!;
-        } else {
-          user = (await getUserDetails(userId: transfer.senderId))!;
-        }
+        Users sender, receiver;
+
+        receiver = (await getUserDetails(userId: transfer.receiverId))!;
+
+        sender = (await getUserDetails(userId: transfer.senderId))!;
+
         data.add({
-          'user': user,
+          'sender': sender,
+          'receiver': receiver,
           'transfer': transfer,
         });
       });
-
       return data;
     } catch (error) {
       throw error.toString();
@@ -1683,6 +1693,52 @@ class FirebaseMethods {
       String name =
           (await usersCollection.doc(userId).get()).get("nameOnPanCard");
       return name;
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<DateTime?> checkIfCanWithdraw({
+    required String userId,
+  }) async {
+    try {
+      String walletId =
+          (await walletsCollection.where("userId", isEqualTo: userId).get())
+              .docs
+              .first
+              .id;
+
+      DateTime? date;
+
+      List<QueryDocumentSnapshot> res = (await walletsCollection
+              .doc(walletId)
+              .collection("payouts")
+              .where("status",
+                  isNotEqualTo: PayoutStatus.FAILED.toString().split('.').last)
+              .orderBy("status")
+              .orderBy("updatedAt", descending: true)
+              .limit(1)
+              .get())
+          .docs;
+
+      if (res.isEmpty) {
+        return date;
+      }
+
+      date = res.first.get("updatedAt").toDate();
+      return date;
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<bool> checkIfPanAlreadyLinked({
+    required String pan,
+  }) async {
+    try {
+      QuerySnapshot userSnapshot =
+          await usersCollection.where("panNumber", isEqualTo: pan).get();
+      return userSnapshot.size != 0;
     } catch (error) {
       rethrow;
     }

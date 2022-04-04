@@ -51,6 +51,8 @@ class FirebaseRepository {
 
   Future<int> get getWithdrawlLimit => firebaseMethods.getWithdrawlLimit;
 
+  Future<int> get getWithdrawlPeriod => firebaseMethods.getWithdrawlPeriod;
+
   Future<bool> isNewUser({
     required String mobile,
   }) =>
@@ -385,4 +387,18 @@ class FirebaseRepository {
     required String userId,
   }) =>
       firebaseMethods.getNameOnPanCard(userId: userId);
+
+  Future<DateTime?> checkIfCanWithdraw({
+    required String userId,
+  }) =>
+      firebaseMethods.checkIfCanWithdraw(
+        userId: userId,
+      );
+
+  Future<bool> checkIfPanAlreadyLinked({
+    required String pan,
+  }) =>
+      firebaseMethods.checkIfPanAlreadyLinked(
+        pan: pan,
+      );
 }

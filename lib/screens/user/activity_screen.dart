@@ -102,7 +102,7 @@ class _ActivityScreenState extends State<ActivityScreen> {
                         options: const [
                           'Trades',
                           'Purchases',
-                          'Payouts',
+                          'Withdrawls',
                           'Transfers'
                         ],
                         onChanged: (value) {

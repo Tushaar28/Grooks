@@ -33,6 +33,7 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
   late double _payoutCommission;
   late final Mixpanel _mixpanel;
   late int _withdrawlLimit;
+  late int _withdrawlPeriod;
 
   @override
   void initState() {
@@ -48,6 +49,7 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
     getUserDetails();
     getUserCoins();
     getWithdrawlLimit();
+    getWithdrawlPeriod();
     getPayoutCommission();
     _amountController = TextEditingController();
   }
@@ -80,6 +82,15 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
     try {
       int limit = await _repository.getWithdrawlLimit;
       _withdrawlLimit = limit;
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<void> getWithdrawlPeriod() async {
+    try {
+      int period = await _repository.getWithdrawlPeriod;
+      _withdrawlPeriod = period;
     } catch (error) {
       rethrow;
     }
@@ -279,9 +290,15 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
               ),
               const AutoSizeText("10 coins = Re 1"),
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.08,
+                height: MediaQuery.of(context).size.height * 0.06,
               ),
+
               AutoSizeText("Minimum Rs $_withdrawlLimit can be redeemed"),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.01,
+              ),
+              AutoSizeText(
+                  "There has to be a gap of atleast $_withdrawlPeriod days between consecutive withdrawls"),
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.01,
               ),
@@ -322,7 +339,7 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
               ),
               if (isAmountValid()) ...[
                 Container(
-                  height: MediaQuery.of(context).size.height * 0.4,
+                  height: MediaQuery.of(context).size.height * 0.3,
                   padding: EdgeInsets.fromLTRB(
                     0,
                     MediaQuery.of(context).size.height * 0.01,

@@ -41,18 +41,23 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
       _ifscController;
   late bool _isLoading,
       _done,
+      _dataLoaded,
       _isUpiValid,
       _isBankValid,
       _isUpiVerified,
       _isBankVerified;
   String? _withdrawlType;
+  late int _withdrawlPeriod;
   late Mixpanel _mixpanel;
 
   @override
   void initState() {
     super.initState();
     _initMixpanel();
+    _dataLoaded = false;
     _repository = FirebaseRepository();
+    _withdrawlPeriod = 0;
+    getWithdrawlPeriod();
     _formKey = GlobalKey<FormState>();
     _upiController = TextEditingController();
     _nameController = TextEditingController();
@@ -61,8 +66,18 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
     _ifscController = TextEditingController();
     _isLoading = _done =
         _isUpiVerified = _isBankVerified = _isUpiValid = _isBankValid = false;
+
     // _upiController.addListener(isUpiValid);
     // _nameController.addListener(isUpiValid);
+  }
+
+  Future<void> getWithdrawlPeriod() async {
+    try {
+      int period = await _repository.getWithdrawlPeriod;
+      _withdrawlPeriod = period;
+    } catch (error) {
+      rethrow;
+    }
   }
 
   Future<void> _initMixpanel() async {
@@ -117,6 +132,25 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
           name: _nameController.text.trim(),
         );
       }
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<int> checkIfCanWithdraw() async {
+    try {
+      DateTime? lastPayoutDate =
+          await _repository.checkIfCanWithdraw(userId: widget.userId);
+      if (lastPayoutDate == null) {
+        return 0;
+      }
+      DateTime nextPayoutDate = lastPayoutDate.add(
+        Duration(
+          days: _withdrawlPeriod,
+        ),
+      );
+      Duration diff = nextPayoutDate.difference(DateTime.now());
+      return diff.inHours;
     } catch (error) {
       rethrow;
     }
@@ -679,6 +713,28 @@ class _AccountInformationScreenState extends State<AccountInformationScreen> {
                                     return;
                                   }
                                   if (_formKey.currentState!.validate()) {
+                                    int remainingHours =
+                                        await checkIfCanWithdraw();
+                                    if (remainingHours > 0) {
+                                      int days = (remainingHours / 24).floor();
+                                      int hours = remainingHours % 24;
+                                      ScaffoldMessenger.of(context)
+                                          .hideCurrentSnackBar();
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        SnackBar(
+                                          content: AutoSizeText(
+                                              "Withdrawl limit reached. Please wait for $days day(s) and $hours hour(s) before next payout"),
+                                          backgroundColor: Colors.red,
+                                          duration: const Duration(seconds: 3),
+                                        ),
+                                      );
+                                      setState(() {
+                                        _isLoading = false;
+                                        _done = true;
+                                      });
+                                      return;
+                                    }
                                     bool isValid = await verifyBankDetails();
                                     if (!isValid) {
                                       ScaffoldMessenger.of(context)
