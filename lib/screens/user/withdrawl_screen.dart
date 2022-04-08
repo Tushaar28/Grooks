@@ -392,8 +392,8 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 0.2,
                             child: Center(
-                              child:
-                                  AutoSizeText("Rs ${getWithdrawlCharges()}"),
+                              child: AutoSizeText(
+                                  "Rs ${getWithdrawlCharges().toStringAsFixed(2)}"),
                             ),
                           ),
                         ],

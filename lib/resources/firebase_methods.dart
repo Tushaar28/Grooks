@@ -233,6 +233,16 @@ class FirebaseMethods {
     }
   }
 
+  Future<String?> get getVideoLink async {
+    try {
+      String link =
+          (await settingsCollection.get()).docs.first.get("videoLink");
+      return link;
+    } catch (error) {
+      return null;
+    }
+  }
+
   Future<bool> isNewUser({
     required String mobile,
   }) async {
@@ -417,6 +427,7 @@ class FirebaseMethods {
             .set({
           'id': docId,
           'userId': user.id,
+          'referralCoins': referralCoins,
         });
         QuerySnapshot refferingUserWalletSnapshot = await walletsCollection
             .where('userId', isEqualTo: referringUser.id)
@@ -959,24 +970,6 @@ class FirebaseMethods {
           'pairedTradeId': firstTrade.id,
         });
 
-        // String transactionId =
-        //     walletsCollection.doc(walletId).collection('transactions').doc().id;
-        // model.Transaction transaction = model.Transaction(
-        //   id: transactionId,
-        //   createdAt: DateTime.now(),
-        //   status: model.TransactionStatus.PROCESSED,
-        //   type: TransactionType.COINS_LOST,
-        //   amount: bet.toDouble(),
-        //   bonusCoins: bonusCoinsUsed,
-        //   redeemableCoins: redeemableCoinsUsed,
-        //   updatedAt: DateTime.now(),
-        // );
-        // await walletsCollection
-        //     .doc(walletId)
-        //     .collection('transactions')
-        //     .doc(transactionId)
-        //     .set(transaction.toMap(transaction) as Map<String, dynamic>);
-
         await walletsCollection.doc(walletId).update({
           'updatedAt': DateTime.now(),
           'bonusCoins': currentBonusCoins - bonusCoinsUsed,
@@ -1005,6 +998,19 @@ class FirebaseMethods {
           });
         }
       });
+      await initMixpanel;
+      if (_mixpanel != null) {
+        _mixpanel!.identify(userId);
+        _mixpanel!.getPeople().increment("paired_trades", 1);
+        _mixpanel!.getPeople().increment("total_trades", 1);
+        _mixpanel!.track(
+          "trade_pair_success",
+          properties: {
+            "userId": userId,
+            "questionId": firstTrade.questionId,
+          },
+        );
+      }
     } catch (error) {
       rethrow;
     }

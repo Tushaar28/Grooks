@@ -53,6 +53,8 @@ class FirebaseRepository {
 
   Future<int> get getWithdrawlPeriod => firebaseMethods.getWithdrawlPeriod;
 
+  Future<String?> get getVideoLink => firebaseMethods.getVideoLink;
+
   Future<bool> isNewUser({
     required String mobile,
   }) =>

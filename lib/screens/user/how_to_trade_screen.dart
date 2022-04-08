@@ -1,9 +1,11 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:grooks_dev/models/user.dart';
+import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/services/mixpanel.dart';
 import 'package:grooks_dev/widgets/how_to_trade_carousel.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HowToTradeScreen extends StatefulWidget {
   final Users user;
@@ -19,11 +21,18 @@ class HowToTradeScreen extends StatefulWidget {
 class _HowToTradeScreenState extends State<HowToTradeScreen> {
   late final GlobalKey<ScaffoldState> _scaffoldKey;
   late final Mixpanel _mixpanel;
+  late String _videoLink;
+  late bool _dataLoaded;
+  late final FirebaseRepository _repository;
 
   @override
   void initState() {
     super.initState();
+    _dataLoaded = false;
     _initMixpanel();
+    _videoLink = "";
+    _repository = FirebaseRepository();
+    getVideoLink();
     _scaffoldKey = GlobalKey<ScaffoldState>();
   }
 
@@ -35,8 +44,27 @@ class _HowToTradeScreenState extends State<HowToTradeScreen> {
     });
   }
 
+  Future<void> getVideoLink() async {
+    try {
+      String? link = await _repository.getVideoLink;
+      if (link != null && link.isNotEmpty) {
+        _videoLink = link;
+      }
+      setState(() => _dataLoaded = true);
+    } catch (error) {
+      rethrow;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (_dataLoaded == false) {
+      return const Center(
+        child: CircularProgressIndicator.adaptive(
+          backgroundColor: Colors.white,
+        ),
+      );
+    }
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -58,6 +86,17 @@ class _HowToTradeScreenState extends State<HowToTradeScreen> {
         ),
         centerTitle: false,
         elevation: 0,
+        actions: [
+          if (_videoLink.isNotEmpty) ...[
+            IconButton(
+              icon: const Icon(
+                Icons.play_circle_fill_outlined,
+                size: 30,
+              ),
+              onPressed: () async => await launch(_videoLink),
+            ),
+          ],
+        ],
       ),
       body: HowToTradeCarousel(user: widget.user),
     );

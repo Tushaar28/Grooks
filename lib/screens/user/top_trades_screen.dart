@@ -198,21 +198,6 @@ class _TopTradesScreenState extends State<TopTradesScreen>
                                 try {
                                   setState(() => _isLoading = true);
                                   await pairTrade(trade: trade);
-                                  _mixpanel.identify(widget.user.id);
-                                  _mixpanel
-                                      .getPeople()
-                                      .increment("paired_trades", 1);
-                                  _mixpanel
-                                      .getPeople()
-                                      .increment("total_trades", 1);
-                                  _mixpanel.track(
-                                    "trade_pair_success",
-                                    properties: {
-                                      "userId": widget.user.id,
-                                      "questionId": widget.question.id,
-                                      "questionName": widget.question.name,
-                                    },
-                                  );
                                   Navigator.of(context).pushAndRemoveUntil(
                                     MaterialPageRoute(
                                       builder: (context) =>
