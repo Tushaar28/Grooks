@@ -403,4 +403,10 @@ class FirebaseRepository {
       firebaseMethods.checkIfPanAlreadyLinked(
         pan: pan,
       );
+
+  Future<List<Map<String, dynamic>>> get getInitialReferrals =>
+      firebaseMethods.getInitialReferrals;
+
+  Future<List<Map<String, dynamic>>> get getReferrals =>
+      firebaseMethods.getReferrals;
 }

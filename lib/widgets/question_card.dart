@@ -247,11 +247,13 @@ class _QuestionCardState extends State<QuestionCard> {
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.02,
                   width: double.infinity,
-                  child: const AutoSizeText(
-                    "Be the first to trade",
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 12,
+                  child: const Center(
+                    child: AutoSizeText(
+                      "Be the first to trade",
+                      style: TextStyle(
+                        color: Colors.grey,
+                        fontSize: 12,
+                      ),
                     ),
                   ),
                 ),

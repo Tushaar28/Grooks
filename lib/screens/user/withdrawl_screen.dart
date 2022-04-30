@@ -52,6 +52,7 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
     getWithdrawlPeriod();
     getPayoutCommission();
     _amountController = TextEditingController();
+    _amountController.text = "0";
   }
 
   Future<void> _initMixpanel() async {
@@ -288,11 +289,10 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.01,
               ),
-              const AutoSizeText("10 coins = Re 1"),
+              const AutoSizeText("Rs.10 = 100 coins"),
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.06,
               ),
-
               AutoSizeText("Minimum Rs $_withdrawlLimit can be redeemed"),
               SizedBox(
                 height: MediaQuery.of(context).size.height * 0.01,
@@ -337,232 +337,175 @@ class _WithdrawlScreenState extends State<WithdrawlScreen> {
                   ),
                 ),
               ),
-              if (isAmountValid()) ...[
-                Container(
-                  height: MediaQuery.of(context).size.height * 0.3,
-                  padding: EdgeInsets.fromLTRB(
-                    0,
-                    MediaQuery.of(context).size.height * 0.01,
-                    0,
-                    0,
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.4,
-                            child: const AutoSizeText(
-                              "Coins to be used",
-                              style: TextStyle(
+              Container(
+                height: MediaQuery.of(context).size.height * 0.3,
+                padding: EdgeInsets.fromLTRB(
+                  0,
+                  MediaQuery.of(context).size.height * 0.01,
+                  0,
+                  0,
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.4,
+                          child: const AutoSizeText(
+                            "Coins to be used",
+                            style: TextStyle(
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.2,
+                          child: Center(
+                            child: AutoSizeText(
+                              "${double.parse(_amountController.text).ceil() * 10}",
+                              style: const TextStyle(
                                 fontSize: 16,
                               ),
                             ),
                           ),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.2,
-                            child: Center(
-                              child: AutoSizeText(
-                                "${double.parse(_amountController.text).ceil() * 10}",
-                                style: const TextStyle(
-                                  fontSize: 16,
-                                ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.4,
+                          child: const AutoSizeText(
+                            "Withdrawl charges",
+                            style: TextStyle(
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.2,
+                          child: Center(
+                            child: AutoSizeText(
+                                "Rs ${getWithdrawlCharges().toStringAsFixed(2)}"),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.4,
+                          child: const AutoSizeText(
+                            "Final Amount",
+                            style: TextStyle(
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.2,
+                          child: Center(
+                            child: AutoSizeText("Rs ${getFinalAmount()}"),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(
+                      child: _isLoading
+                          ? const Center(
+                              child: CircularProgressIndicator.adaptive(
+                                backgroundColor: Colors.white,
                               ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.4,
-                            child: const AutoSizeText(
-                              "Withdrawl charges",
-                              style: TextStyle(
-                                fontSize: 16,
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.2,
-                            child: Center(
-                              child: AutoSizeText(
-                                  "Rs ${getWithdrawlCharges().toStringAsFixed(2)}"),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        mainAxisSize: MainAxisSize.max,
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.4,
-                            child: const AutoSizeText(
-                              "Final Amount",
-                              style: TextStyle(
-                                fontSize: 16,
-                              ),
-                            ),
-                          ),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 0.2,
-                            child: Center(
-                              child: AutoSizeText("Rs ${getFinalAmount()}"),
-                            ),
-                          ),
-                        ],
-                      ),
-                      SizedBox(
-                        child: _isLoading
-                            ? const Center(
-                                child: CircularProgressIndicator.adaptive(
-                                  backgroundColor: Colors.white,
-                                ),
-                              )
-                            : SwipeButton(
-                                text: "Swipe to Withdraw",
-                                height:
-                                    MediaQuery.of(context).size.height * 0.065,
-                                color: Theme.of(context).primaryColor,
-                                backgroundColorEnd: Colors.blueAccent[100],
-                                onSwipeCallback: () async {
-                                  try {
-                                    setState(() => _isLoading = true);
-                                    bool isPanVerified = await _repository
-                                        .getPanVerificationStatus(
-                                            userId: widget.userId);
-                                    if (isPanVerified) {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              AccountInformationScreen(
-                                            requestedAmount: double.parse(
-                                                _amountController.text),
-                                            finalAmount: getFinalAmount(),
-                                            commission: getWithdrawlCharges(),
-                                            userId: widget.userId,
-                                            coins: double.parse(
-                                                        _amountController.text)
-                                                    .ceil() *
-                                                10,
-                                          ),
-                                        ),
-                                      );
-                                    } else {
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              PanVerificationScreen(
-                                            requestedAmount: double.parse(
-                                                _amountController.text),
-                                            finalAmount: getFinalAmount(),
-                                            commission: getWithdrawlCharges(),
-                                            userId: widget.userId,
-                                            coins: double.parse(
-                                                        _amountController.text)
-                                                    .ceil() *
-                                                10,
-                                          ),
-                                        ),
-                                      );
-                                    }
-                                  } catch (error) {
+                            )
+                          : SwipeButton(
+                              text: "Swipe to Withdraw",
+                              height:
+                                  MediaQuery.of(context).size.height * 0.065,
+                              color: Theme.of(context).primaryColor,
+                              backgroundColorEnd: Colors.blueAccent[100],
+                              onSwipeCallback: () async {
+                                try {
+                                  setState(() => _isLoading = true);
+                                  bool isValid = isAmountValid();
+                                  if (isValid == false) {
                                     ScaffoldMessenger.of(context)
                                         .hideCurrentSnackBar();
                                     ScaffoldMessenger.of(context).showSnackBar(
                                       const SnackBar(
                                         content:
-                                            AutoSizeText("An error occured"),
+                                            AutoSizeText("Insufficient amount"),
                                         backgroundColor: Colors.red,
                                         duration: Duration(seconds: 1),
                                       ),
                                     );
-                                  } finally {
                                     setState(() => _isLoading = false);
+                                    return;
                                   }
-                                },
-                              ),
-                      ),
-                    ],
-                  ),
+                                  bool isPanVerified = await _repository
+                                      .getPanVerificationStatus(
+                                          userId: widget.userId);
+                                  if (isPanVerified) {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            AccountInformationScreen(
+                                          requestedAmount: double.parse(
+                                              _amountController.text),
+                                          finalAmount: getFinalAmount(),
+                                          commission: getWithdrawlCharges(),
+                                          userId: widget.userId,
+                                          coins: double.parse(
+                                                      _amountController.text)
+                                                  .ceil() *
+                                              10,
+                                        ),
+                                      ),
+                                    );
+                                  } else {
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            PanVerificationScreen(
+                                          requestedAmount: double.parse(
+                                              _amountController.text),
+                                          finalAmount: getFinalAmount(),
+                                          commission: getWithdrawlCharges(),
+                                          userId: widget.userId,
+                                          coins: double.parse(
+                                                      _amountController.text)
+                                                  .ceil() *
+                                              10,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                } catch (error) {
+                                  ScaffoldMessenger.of(context)
+                                      .hideCurrentSnackBar();
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: AutoSizeText("An error occured"),
+                                      backgroundColor: Colors.red,
+                                      duration: Duration(seconds: 1),
+                                    ),
+                                  );
+                                } finally {
+                                  setState(() => _isLoading = false);
+                                }
+                              },
+                            ),
+                    ),
+                  ],
                 ),
-              ],
-              // SizedBox(
-              //   width: MediaQuery.of(context).size.width * 0.8,
-              //   child: Card(
-              //     elevation: 10,
-              //     child: Column(
-              //       children: [
-              //         SizedBox(
-              //           height: MediaQuery.of(context).size.height * 0.01,
-              //         ),
-              //         const AutoSizeText(
-              //           "Choose amount to withdraw",
-              //           style: TextStyle(
-              //             fontSize: 20,
-              //             fontWeight: FontWeight.w400,
-              //           ),
-              //         ),
-              //         SizedBox(
-              //           height: MediaQuery.of(context).size.height * 0.05,
-              //         ),
-              //         Row(
-              //           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              //           mainAxisSize: MainAxisSize.max,
-              //           children: [
-              //             TextButton(
-              //               child: AutoSizeText(
-              //                 "Rs 250",
-              //                 style: TextStyle(
-              //                   fontSize: 16,
-              //                   color: _is250Pressed
-              //                       ? Theme.of(context).primaryColor
-              //                       : Colors.grey,
-              //                 ),
-              //               ),
-              //               onPressed: () {},
-              //             ),
-              //             TextButton(
-              //               child: AutoSizeText(
-              //                 "Rs 500",
-              //                 style: TextStyle(
-              //                   fontSize: 16,
-              //                   color: _is500Pressed
-              //                       ? Theme.of(context).primaryColor
-              //                       : Colors.grey,
-              //                 ),
-              //               ),
-              //               onPressed: () {
-              //                 setState(() {
-
-              //                 });
-              //               },
-              //             ),
-              //             TextButton(
-              //               child: AutoSizeText(
-              //                 "Rs 1000",
-              //                 style: TextStyle(
-              //                   fontSize: 16,
-              //                   color: _is1000Pressed
-              //                       ? Theme.of(context).primaryColor
-              //                       : Colors.grey,
-              //                 ),
-              //               ),
-              //               onPressed: () {},
-              //             ),
-              //           ],
-              //         ),
-              //       ],
-              //     ),
-              //   ),
-              // ),
+              ),
             ],
           ),
         ),

@@ -24,12 +24,14 @@ class OTPInputScreen extends StatefulWidget {
   final String? referralCode;
   final Map<String, dynamic>? sharedViewMap;
   final Question? question;
+  final bool isNewUser;
   const OTPInputScreen({
     Key? key,
     required this.mobile,
     this.referralCode,
     this.question,
     this.sharedViewMap,
+    this.isNewUser = false,
   }) : super(key: key);
 
   @override
@@ -88,7 +90,7 @@ class _OTPInputScreenState extends State<OTPInputScreen> {
   Future<void> _initMixpanel() async {
     _mixpanel = await MixpanelManager.init();
     _mixpanel.identify(widget.mobile);
-    _mixpanel.track("withdrawl_screen", properties: {
+    _mixpanel.track("otp_input_screen", properties: {
       "mobile": widget.mobile,
     });
   }
@@ -169,6 +171,8 @@ class _OTPInputScreenState extends State<OTPInputScreen> {
           } else {
             bool isPasswordSet =
                 await _repository.isPasswordSet(mobile: "+91${widget.mobile}");
+            _mixpanel.identify(userDetails.id);
+            _mixpanel.getPeople().set("lastLoginAt", DateTime.now());
             if (isPasswordSet) {
               Navigator.pushAndRemoveUntil(
                 context,
@@ -247,17 +251,6 @@ class _OTPInputScreenState extends State<OTPInputScreen> {
     } catch (error) {
       throw error.toString();
     }
-  }
-
-  Future<String> generateReferralCode(
-      String userName, String userMobile) async {
-    var id = MyEncryptionDecryption.encryptAES(userMobile);
-    var randomCode = "${userName.substring(0, 3)}-${id.base64.substring(0, 8)}";
-    return randomCode;
-  }
-
-  Future<void> saveReferralLink(String link) async {
-    _repository.saveReferalLink(link);
   }
 
   @override
@@ -343,31 +336,33 @@ class _OTPInputScreenState extends State<OTPInputScreen> {
                             style: TextStyle(color: Colors.black),
                           ),
                         ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.of(context).pushReplacement(
-                              PageTransition(
-                                child: PasswordScreen(
-                                  mobile: widget.mobile,
-                                  question: widget.question,
-                                  referralCode: widget.referralCode,
-                                  sharedViewMap: widget.sharedViewMap,
+                        if (widget.isNewUser == false) ...[
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pushReplacement(
+                                PageTransition(
+                                  child: PasswordScreen(
+                                    mobile: widget.mobile,
+                                    question: widget.question,
+                                    referralCode: widget.referralCode,
+                                    sharedViewMap: widget.sharedViewMap,
+                                  ),
+                                  type: PageTransitionType.rightToLeft,
+                                  duration: const Duration(
+                                    milliseconds: 300,
+                                  ),
+                                  reverseDuration: const Duration(
+                                    milliseconds: 300,
+                                  ),
                                 ),
-                                type: PageTransitionType.rightToLeft,
-                                duration: const Duration(
-                                  milliseconds: 300,
-                                ),
-                                reverseDuration: const Duration(
-                                  milliseconds: 300,
-                                ),
-                              ),
-                            );
-                          },
-                          child: const AutoSizeText(
-                            'Login with passcode',
-                            style: TextStyle(color: Colors.black),
+                              );
+                            },
+                            child: const AutoSizeText(
+                              'Login with passcode',
+                              style: TextStyle(color: Colors.black),
+                            ),
                           ),
-                        ),
+                        ],
                       ],
                     ),
                   ),

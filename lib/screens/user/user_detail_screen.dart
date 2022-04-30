@@ -7,7 +7,6 @@ import 'package:grooks_dev/models/question.dart';
 import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/services/mixpanel.dart';
-import 'package:grooks_dev/services/my_encryption.dart';
 import 'package:grooks_dev/widgets/custom_button.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
@@ -524,6 +523,9 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                                   _mixpanel
                                       .getPeople()
                                       .set("mobile", user.mobile!.substring(3));
+                                  _mixpanel
+                                      .getPeople()
+                                      .set("lastLoginAt", DateTime.now());
                                   _mixpanel.getPeople().set("referrals", 0);
                                   _mixpanel
                                       .getPeople()

@@ -243,6 +243,43 @@ class FirebaseMethods {
     }
   }
 
+  Future<List<Map<String, dynamic>>> get getInitialReferrals async {
+    try {
+      List<Map<String, dynamic>> referrals = [];
+      QuerySnapshot qs = await settingsCollection.get();
+      dynamic data = qs.docs.first.data();
+      return referrals;
+    } catch (error) {
+      rethrow;
+    }
+  }
+
+  Future<List<Map<String, dynamic>>> get getReferrals async {
+    try {
+      List<Map<String, dynamic>> rank = [];
+      List<Map<String, dynamic>> referrals = [];
+      QuerySnapshot usersSnapshot = await usersCollection.get();
+      for (var element in usersSnapshot.docs) {
+        String id = element.id;
+        String name = element.get("name");
+        QuerySnapshot referralsSnapshot =
+            await usersCollection.doc(id).collection("referrals").get();
+        int count = referralsSnapshot.size;
+        referrals.add({
+          "name": name,
+          "referrals": count,
+        });
+      }
+      referrals.sort((a, b) => b["referrals"].compareTo(a["referrals"]));
+      for (int i = 0; i < 20; i++) {
+        rank.add(referrals[i]);
+      }
+      return rank;
+    } catch (error) {
+      rethrow;
+    }
+  }
+
   Future<bool> isNewUser({
     required String mobile,
   }) async {
@@ -587,6 +624,7 @@ class FirebaseMethods {
           .where("closedAt", isNull: true)
           .where("isActive", isEqualTo: true)
           .where("isDeleted", isEqualTo: false)
+          .orderBy("updatedAt", descending: true)
           .get();
 
       for (var element in questionsSnapshot.docs) {
@@ -610,6 +648,7 @@ class FirebaseMethods {
           .where('parent', isEqualTo: subcategoryId)
           .where('answer', whereIn: [true, false])
           .where("isActive", isEqualTo: false)
+          .orderBy("updatedAt", descending: true)
           .get();
       for (var element in snapshot.docs) {
         if (element.exists) {
@@ -953,7 +992,7 @@ class FirebaseMethods {
           bonusCoinsUsed: bonusCoinsUsed,
           redeemableCoinsUsed: redeemableCoinsUsed,
           coins: bet,
-          createdAt: DateTime.now(),
+          createdAt: pairedDateTime,
           questionId: firstTrade.questionId,
           response: !firstTrade.response,
           status: Status.ACTIVE_PAIRED,
@@ -1680,11 +1719,13 @@ class FirebaseMethods {
                 : 500;
         DocumentSnapshot userSnapshot =
             await usersCollection.doc(referralMap["userId"]).get();
-        Map<String, dynamic> userMap =
-            userSnapshot.data() as Map<String, dynamic>;
+        if (userSnapshot.exists) {
+          Map<String, dynamic> userMap =
+              userSnapshot.data() as Map<String, dynamic>;
 
-        mapData = {...mapData, ...referralMap, ...userMap};
-        data.add(mapData);
+          mapData = {...mapData, ...referralMap, ...userMap};
+          data.add(mapData);
+        }
       });
       return data;
     } catch (error) {

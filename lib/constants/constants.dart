@@ -26,6 +26,5 @@ const String WALLETS_COLLECTION = "wallets";
 const String WITHDRAWLS_COLLECTION = "withdrawls";
 // ignore: constant_identifier_names
 const String PAYOUTS_COLLECTION = "payouts";
-
 // ignore: constant_identifier_names
 const String PURCHASES_COLLECTION = "purchases";

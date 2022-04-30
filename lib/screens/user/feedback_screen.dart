@@ -428,14 +428,14 @@ class _FeedbackScreenState extends State<FeedbackScreen> {
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.05,
                       ),
-                      Row(
-                        children: [
-                          const Text("Or call us on   "),
-                          TextButton(
-                            child: Text("+91"),
-                          ),
-                        ],
-                      ),
+                      // Row(
+                      //   children: [
+                      //     const Text("Or call us on   "),
+                      //     TextButton(
+                      //       child: Text("+91"),
+                      //     ),
+                      //   ],
+                      // ),
                     ],
                   ),
                 );

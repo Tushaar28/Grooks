@@ -1,9 +1,12 @@
 import 'dart:async';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
 import 'package:grooks_dev/services/location.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'app_update_screen.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -13,6 +16,9 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+  ConnectivityResult? _connectionStatus;
+  final Connectivity _connectivity = Connectivity();
+  late StreamSubscription<ConnectivityResult> _connectivitySubscription;
   late final FirebaseRepository _repository;
   late String _currentVersion;
   late String? _link;
@@ -20,9 +26,35 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
+    initConnectivity();
+    _connectivitySubscription =
+        _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
     _repository = FirebaseRepository();
     _link = "";
     getPackageDetails();
+  }
+
+  @override
+  void dispose() {
+    _connectivitySubscription.cancel();
+    super.dispose();
+  }
+
+  Future<void> initConnectivity() async {
+    late ConnectivityResult result;
+    try {
+      result = await _connectivity.checkConnectivity();
+    } on PlatformException catch (e) {
+      return;
+    }
+
+    return _updateConnectionStatus(result);
+  }
+
+  Future<void> _updateConnectionStatus(ConnectivityResult result) async {
+    setState(() {
+      _connectionStatus = result;
+    });
   }
 
   Future<void> getPackageDetails() async {
@@ -56,6 +88,49 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    if (_connectionStatus == null) {
+      return const Center(
+        child: CircularProgressIndicator.adaptive(
+          backgroundColor: Colors.white,
+        ),
+      );
+    }
+    if (_connectionStatus != null &&
+        _connectionStatus == ConnectivityResult.none) {
+      SchedulerBinding.instance!.addPostFrameCallback(
+        (timeStamp) => Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(
+            fullscreenDialog: true,
+            builder: (context) => const Scaffold(
+              backgroundColor: Colors.white,
+              body: AlertDialog(
+                title: Center(
+                  child: Text(
+                    "Error !!",
+                    style: TextStyle(
+                      color: Colors.red,
+                      fontSize: 18,
+                    ),
+                  ),
+                ),
+                actions: [
+                  Center(
+                    child: Text(
+                      "No internet connection",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          (route) => false,
+        ),
+      );
+    }
     return Scaffold(
       body: FutureBuilder(
         future: checkVersion(),

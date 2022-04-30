@@ -17,23 +17,31 @@ class AppUpdateScreen extends StatefulWidget {
 }
 
 class _AppUpdateScreenState extends State<AppUpdateScreen> {
-  late bool _isLoading;
+  late bool _isLoading, _done;
+  late String _progress;
+  OtaEvent? event;
 
   @override
   void initState() {
     super.initState();
-    _isLoading = false;
+    _progress = "";
+    _isLoading = _done = false;
   }
 
-  showProgressIndicator({String? value}) {
-    Center(
-      child: LinearProgressIndicator(
-        backgroundColor: Colors.white,
-        color: Colors.blue,
-        minHeight: 50,
-        value: double.tryParse(value!),
-      ),
-    );
+  String getText(OtaEvent? event) {
+    if (event == null) {
+      return "A new version of app is available";
+    }
+    if (event.status == OtaStatus.DOWNLOADING) {
+      return "Downloading $_progress %";
+    }
+    if (event.status == OtaStatus.DOWNLOAD_ERROR) {
+      return "Download failed. Please try again";
+    }
+    if (event.status == OtaStatus.INSTALLING) {
+      return "Installing";
+    }
+    return "Permission not granted. Please allow permission to install app from external sources.";
   }
 
   @override
@@ -69,9 +77,9 @@ class _AppUpdateScreenState extends State<AppUpdateScreen> {
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.06,
                   ),
-                  const Text(
-                    "A newer version of app is available",
-                    style: TextStyle(
+                  Text(
+                    getText(event),
+                    style: const TextStyle(
                       fontSize: 18,
                     ),
                   ),
@@ -83,27 +91,37 @@ class _AppUpdateScreenState extends State<AppUpdateScreen> {
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.06,
                     width: double.infinity,
-                    child: _isLoading
-                        ? const Center(
-                            child: CircularProgressIndicator.adaptive(
-                              backgroundColor: Colors.white,
-                            ),
-                          )
-                        : CustomButton(
-                            text: "Update Now",
-                            onPressed: () async {
-                              try {
-                                setState(() => _isLoading = true);
-                                OtaUpdate().execute(widget.link).listen(
-                                  (event) {
-                                    showProgressIndicator(value: event.value);
-                                  },
-                                );
-                              } catch (error) {
-                                setState(() => _isLoading = false);
-                              }
-                            },
-                          ),
+                    child: _done
+                        ? null
+                        : _isLoading
+                            ? const Center(
+                                child: CircularProgressIndicator.adaptive(
+                                  backgroundColor: Colors.white,
+                                ),
+                              )
+                            : CustomButton(
+                                text: "Update Now",
+                                onPressed: () async {
+                                  try {
+                                    setState(() => _isLoading = true);
+                                    OtaUpdate().execute(widget.link).listen(
+                                      (e) {
+                                        event = e;
+                                        // print("STATUS = ${event!.status}");
+                                        // print("VALUE = ${event!.value}");
+                                        setState(
+                                            () => _progress = event!.value!);
+                                        if (event!.value != null &&
+                                            event!.value == "100") {
+                                          setState(() => _done = true);
+                                        }
+                                      },
+                                    );
+                                  } catch (error) {
+                                    setState(() => _isLoading = false);
+                                  }
+                                },
+                              ),
                   ),
                 ],
               ),

@@ -179,10 +179,6 @@ class _CustomSubcategoryCardState extends State<CustomSubcategoryCard> {
                                 decoration: const BoxDecoration(
                                   color: Colors.transparent,
                                 ),
-                                padding: EdgeInsets.only(
-                                  top: MediaQuery.of(context).size.height *
-                                      0.012,
-                                ),
                                 child: AutoSizeText(
                                   '${widget.subcategory.openEvents} event(s) live',
                                   style: const TextStyle(

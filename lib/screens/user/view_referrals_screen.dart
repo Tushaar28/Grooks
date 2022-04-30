@@ -87,16 +87,7 @@ class _ViewReferralsScreenState extends State<ViewReferralsScreen> {
             (route) => false);
       });
     }
-    if (_users == null || _users!.isEmpty) {
-      return const Center(
-        child: AutoSizeText(
-          "No users referred",
-          style: TextStyle(
-            fontSize: 18,
-          ),
-        ),
-      );
-    }
+
     return Scaffold(
       key: _scaffoldKey,
       appBar: AppBar(
@@ -120,83 +111,92 @@ class _ViewReferralsScreenState extends State<ViewReferralsScreen> {
         elevation: 0,
       ),
       body: SafeArea(
-        child: ListView.builder(
-          itemCount: _users!.length,
-          itemBuilder: (context, index) => Padding(
-            padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
-            child: ExpansionTileCard(
-              shadowColor: Colors.black,
-              baseColor: Colors.blueGrey[10],
-              expandedColor: Colors.blueGrey[100],
-              elevation: 20,
-              leading: SizedBox(
-                width: MediaQuery.of(context).size.width * 0.15,
-                height: MediaQuery.of(context).size.width * 0.15,
+        child: _users == null || _users!.isEmpty
+            ? const Center(
                 child: AutoSizeText(
-                  "+ ${_users![index]['referralCoins']}",
+                  "No users referred",
                   style: TextStyle(
-                    fontFamily: 'Poppins',
-                    color: Theme.of(context).primaryColor,
-                    fontSize: 20,
+                    fontSize: 18,
+                  ),
+                ),
+              )
+            : ListView.builder(
+                itemCount: _users!.length,
+                itemBuilder: (context, index) => Padding(
+                  padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
+                  child: ExpansionTileCard(
+                    shadowColor: Colors.black,
+                    baseColor: Colors.blueGrey[10],
+                    expandedColor: Colors.blueGrey[100],
+                    elevation: 20,
+                    leading: SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.15,
+                      height: MediaQuery.of(context).size.width * 0.15,
+                      child: AutoSizeText(
+                        "+ ${_users![index]['referralCoins']}",
+                        style: TextStyle(
+                          fontFamily: 'Poppins',
+                          color: Theme.of(context).primaryColor,
+                          fontSize: 20,
+                        ),
+                      ),
+                    ),
+                    title: SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.1,
+                      width: MediaQuery.of(context).size.width * 0.5,
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(
+                          10,
+                          10,
+                          0,
+                          0,
+                        ),
+                        child: AutoSizeText(
+                          "${_users![index]['name']}",
+                        ),
+                      ),
+                    ),
+                    children: [
+                      const Divider(
+                        thickness: 1.0,
+                        height: 1.0,
+                      ),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16.0,
+                            vertical: 8.0,
+                          ),
+                          child: AutoSizeText(
+                            "Mobile: ${_users![index]['mobile'].substring(3)}",
+                            style: const TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                      ),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16.0,
+                            vertical: 8.0,
+                          ),
+                          child: AutoSizeText(
+                            "Timestamp: ${timeago.format(_users![index]['createdAt'].toDate())}",
+                            style: const TextStyle(
+                              fontFamily: 'Poppins',
+                              fontSize: 12,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ),
-              title: SizedBox(
-                height: MediaQuery.of(context).size.height * 0.1,
-                width: MediaQuery.of(context).size.width * 0.5,
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(
-                    10,
-                    10,
-                    0,
-                    0,
-                  ),
-                  child: AutoSizeText(
-                    "${_users![index]['name']}",
-                  ),
-                ),
-              ),
-              children: [
-                const Divider(
-                  thickness: 1.0,
-                  height: 1.0,
-                ),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0,
-                      vertical: 8.0,
-                    ),
-                    child: AutoSizeText(
-                      "Mobile: ${_users![index]['mobile'].substring(3)}",
-                      style: const TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 12,
-                      ),
-                    ),
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16.0,
-                      vertical: 8.0,
-                    ),
-                    child: AutoSizeText(
-                      "Timestamp: ${timeago.format(_users![index]['createdAt'].toDate())}",
-                      style: const TextStyle(
-                        fontFamily: 'Poppins',
-                        fontSize: 12,
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
       ),
     );
   }

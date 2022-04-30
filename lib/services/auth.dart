@@ -141,6 +141,9 @@ class _AuthState extends State<Auth> {
                             _mixpanel.getPeople().set("name", _user!.name);
                             _mixpanel
                                 .getPeople()
+                                .set("lastLoginAt", DateTime.now());
+                            _mixpanel
+                                .getPeople()
                                 .set("mobile", _user!.mobile!.substring(3));
                             _mixpanel.getPeople().set("referrals", 0);
                             _mixpanel.getPeople().set("app_share_success", 0);

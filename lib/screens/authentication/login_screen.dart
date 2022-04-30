@@ -6,7 +6,6 @@ import 'package:grooks_dev/models/question.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
 import 'package:grooks_dev/screens/authentication/passcode_input_screen.dart';
 import 'package:url_launcher/url_launcher.dart';
-
 import 'otp_input_screen.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -56,166 +55,172 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       key: _scaffoldKey,
       backgroundColor: const Color(0xFFEDECEC),
-      resizeToAvoidBottomInset: true,
       body: SafeArea(
-        child: Stack(
-          children: [
-            Image.asset(
-              "assets/images/login_bg1.png",
-              fit: BoxFit.fill,
-              alignment: Alignment.bottomCenter,
-              width: double.infinity,
-              height: MediaQuery.of(context).size.height,
-            ),
-            Container(
-              width: double.infinity,
-              height: MediaQuery.of(context).size.height * 0.9,
-              padding: EdgeInsets.fromLTRB(
-                MediaQuery.of(context).size.width * 0.05,
-                0,
-                MediaQuery.of(context).size.width * 0.05,
-                0,
+        child: SingleChildScrollView(
+          child: Stack(
+            children: [
+              Image.asset(
+                "assets/images/login_bg1.png",
+                fit: BoxFit.fill,
+                alignment: Alignment.bottomCenter,
+                width: double.infinity,
+                height: MediaQuery.of(context).size.height,
               ),
-              alignment: Alignment.bottomCenter,
-              color: Colors.transparent,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.08,
-                    child: TextField(
-                      controller: _mobileController,
-                      obscureText: false,
-                      keyboardType: TextInputType.phone,
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                      decoration: const InputDecoration(
-                        fillColor: Colors.white,
-                        filled: true,
-                        hintText: 'Enter phone number',
-                        contentPadding:
-                            EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(10),
+              Container(
+                width: double.infinity,
+                height: MediaQuery.of(context).size.height * 0.9,
+                padding: EdgeInsets.fromLTRB(
+                  MediaQuery.of(context).size.width * 0.05,
+                  0,
+                  MediaQuery.of(context).size.width * 0.05,
+                  0,
+                ),
+                alignment: Alignment.bottomCenter,
+                color: Colors.transparent,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.08,
+                      child: TextField(
+                        controller: _mobileController,
+                        obscureText: false,
+                        keyboardType: TextInputType.phone,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
+                        decoration: const InputDecoration(
+                          fillColor: Colors.white,
+                          filled: true,
+                          hintText: 'Enter phone number',
+                          contentPadding: EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 20),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(10),
+                            ),
                           ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(10),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(10),
+                            ),
                           ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(10.0),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(10.0),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.053,
-                    width: double.infinity,
-                    child: _isLoading
-                        ? const Center(
-                            child: CircularProgressIndicator.adaptive(
-                              backgroundColor: Colors.white,
-                            ),
-                          )
-                        : ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              primary: Colors.black,
-                            ),
-                            child: const AutoSizeText(
-                              "Continue",
-                              style: TextStyle(
-                                color: Colors.white,
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.053,
+                      width: double.infinity,
+                      child: _isLoading
+                          ? const Center(
+                              child: CircularProgressIndicator.adaptive(
+                                backgroundColor: Colors.white,
                               ),
-                            ),
-                            onPressed: () async {
-                              try {
-                                Pattern pattern = r'^[6789]\d{9}$';
-                                setState(() => _isLoading = true);
-                                RegExp regex = RegExp(pattern.toString());
-                                if (!regex
-                                    .hasMatch(_mobileController.text.trim())) {
+                            )
+                          : ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                primary: Colors.black,
+                              ),
+                              child: const AutoSizeText(
+                                "Continue",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                ),
+                              ),
+                              onPressed: () async {
+                                try {
+                                  Pattern pattern = r'^[6789]\d{9}$';
+                                  setState(() => _isLoading = true);
+                                  RegExp regex = RegExp(pattern.toString());
+                                  if (!regex.hasMatch(
+                                      _mobileController.text.trim())) {
+                                    ScaffoldMessenger.of(context)
+                                        .hideCurrentSnackBar();
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: AutoSizeText(
+                                            'Enter valid mobile number'),
+                                        backgroundColor: Colors.red,
+                                      ),
+                                    );
+                                    setState(() => _isLoading = false);
+                                    return;
+                                  } else {
+                                    bool isNewUser =
+                                        await _repository.isNewUser(
+                                      mobile:
+                                          '+91${_mobileController.text.trim()}',
+                                    );
+                                    if (isNewUser == false) {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) => PasswordScreen(
+                                            mobile:
+                                                _mobileController.text.trim(),
+                                            referralCode: widget.referralCode,
+                                          ),
+                                        ),
+                                      );
+                                    } else {
+                                      Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                          builder: (context) => OTPInputScreen(
+                                            mobile:
+                                                _mobileController.text.trim(),
+                                            referralCode: widget.referralCode,
+                                            isNewUser: true,
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                    setState(() => _isLoading = false);
+                                  }
+                                } catch (error) {
+                                  setState(() => _isLoading = false);
                                   ScaffoldMessenger.of(context)
                                       .hideCurrentSnackBar();
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     const SnackBar(
-                                      content: AutoSizeText(
-                                          'Enter valid mobile number'),
+                                      content: AutoSizeText("An error occured"),
                                       backgroundColor: Colors.red,
+                                      duration: Duration(seconds: 1),
                                     ),
                                   );
-                                  setState(() => _isLoading = false);
-                                  return;
-                                } else {
-                                  bool isNewUser = await _repository.isNewUser(
-                                    mobile:
-                                        '+91${_mobileController.text.trim()}',
-                                  );
-
-                                  if (isNewUser == false) {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) => PasswordScreen(
-                                          mobile: _mobileController.text.trim(),
-                                          referralCode: widget.referralCode,
-                                        ),
-                                      ),
-                                    );
-                                  } else {
-                                    Navigator.of(context).push(
-                                      MaterialPageRoute(
-                                        builder: (context) => OTPInputScreen(
-                                          mobile: _mobileController.text.trim(),
-                                          referralCode: widget.referralCode,
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                  setState(() => _isLoading = false);
                                 }
-                              } catch (error) {
-                                setState(() => _isLoading = false);
-                                ScaffoldMessenger.of(context)
-                                    .hideCurrentSnackBar();
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                    content: AutoSizeText("An error occured"),
-                                    backgroundColor: Colors.red,
-                                    duration: Duration(seconds: 1),
-                                  ),
-                                );
-                              }
-                            },
-                          ),
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.03,
-                  ),
-                  RichText(
-                    text: TextSpan(
-                      children: [
-                        const TextSpan(
-                          text: "By logging in, you agree to our ",
-                        ),
-                        TextSpan(
-                          text: "Terms and Conditions",
-                          style: const TextStyle(
-                            decoration: TextDecoration.underline,
-                            color: Colors.blue,
-                          ),
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = () async => await launch(_url),
-                        ),
-                      ],
+                              },
+                            ),
                     ),
-                  ),
-                ],
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.03,
+                    ),
+                    RichText(
+                      text: TextSpan(
+                        children: [
+                          const TextSpan(
+                            text: "By logging in, you agree to our ",
+                          ),
+                          TextSpan(
+                            text: "Terms and Conditions",
+                            style: const TextStyle(
+                              decoration: TextDecoration.underline,
+                              color: Colors.blue,
+                            ),
+                            recognizer: TapGestureRecognizer()
+                              ..onTap = () async => await launch(_url),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
