@@ -35,7 +35,6 @@ class _CustomDrawerState extends State<CustomDrawer> {
     backgroundColor: Colors.red,
     duration: Duration(seconds: 2),
   );
-
   late final FirebaseRepository _repository;
   late Mixpanel _mixpanel;
 

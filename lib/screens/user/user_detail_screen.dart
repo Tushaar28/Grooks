@@ -6,15 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:grooks_dev/models/question.dart';
 import 'package:grooks_dev/models/user.dart';
 import 'package:grooks_dev/resources/firebase_repository.dart';
+import 'package:grooks_dev/screens/user/set_password_screen.dart';
 import 'package:grooks_dev/services/mixpanel.dart';
 import 'package:grooks_dev/widgets/custom_button.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mixpanel_flutter/mixpanel_flutter.dart';
-import 'package:otp_text_field/otp_field.dart';
-import 'package:otp_text_field/otp_field_style.dart';
-import 'package:otp_text_field/style.dart';
-
-import 'onboarding_screen.dart';
+import 'package:page_transition/page_transition.dart';
 
 class UserDetailScreen extends StatefulWidget {
   final User user;
@@ -78,29 +75,6 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
     super.dispose();
   }
 
-  Future<void> addUser() async {
-    try {
-      String name = _lastNameController.text.isNotEmpty
-          ? _firstNameController.text.trim() + ' ' + _lastNameController.text
-          : _firstNameController.text.trim();
-
-      await _repository.addUser(
-        name: name,
-        mobile: widget.user.phoneNumber,
-        uid: widget.user.uid,
-        profilePicture: _profilePicture,
-        referralCode: _referralController.text.trim(),
-        password: _passwordController.text.trim(),
-      );
-    } catch (error) {
-      throw error.toString();
-    }
-  }
-
-  Future<Users?> getUserDetails() async {
-    return await _repository.getUserDetails();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -120,20 +94,20 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                 children: [
                   Padding(
                     padding: EdgeInsets.only(
-                      top: MediaQuery.of(context).size.height * 0.02,
+                      top: MediaQuery.of(context).size.height * 0.04,
                     ),
                     child: const AutoSizeText(
                       'Your information',
                       style: TextStyle(
                         fontFamily: "Poppins",
-                        fontSize: 18,
+                        fontSize: 24,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
                   Padding(
                     padding: EdgeInsets.only(
-                      top: MediaQuery.of(context).size.height * 0.02,
+                      top: MediaQuery.of(context).size.height * 0.08,
                     ),
                     child: Stack(
                       children: [
@@ -171,7 +145,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                     child: Padding(
                       padding: EdgeInsets.fromLTRB(
                         0,
-                        MediaQuery.of(context).size.height * 0.028,
+                        MediaQuery.of(context).size.height * 0.06,
                         0,
                         0,
                       ),
@@ -216,7 +190,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                     child: Padding(
                       padding: EdgeInsets.fromLTRB(
                         0,
-                        MediaQuery.of(context).size.height * 0.028,
+                        MediaQuery.of(context).size.height * 0.04,
                         0,
                         0,
                       ),
@@ -256,7 +230,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                     child: Padding(
                       padding: EdgeInsets.fromLTRB(
                         0,
-                        MediaQuery.of(context).size.height * 0.028,
+                        MediaQuery.of(context).size.height * 0.04,
                         0,
                         0,
                       ),
@@ -295,7 +269,7 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                     child: Padding(
                       padding: EdgeInsets.fromLTRB(
                         0,
-                        MediaQuery.of(context).size.height * 0.028,
+                        MediaQuery.of(context).size.height * 0.04,
                         0,
                         0,
                       ),
@@ -330,98 +304,8 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                       ),
                     ),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.only(
-                      top: 20,
-                    ),
-                    child: Center(
-                      child: AutoSizeText(
-                        "Set your 4 digit passcode",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ),
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                      child: OTPTextField(
-                        keyboardType: TextInputType.phone,
-                        obscureText: true,
-                        length: 4,
-                        width: MediaQuery.of(context).size.width,
-                        fieldWidth: MediaQuery.of(context).size.width * 0.13,
-                        otpFieldStyle: OtpFieldStyle(
-                          backgroundColor: Colors.white,
-                          borderColor: Colors.black,
-                          enabledBorderColor: Colors.black,
-                          focusBorderColor: Colors.black,
-                        ),
-                        style: const TextStyle(
-                          fontSize: 18,
-                          color: Colors.black,
-                        ),
-                        textFieldAlignment: MainAxisAlignment.spaceAround,
-                        fieldStyle: FieldStyle.underline,
-                        onChanged: (String value) {
-                          _passwordController.text = value;
-                        },
-                        onCompleted: (String pin) {
-                          _passwordController.text = pin.trim();
-                        },
-                      ),
-                    ),
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.only(
-                      top: 20,
-                    ),
-                    child: Center(
-                      child: AutoSizeText(
-                        "Confirm your 4 digit passcode",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                      child: OTPTextField(
-                        keyboardType: TextInputType.phone,
-                        obscureText: true,
-                        length: 4,
-                        width: MediaQuery.of(context).size.width,
-                        fieldWidth: MediaQuery.of(context).size.width * 0.13,
-                        otpFieldStyle: OtpFieldStyle(
-                          backgroundColor: Colors.white,
-                          borderColor: Colors.black,
-                          enabledBorderColor: Colors.black,
-                          focusBorderColor: Colors.black,
-                        ),
-                        style: const TextStyle(
-                          fontSize: 18,
-                          color: Colors.black,
-                        ),
-                        textFieldAlignment: MainAxisAlignment.spaceAround,
-                        fieldStyle: FieldStyle.underline,
-                        onChanged: (String value) {
-                          _confirmPasswordController.text = value;
-                        },
-                        onCompleted: (String pin) {
-                          _confirmPasswordController.text = pin.trim();
-                        },
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.03,
+                    height: MediaQuery.of(context).size.height * 0.07,
                   ),
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.05,
@@ -435,155 +319,36 @@ class _UserDetailScreenState extends State<UserDetailScreen> {
                         : CustomButton(
                             onPressed: () async {
                               try {
+                                FocusManager.instance.primaryFocus?.unfocus();
                                 setState(() => _isLoading = true);
-                                if (_passwordController.text.trim().length !=
-                                    4) {
-                                  ScaffoldMessenger.of(context)
-                                      .hideCurrentSnackBar();
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content:
-                                          AutoSizeText("Password is required"),
-                                      backgroundColor: Colors.red,
-                                      duration: Duration(seconds: 1),
-                                    ),
-                                  );
-                                  setState(() => _isLoading = false);
-                                  return;
-                                }
-                                if (!RegExp(r"^[0-9]{4}$").hasMatch(
-                                    _passwordController.text.trim())) {
-                                  ScaffoldMessenger.of(context)
-                                      .hideCurrentSnackBar();
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content: AutoSizeText(
-                                          "Password should contain 4 digits"),
-                                      backgroundColor: Colors.red,
-                                      duration: Duration(seconds: 1),
-                                    ),
-                                  );
-                                  setState(() => _isLoading = false);
-                                  return;
-                                }
-                                if (_passwordController.text.trim() !=
-                                    _confirmPasswordController.text.trim()) {
-                                  ScaffoldMessenger.of(context)
-                                      .hideCurrentSnackBar();
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    const SnackBar(
-                                      content:
-                                          AutoSizeText("Password do not match"),
-                                      backgroundColor: Colors.red,
-                                      duration: Duration(seconds: 1),
-                                    ),
-                                  );
-                                  setState(() => _isLoading = false);
-                                  return;
-                                }
                                 if (_formKey.currentState!.validate()) {
-                                  await addUser();
-                                  Users? user = await getUserDetails();
-                                  _mixpanel.identify(user!.id);
-                                  _mixpanel.track("signup", properties: {
-                                    "userId": user.id,
-                                  });
-                                  _mixpanel.track("login", properties: {
-                                    "userId": user.id,
-                                  });
-                                  if (widget.sharedViewMap != null &&
-                                      widget.question != null) {
-                                    setState(() => _isLoading = false);
-                                    // Navigator.pushAndRemoveUntil(
-                                    //     context,
-                                    //     MaterialPageRoute(
-                                    //       builder: (context) =>
-                                    //           QuestionDetailScreen(
-                                    //         user: user,
-                                    //         questionId: widget.question!.id,
-                                    //         questionName:
-                                    //             widget.question!.name,
-                                    //         sharedViewMap:
-                                    //             widget.sharedViewMap,
-                                    //       ),
-                                    //     ),
-                                    //     (route) => false);
-                                  } else {
-                                    setState(() => _isLoading = false);
-                                    Navigator.pushAndRemoveUntil(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            OnboardingScreen(user: user),
+                                  Navigator.of(context).push(
+                                    PageTransition(
+                                      child: SetPasswordScreen(
+                                        name: _lastNameController
+                                                .text.isNotEmpty
+                                            ? _firstNameController.text.trim() +
+                                                ' ' +
+                                                _lastNameController.text
+                                            : _firstNameController.text.trim(),
+                                        phoneNumber: widget.user.phoneNumber!,
+                                        referralCode:
+                                            _referralController.text.trim(),
+                                        uid: widget.user.uid,
+                                        profilePicture: _profilePicture,
+                                        mixpanel: _mixpanel,
                                       ),
-                                      (r) => false,
-                                    );
-                                  }
-                                  _mixpanel.getPeople().set("name", user.name);
-                                  _mixpanel
-                                      .getPeople()
-                                      .set("mobile", user.mobile!.substring(3));
-                                  _mixpanel
-                                      .getPeople()
-                                      .set("lastLoginAt", DateTime.now());
-                                  _mixpanel.getPeople().set("referrals", 0);
-                                  _mixpanel
-                                      .getPeople()
-                                      .set("app_share_success", 0);
-                                  _mixpanel
-                                      .getPeople()
-                                      .increment("total_trades", 0);
-                                  _mixpanel
-                                      .getPeople()
-                                      .increment("total_trades_failed", 0);
-                                  _mixpanel
-                                      .getPeople()
-                                      .increment("new_trades", 0);
-                                  _mixpanel
-                                      .getPeople()
-                                      .increment("new_trades_failed", 0);
-                                  _mixpanel
-                                      .getPeople()
-                                      .increment("paired_trades", 0);
-                                  _mixpanel
-                                      .getPeople()
-                                      .increment("paired_trades_failed", 0);
-                                  _mixpanel
-                                      .getPeople()
-                                      .increment("cancelled_trades", 0);
-                                  _mixpanel
-                                      .getPeople()
-                                      .increment("cancelled_trades_failed", 0);
-                                  _mixpanel
-                                      .getPeople()
-                                      .increment("purchases", 0);
-                                  _mixpanel
-                                      .getPeople()
-                                      .increment("purchases_failed", 0);
-                                  _mixpanel.getPeople().increment("payouts", 0);
-                                  _mixpanel
-                                      .getPeople()
-                                      .increment("payouts_failed", 0);
-                                  _mixpanel.getPeople().set("referrals", 0);
-                                  _mixpanel
-                                      .getPeople()
-                                      .increment("store_packs_clicked", 0);
-                                  _mixpanel
-                                      .getPeople()
-                                      .increment("49_pack_clicked", 0);
-                                  _mixpanel
-                                      .getPeople()
-                                      .increment("99_pack_clicked", 0);
-                                  _mixpanel
-                                      .getPeople()
-                                      .increment("199_pack_clicked", 0);
-                                  _mixpanel
-                                      .getPeople()
-                                      .increment("499_pack_clicked", 0);
-                                  _mixpanel.getPeople().setOnce(
-                                      "createdAt", DateTime.now().toString());
-                                  _mixpanel.flush();
+                                      type: PageTransitionType.rightToLeft,
+                                      duration: const Duration(
+                                        milliseconds: 500,
+                                      ),
+                                      reverseDuration: const Duration(
+                                        milliseconds: 500,
+                                      ),
+                                    ),
+                                  );
                                 }
+                                setState(() => _isLoading = false);
                               } catch (error) {
                                 setState(() => _isLoading = false);
                                 ScaffoldMessenger.of(context)

@@ -169,31 +169,19 @@ class _OTPInputScreenState extends State<OTPInputScreen> {
             //     ),
             //     (route) => false);
           } else {
-            bool isPasswordSet =
-                await _repository.isPasswordSet(mobile: "+91${widget.mobile}");
             _mixpanel.identify(userDetails.id);
             _mixpanel.getPeople().set("lastLoginAt", DateTime.now());
-            if (isPasswordSet) {
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => NavbarScreen(
-                    user: userDetails,
-                    initialPage: 'Home',
-                  ),
+
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => NavbarScreen(
+                  user: userDetails,
+                  initialPage: 'Home',
                 ),
-                (Route<dynamic> route) => false,
-              );
-            } else {
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      SetPasswordScreen(userId: userDetails.id),
-                ),
-                (Route<dynamic> route) => false,
-              );
-            }
+              ),
+              (Route<dynamic> route) => false,
+            );
           }
         }
       }
@@ -488,33 +476,17 @@ class _OTPInputScreenState extends State<OTPInputScreen> {
                                           //     ),
                                           //     (route) => false);
                                         } else {
-                                          bool isPasswordSet =
-                                              await _repository.isPasswordSet(
-                                                  mobile:
-                                                      "+91${widget.mobile}");
-                                          if (isPasswordSet) {
-                                            Navigator.pushAndRemoveUntil(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    NavbarScreen(
-                                                  user: userDetails,
-                                                  initialPage: 'Home',
-                                                ),
+                                          Navigator.pushAndRemoveUntil(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  NavbarScreen(
+                                                user: userDetails,
+                                                initialPage: 'Home',
                                               ),
-                                              (Route<dynamic> route) => false,
-                                            );
-                                          } else {
-                                            Navigator.pushAndRemoveUntil(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (context) =>
-                                                    SetPasswordScreen(
-                                                        userId: userDetails.id),
-                                              ),
-                                              (Route<dynamic> route) => false,
-                                            );
-                                          }
+                                            ),
+                                            (Route<dynamic> route) => false,
+                                          );
                                         }
                                       }
                                     } catch (error) {
