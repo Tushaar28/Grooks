@@ -1463,7 +1463,7 @@ class FirebaseMethods {
     }
   }
 
-  Future<String> getSubcategoryNameForQuestion({
+  Future<Category> getSubcategoryDetailsForQuestion({
     required String questionId,
   }) async {
     try {
@@ -1473,8 +1473,9 @@ class FirebaseMethods {
       String categoryId = questionSnapshot.get('parent');
       QuerySnapshot categorySnapshot =
           await categoriesCollection.where('id', isEqualTo: categoryId).get();
-      name = categorySnapshot.docs.first.get('name');
-      return name;
+      Category subcategory = Category.fromMap(
+          categorySnapshot.docs.first.data() as Map<String, dynamic>);
+      return subcategory;
     } catch (error) {
       rethrow;
     }

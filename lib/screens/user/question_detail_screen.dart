@@ -589,98 +589,97 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
   Future<bool> showLowPairingWarning() async {
     try {
       bool answer = false;
-      await showModalBottomSheet(
+      await showDialog(
         context: context,
-        backgroundColor: Colors.transparent,
-        builder: (BuildContext context) => StatefulBuilder(
-          builder: (context, setState) => Card(
-            elevation: 10,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: SizedBox(
-              height: MediaQuery.of(context).size.height * 0.25,
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.02,
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.035,
-                    child: const AutoSizeText(
-                      "Warning",
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.red,
+        builder: (BuildContext context) => SizedBox(
+          height: MediaQuery.of(context).size.height * 0.3,
+          child: Center(
+            child: StatefulBuilder(
+              builder: (context, setState) => Card(
+                elevation: 10,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: SizedBox(
+                  height: MediaQuery.of(context).size.height * 0,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.02,
                       ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.03,
-                  ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 10,
-                    ),
-                    child: Expanded(
-                      child: AutoSizeText(
-                        "The probability of your trade being paired is low. Do you still want to continue?",
-                        style: TextStyle(
-                          fontSize: 16,
-                        ),
-                      ),
-                    ),
-                  ),
-                  const Expanded(
-                    child: SizedBox(
-                      height: 0,
-                    ),
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.065,
-                    width: MediaQuery.of(context).size.width * 0.8,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.3,
-                          child: ElevatedButton(
-                            child: const Text(
-                              "Continue",
-                              style: TextStyle(
-                                color: Colors.white,
-                              ),
-                            ),
-                            style: ElevatedButton.styleFrom(
-                              primary: Colors.blue,
-                            ),
-                            onPressed: () => Navigator.pop(context, true),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.035,
+                        child: const AutoSizeText(
+                          "Warning",
+                          style: TextStyle(
+                            fontSize: 22,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.red,
                           ),
                         ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 0.3,
-                          child: ElevatedButton(
-                            child: const Text(
-                              "Cancel",
-                              style: TextStyle(
-                                color: Colors.white,
-                              ),
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.03,
+                      ),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 10,
+                        ),
+                        child: Expanded(
+                          child: AutoSizeText(
+                            "The probability of your trade being paired is low. Do you still want to continue?",
+                            style: TextStyle(
+                              fontSize: 16,
                             ),
-                            style: ElevatedButton.styleFrom(
-                              primary: Colors.red,
-                            ),
-                            onPressed: () => Navigator.pop(context, false),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.065,
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.3,
+                              child: ElevatedButton(
+                                child: const Text(
+                                  "Continue",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  primary: Colors.blue,
+                                ),
+                                onPressed: () => Navigator.pop(context, true),
+                              ),
+                            ),
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.3,
+                              child: ElevatedButton(
+                                child: const Text(
+                                  "Cancel",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                style: ElevatedButton.styleFrom(
+                                  primary: Colors.red,
+                                ),
+                                onPressed: () => Navigator.pop(context, false),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 0.01,
+                      ),
+                    ],
                   ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.01,
-                  ),
-                ],
+                ),
               ),
             ),
           ),

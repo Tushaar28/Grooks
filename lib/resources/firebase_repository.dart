@@ -293,10 +293,10 @@ class FirebaseRepository {
   }) =>
       firebaseMethods.getOpenTradesForUser(userId: userId);
 
-  Future<String> getSubcategoryNameForQuestion({
+  Future<Category> getSubcategoryDetailsForQuestion({
     required String questionId,
   }) =>
-      firebaseMethods.getSubcategoryNameForQuestion(questionId: questionId);
+      firebaseMethods.getSubcategoryDetailsForQuestion(questionId: questionId);
 
   Future<List<Trade>> getClosedTradesForUser({
     required String userId,

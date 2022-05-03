@@ -34,8 +34,9 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    compileSdkVersion 30
-
+    compileSdkVersion 31
+    aaptOptions.cruncherEnabled = false
+    aaptOptions.useNewCruncher = false
     sourceSets {
         main.java.srcDirs += 'src/main/kotlin'
     }
@@ -45,11 +46,12 @@ android {
     }
 
     defaultConfig {
-        applicationId 'com.bagoyo.grooks_dev'
+        applicationId 'com.bagoyo.polls'
         minSdkVersion 23
         targetSdkVersion 29
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        multiDexEnabled true
     }
 
     signingConfigs {
@@ -76,4 +78,5 @@ flutter {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'com.android.support:multidex:1.0.3'
 }

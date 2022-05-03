@@ -194,7 +194,7 @@ class _TradesActivityScreenState extends State<TradesActivityScreen> {
                                             trade.status ==
                                                 Status.ACTIVE_UNPAIRED
                                         ? '${trade.coinsWon ?? trade.coins}'
-                                        : '+${trade.coinsWon ?? trade.coins}',
+                                        : '+ ${trade.coinsWon ?? trade.coins}',
                                     style: TextStyle(
                                       fontFamily: 'Poppins',
                                       color: trade.status == Status.LOST ||

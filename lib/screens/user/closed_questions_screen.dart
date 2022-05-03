@@ -114,7 +114,7 @@ class _ClosedQuestionsDetailScreenState
         if (_questions.isEmpty) {
           return const Center(
             child: AutoSizeText(
-              "No closed questions",
+              "No closed events",
               style: TextStyle(
                 fontFamily: 'Poppins',
                 fontSize: 20,

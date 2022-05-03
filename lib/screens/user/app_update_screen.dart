@@ -107,8 +107,6 @@ class _AppUpdateScreenState extends State<AppUpdateScreen> {
                                     OtaUpdate().execute(widget.link).listen(
                                       (e) {
                                         event = e;
-                                        // print("STATUS = ${event!.status}");
-                                        // print("VALUE = ${event!.value}");
                                         setState(
                                             () => _progress = event!.value!);
                                         if (event!.value != null &&

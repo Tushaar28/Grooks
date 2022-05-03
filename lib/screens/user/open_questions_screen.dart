@@ -112,7 +112,7 @@ class _OpenQuestionsDetailScreenState extends State<OpenQuestionsDetailScreen>
         if (_questions.isEmpty) {
           return const Center(
             child: AutoSizeText(
-              "No active questions",
+              "No active events",
               style: TextStyle(
                 fontFamily: 'Poppins',
                 fontSize: 20,

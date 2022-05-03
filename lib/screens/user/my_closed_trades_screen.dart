@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:grooks_dev/models/category.dart';
 import 'package:grooks_dev/models/question.dart';
 import 'package:grooks_dev/models/trade.dart';
 import 'package:grooks_dev/models/user.dart';
@@ -82,16 +83,28 @@ class _MyClosedTradesScreenState extends State<MyClosedTradesScreen>
     }
   }
 
-  Future<String> getSubcategoryNameForQuestion({
+  Future<Category> getSubcategoryDetailsForQuestion({
     required String questionId,
   }) async {
     try {
-      String name = await _repository.getSubcategoryNameForQuestion(
+      Category subcategory = await _repository.getSubcategoryDetailsForQuestion(
           questionId: questionId);
-      return name;
+      return subcategory;
     } catch (error) {
       throw error.toString();
     }
+  }
+
+  String getTradeStatus(Trade trade) {
+    if (trade.status == Status.WON) return "WON";
+    if (trade.status == Status.LOST) return "LOST";
+    return "CANCELLED";
+  }
+
+  Color getTradeColor(String value) {
+    if (value.toUpperCase() == "WON") return Colors.blue;
+    if (value.toUpperCase() == "LOST") return Colors.red;
+    return Colors.grey;
   }
 
   @override
@@ -190,8 +203,8 @@ class _MyClosedTradesScreenState extends State<MyClosedTradesScreen>
                               mainAxisAlignment: MainAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                FutureBuilder<String>(
-                                  future: getSubcategoryNameForQuestion(
+                                FutureBuilder<Category>(
+                                  future: getSubcategoryDetailsForQuestion(
                                       questionId: question.id),
                                   builder: (context, snapshot) {
                                     if (snapshot.connectionState !=
@@ -205,7 +218,7 @@ class _MyClosedTradesScreenState extends State<MyClosedTradesScreen>
                                       padding: const EdgeInsets.fromLTRB(
                                           10, 5, 10, 10),
                                       child: AutoSizeText(
-                                        snapshot.data!,
+                                        snapshot.data!.name,
                                         style: const TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
@@ -219,20 +232,47 @@ class _MyClosedTradesScreenState extends State<MyClosedTradesScreen>
                                       MediaQuery.of(context).size.height * 0.02,
                                 ),
                                 SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.65,
+                                  width: MediaQuery.of(context).size.width,
                                   height:
-                                      MediaQuery.of(context).size.height * 0.05,
-                                  child: Align(
-                                    alignment: const Alignment(0, 0),
-                                    child: AutoSizeText(
-                                      question.name,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                        fontFamily: 'Poppins',
-                                        fontSize: 14,
+                                      MediaQuery.of(context).size.height * 0.08,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.08,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.2,
+                                        child: question.image != null &&
+                                                question.image!.isNotEmpty
+                                            ? FadeInImage.assetNetwork(
+                                                placeholder:
+                                                    "assets/images/fallback.png",
+                                                image: question.image!,
+                                              )
+                                            : Image.asset(
+                                                "assets/images/fallback.png"),
                                       ),
-                                    ),
+                                      SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.02,
+                                      ),
+                                      Expanded(
+                                        child: Center(
+                                          child: AutoSizeText(
+                                            question.name,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(
+                                              fontFamily: 'Poppins',
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                                 SizedBox(
@@ -246,11 +286,22 @@ class _MyClosedTradesScreenState extends State<MyClosedTradesScreen>
                                       color: Colors.black,
                                     ),
                                     children: [
-                                      const TextSpan(text: 'Your trade    '),
+                                      TextSpan(
+                                        text: getTradeStatus(
+                                            _closedTrades[index]),
+                                        style: TextStyle(
+                                          color: getTradeColor(getTradeStatus(
+                                              _closedTrades[index])),
+                                          fontSize: 18,
+                                        ),
+                                      ),
+                                      const TextSpan(
+                                        text: "   ",
+                                      ),
                                       TextSpan(
                                         text: _closedTrades[index].response
-                                            ? 'YES'
-                                            : 'NO',
+                                            ? '(YES'
+                                            : '(NO',
                                         style: TextStyle(
                                           color: _closedTrades[index].response
                                               ? Theme.of(context).primaryColor
@@ -259,7 +310,8 @@ class _MyClosedTradesScreenState extends State<MyClosedTradesScreen>
                                         ),
                                       ),
                                       TextSpan(
-                                        text: ' @${_closedTrades[index].coins}',
+                                        text:
+                                            ' @${_closedTrades[index].coins})',
                                         style: TextStyle(
                                           color: _closedTrades[index].response
                                               ? Theme.of(context).primaryColor

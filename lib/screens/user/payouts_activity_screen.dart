@@ -258,7 +258,7 @@ class _PayoutsAcivityScreenState extends State<PayoutsAcivityScreen> {
                                         vertical: 8.0,
                                       ),
                                       child: AutoSizeText(
-                                          "Transaction Date: ${timeago.format(payout.updatedAt)} "),
+                                          "Transaction Date: ${timeago.format(payout.createdAt)} "),
                                     ),
                                   ),
                                 ],

@@ -1,6 +1,7 @@
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:grooks_dev/models/category.dart';
 import 'package:grooks_dev/models/question.dart';
 import 'package:grooks_dev/models/trade.dart';
 import 'package:grooks_dev/models/user.dart';
@@ -82,13 +83,13 @@ class _MyOpenTradesScreenState extends State<MyOpenTradesScreen>
     }
   }
 
-  Future<String> getSubcategoryNameForQuestion({
+  Future<Category> getSubcategoryDetailsForQuestion({
     required String questionId,
   }) async {
     try {
-      String name = await _repository.getSubcategoryNameForQuestion(
+      Category subcategory = await _repository.getSubcategoryDetailsForQuestion(
           questionId: questionId);
-      return name;
+      return subcategory;
     } catch (error) {
       throw error.toString();
     }
@@ -157,7 +158,7 @@ class _MyOpenTradesScreenState extends State<MyOpenTradesScreen>
                   } else {
                     Question question = snapshot.data!;
                     return SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.2,
+                      height: MediaQuery.of(context).size.height * 0.23,
                       child: InkWell(
                         onTap: () async {
                           Navigator.of(context).push(
@@ -187,8 +188,8 @@ class _MyOpenTradesScreenState extends State<MyOpenTradesScreen>
                               mainAxisAlignment: MainAxisAlignment.start,
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                FutureBuilder<String>(
-                                  future: getSubcategoryNameForQuestion(
+                                FutureBuilder<Category>(
+                                  future: getSubcategoryDetailsForQuestion(
                                       questionId: question.id),
                                   builder: (context, snapshot) {
                                     if (snapshot.connectionState !=
@@ -202,7 +203,7 @@ class _MyOpenTradesScreenState extends State<MyOpenTradesScreen>
                                       padding: const EdgeInsets.fromLTRB(
                                           10, 5, 10, 10),
                                       child: AutoSizeText(
-                                        snapshot.data!,
+                                        snapshot.data!.name,
                                         style: const TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,
@@ -216,20 +217,47 @@ class _MyOpenTradesScreenState extends State<MyOpenTradesScreen>
                                       MediaQuery.of(context).size.height * 0.02,
                                 ),
                                 SizedBox(
-                                  width:
-                                      MediaQuery.of(context).size.width * 0.65,
+                                  width: MediaQuery.of(context).size.width,
                                   height:
-                                      MediaQuery.of(context).size.height * 0.05,
-                                  child: Align(
-                                    alignment: const Alignment(0, 0),
-                                    child: AutoSizeText(
-                                      question.name,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                        fontFamily: 'Poppins',
-                                        fontSize: 14,
+                                      MediaQuery.of(context).size.height * 0.08,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.08,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.2,
+                                        child: question.image != null &&
+                                                question.image!.isNotEmpty
+                                            ? FadeInImage.assetNetwork(
+                                                placeholder:
+                                                    "assets/images/fallback.png",
+                                                image: question.image!,
+                                              )
+                                            : Image.asset(
+                                                "assets/images/fallback.png"),
                                       ),
-                                    ),
+                                      SizedBox(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.02,
+                                      ),
+                                      Expanded(
+                                        child: Center(
+                                          child: AutoSizeText(
+                                            question.name,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(
+                                              fontFamily: 'Poppins',
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                                 SizedBox(
