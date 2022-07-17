@@ -27,9 +27,9 @@ class _QuestionCardState extends State<QuestionCard> {
 
   String getFooterText() {
     if (widget.question.answer != null) {
-      return "${((widget.question.openTradesCount! + widget.question.pairedTradesCount! * 2) * 5).toInt()}+ people traded";
+      return "${((widget.question.openTradesCount! + widget.question.pairedTradesCount! * 2) * 4.3).ceil().toInt()}+ people traded";
     }
-    return "${((widget.question.openTradesCount! + widget.question.pairedTradesCount! * 2) * 5).toInt()}+ people trading";
+    return "${((widget.question.openTradesCount! + widget.question.pairedTradesCount! * 2) * 4.3).ceil().toInt()}+ people trading";
   }
 
   @override

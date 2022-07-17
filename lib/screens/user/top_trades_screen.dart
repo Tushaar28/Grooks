@@ -337,7 +337,7 @@ class _TopTradesScreenState extends State<TopTradesScreen>
     if (_trades.isEmpty) {
       return const Center(
         child: AutoSizeText(
-          "No trades",
+          "No open trades",
           style: TextStyle(
             fontSize: 18,
           ),

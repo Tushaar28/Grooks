@@ -620,7 +620,6 @@ class FirebaseMethods {
       List<Question> questions = [];
       QuerySnapshot questionsSnapshot = await questionsCollection
           .where('parent', isEqualTo: subcategoryId)
-          .where("answer", isNull: true)
           .where("closedAt", isNull: true)
           .where("isActive", isEqualTo: true)
           .where("isDeleted", isEqualTo: false)
@@ -646,8 +645,10 @@ class FirebaseMethods {
       List<Question> questions = [];
       QuerySnapshot snapshot = await questionsCollection
           .where('parent', isEqualTo: subcategoryId)
-          .where('answer', whereIn: [true, false])
+          .where("closedAt", isNull: false)
           .where("isActive", isEqualTo: false)
+          .where("isDeleted", isEqualTo: false)
+          .orderBy("closedAt", descending: true)
           .orderBy("updatedAt", descending: true)
           .get();
       for (var element in snapshot.docs) {
@@ -658,6 +659,7 @@ class FirebaseMethods {
       }
       return questions;
     } catch (error) {
+      print(error);
       rethrow;
     }
   }

@@ -7,7 +7,6 @@ import 'package:grooks_dev/screens/user/coins_transfer_screen.dart';
 import 'package:grooks_dev/screens/user/edit_profile_screen.dart';
 import 'package:grooks_dev/screens/user/feedback_screen.dart';
 import 'package:grooks_dev/screens/user/refer_and_earn.dart';
-import 'package:grooks_dev/screens/user/referral_contest_screen.dart';
 import 'package:grooks_dev/screens/user/store_screen.dart';
 import 'package:grooks_dev/screens/user/withdrawl_screen.dart';
 import 'package:grooks_dev/services/mixpanel.dart';
@@ -19,7 +18,7 @@ import 'package:url_launcher/url_launcher.dart';
 class CustomDrawer extends StatefulWidget {
   final BuildContext context;
   final Users user;
-  CustomDrawer({
+  const CustomDrawer({
     Key? key,
     required this.context,
     required this.user,
@@ -310,38 +309,38 @@ class _CustomDrawerState extends State<CustomDrawer> {
                     },
                   ),
                 ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.06,
-                  child: ListTile(
-                    leading: Image.asset(
-                      "assets/images/refer_drawer.png",
-                      height: 40,
-                    ),
-                    title: const AutoSizeText(
-                      'Referral Contest',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                    trailing: const Icon(
-                      Icons.arrow_forward_ios,
-                      color: Colors.black87,
-                    ),
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      Navigator.of(context).push(
-                        PageTransition(
-                          child: ReferralContestScreen(userId: widget.user.id),
-                          type: PageTransitionType.bottomToTop,
-                          duration: const Duration(milliseconds: 300),
-                          reverseDuration: const Duration(milliseconds: 300),
-                        ),
-                      );
-                    },
-                  ),
-                ),
+                // SizedBox(
+                //   height: MediaQuery.of(context).size.height * 0.06,
+                //   child: ListTile(
+                //     leading: Image.asset(
+                //       "assets/images/refer_drawer.png",
+                //       height: 40,
+                //     ),
+                //     title: const AutoSizeText(
+                //       'Referral Contest',
+                //       style: TextStyle(
+                //         color: Colors.black,
+                //         fontSize: 18,
+                //         fontWeight: FontWeight.w400,
+                //       ),
+                //     ),
+                //     trailing: const Icon(
+                //       Icons.arrow_forward_ios,
+                //       color: Colors.black87,
+                //     ),
+                //     onTap: () {
+                //       Navigator.of(context).pop();
+                //       Navigator.of(context).push(
+                //         PageTransition(
+                //           child: ReferralContestScreen(userId: widget.user.id),
+                //           type: PageTransitionType.bottomToTop,
+                //           duration: const Duration(milliseconds: 300),
+                //           reverseDuration: const Duration(milliseconds: 300),
+                //         ),
+                //       );
+                //     },
+                //   ),
+                // ),
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.06,
                   child: ListTile(
@@ -469,6 +468,32 @@ class _CustomDrawerState extends State<CustomDrawer> {
                           reverseDuration: const Duration(milliseconds: 300),
                         ),
                       );
+                    },
+                  ),
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 0.06,
+                  child: ListTile(
+                    leading: Image.asset(
+                      "assets/images/tc.png",
+                      height: 36,
+                    ),
+                    title: const AutoSizeText(
+                      'Terms and conditions',
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                    trailing: const Icon(
+                      Icons.arrow_forward_ios,
+                      color: Colors.black87,
+                    ),
+                    onTap: () async {
+                      String url =
+                          "https://drive.google.com/file/d/1Hk7I-GgBmICcz2ipssuIS4shqtWQuDyG/view?usp=sharing";
+                      await launch(url);
                     },
                   ),
                 ),

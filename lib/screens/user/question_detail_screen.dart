@@ -293,12 +293,30 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                       color: Colors.grey[700],
                     ),
                     SizedBox(
-                      height: MediaQuery.of(context).size.height * 0.17,
+                      height: MediaQuery.of(context).size.height * 0.2,
                       width: MediaQuery.of(context).size.width,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         mainAxisSize: MainAxisSize.max,
                         children: [
+                          if (_currentTrade <= 35) ...[
+                            Row(
+                              children: [
+                                SizedBox(
+                                  height:
+                                      MediaQuery.of(context).size.height * 0.03,
+                                  child: const AutoSizeText(
+                                    "Low chance of trade matching",
+                                    style: TextStyle(
+                                      color: Colors.red,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                           Row(
                             mainAxisSize: MainAxisSize.max,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -337,14 +355,14 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
                               AutoSizeText(
-                                "$_currentTrade",
+                                "$_currentTrade  (₹ ${(_currentTrade) / 10})",
                                 style: const TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
                               AutoSizeText(
-                                "${100 - _currentTrade}",
+                                "${100 - _currentTrade}  (₹ ${(100 - _currentTrade) / 10})",
                                 style: const TextStyle(
                                   color: Color(0xFF007AFF),
                                   fontSize: 16,
@@ -383,7 +401,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           AutoSizeText(
-                            "If Final Outcome is ${isYes ? "Yes" : "No"}",
+                            "1. If Final Outcome is ${isYes ? "Yes" : "No"}",
                             style: const TextStyle(
                               color: Colors.grey,
                               fontSize: 14,
@@ -391,7 +409,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                             ),
                           ),
                           AutoSizeText(
-                            "You make profit of ${100 - _currentTrade} coins",
+                            "2. You make profit of ${100 - _currentTrade} coins",
                             style: const TextStyle(
                               color: Colors.green,
                               fontSize: 14,
@@ -399,7 +417,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                             ),
                           ),
                           AutoSizeText(
-                            "Else you will lose $_currentTrade coins",
+                            "3. Else you will lose $_currentTrade coins",
                             style: const TextStyle(
                               color: Colors.red,
                               fontSize: 14,
@@ -407,7 +425,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                             ),
                           ),
                           const AutoSizeText(
-                            "Your coins will be multiplied with number of trades",
+                            "4. Your coins will be multiplied with number of trades",
                             style: TextStyle(
                               color: Colors.grey,
                               fontSize: 14,
@@ -417,7 +435,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                           Row(
                             children: [
                               const AutoSizeText(
-                                "10 ",
+                                "5. 100 ",
                                 style: TextStyle(
                                   color: Colors.grey,
                                   fontSize: 14,
@@ -427,7 +445,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                               Image.asset("assets/images/coins.png",
                                   scale: 1.2),
                               const AutoSizeText(
-                                " = ₹1 ",
+                                " = ₹10 ",
                                 style: TextStyle(
                                   color: Colors.grey,
                                   fontSize: 14,
@@ -437,7 +455,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                             ],
                           ),
                           const AutoSizeText(
-                            "Your trade will be cancelled if it is not matched by any other user",
+                            "6. Your trade will be cancelled if it is not matched by any other user",
                             style: TextStyle(
                               color: Colors.grey,
                               fontSize: 14,
@@ -445,7 +463,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                             ),
                           ),
                           AutoSizeText(
-                            "${(_winCommission / 100 * (100 - _currentTrade)).ceil()} coins will be deducted as commission from your winning",
+                            "7. ${(_winCommission / 100 * (100 - _currentTrade)).ceil()} coins will be deducted as commission from your winning",
                             style: const TextStyle(
                               color: Colors.grey,
                               fontSize: 14,
@@ -486,15 +504,16 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                                   onSwipeCallback: () async {
                                     try {
                                       setState(() => _isLoading = true);
-                                      bool shouldContinue = true;
-                                      if (_currentTrade < 40) {
-                                        shouldContinue =
-                                            await showLowPairingWarning();
-                                      }
-                                      if (!shouldContinue) {
-                                        setState(() => _isLoading = false);
-                                        return;
-                                      }
+                                      // bool shouldContinue = true;
+                                      // if (_currentTrade < 40) {
+                                      //   Navigator.of(context).pop();
+                                      //   shouldContinue =
+                                      //       await showLowPairingWarning();
+                                      // }
+                                      // if (!shouldContinue) {
+                                      //   setState(() => _isLoading = false);
+                                      //   return;
+                                      // }
                                       await placeTrade(
                                         isYes: isYes,
                                       );
@@ -584,111 +603,6 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
         );
       },
     );
-  }
-
-  Future<bool> showLowPairingWarning() async {
-    try {
-      bool answer = false;
-      await showDialog(
-        context: context,
-        builder: (BuildContext context) => SizedBox(
-          height: MediaQuery.of(context).size.height * 0.3,
-          child: Center(
-            child: StatefulBuilder(
-              builder: (context, setState) => Card(
-                elevation: 10,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: SizedBox(
-                  height: MediaQuery.of(context).size.height * 0,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.02,
-                      ),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.035,
-                        child: const AutoSizeText(
-                          "Warning",
-                          style: TextStyle(
-                            fontSize: 22,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.red,
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.03,
-                      ),
-                      const Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 10,
-                        ),
-                        child: Expanded(
-                          child: AutoSizeText(
-                            "The probability of your trade being paired is low. Do you still want to continue?",
-                            style: TextStyle(
-                              fontSize: 16,
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.065,
-                        width: MediaQuery.of(context).size.width * 0.8,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.3,
-                              child: ElevatedButton(
-                                child: const Text(
-                                  "Continue",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  primary: Colors.blue,
-                                ),
-                                onPressed: () => Navigator.pop(context, true),
-                              ),
-                            ),
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width * 0.3,
-                              child: ElevatedButton(
-                                child: const Text(
-                                  "Cancel",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                  ),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                  primary: Colors.red,
-                                ),
-                                onPressed: () => Navigator.pop(context, false),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.01,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      );
-      return answer;
-    } catch (error) {
-      return false;
-    }
   }
 
   Future<void> updateDoneStatus() async {
@@ -824,7 +738,7 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                           ),
                         ),
                       ),
-                      if (_question!.answer == null) ...[
+                      if (_question!.closedAt == null) ...[
                         SizedBox(
                           height: MediaQuery.of(context).size.height * 0.03,
                           width: MediaQuery.of(context).size.width,
@@ -916,21 +830,25 @@ class _QuestionDetailScreenState extends State<QuestionDetailScreen> {
                           ),
                         ),
                       ],
-                      if (_question!.answer != null) ...[
+                      if (_question!.closedAt != null) ...[
                         SizedBox(
                           height: MediaQuery.of(context).size.height * 0.05,
                           width: double.infinity,
                           child: Center(
                             child: AutoSizeText(
-                              (_question!.answer)!
-                                  ? "Event settled at Yes"
-                                  : "Event settled at No",
+                              _question!.answer != null
+                                  ? (_question!.answer)!
+                                      ? "Event settled at Yes"
+                                      : "Event settled at No"
+                                  : "Event cancelled",
                               style: TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.bold,
-                                color: (_question!.answer)!
-                                    ? Colors.green[600]
-                                    : const Color(0xFFEB6821),
+                                color: _question!.answer != null
+                                    ? (_question!.answer)!
+                                        ? Colors.green[600]
+                                        : const Color(0xFFEB6821)
+                                    : Colors.grey,
                               ),
                             ),
                           ),
